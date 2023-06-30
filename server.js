@@ -1,6 +1,17 @@
-const express = require('express'); //Import the express dependency
-const app = express();              //Instantiate an express app, the main work horse of this server
-const port = 8080;                  //Save the port number where your server will be listening
+const express = require('express');
+const app = express();
+const port = process.env.port || 8080;
+
+const admin = require("firebase-admin");
+const credentials = require("./ServiceAccountKey.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(credentials)
+});
+
+const db = admin.firestore();
+app.use(express.json);
+app.use(express.urlencoded({extended: true}));
 
 //Idiomatic expression in express to route and respond to a client request
 app.get('/', (req, res) => {        //get requests to the root ("/") will route here
