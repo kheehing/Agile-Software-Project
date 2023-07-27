@@ -8,4 +8,7 @@
 * **[Gabrielle](https://github.com/Gabrielle-97)**
 * **[Raziq](https://github.com/RaziqAhZiq)**
 
+## Image link used
+
+* **https://unsplash.com/images/travel**
 
