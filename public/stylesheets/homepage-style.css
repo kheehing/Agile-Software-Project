@@ -9,13 +9,13 @@ body {
 
 @font-face {
     font-family: 'Family';
-    src: url('fonts/Family.ttf');
+    src: url('../fonts/Family.ttf');
     font-weight: bold;
 }
 
 @font-face {
     font-family: 'Mister';
-    src: url('fonts/Mister.otf');
+    src: url('../fonts/Mister.otf');
     font-weight: normal;
 }
 
