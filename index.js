@@ -14,16 +14,14 @@ admin.initializeApp({
 // ====================================================
 
 const db = admin.firestore();
-app.use(express.json);
+app.use(express.json());
+app.use(express.static(__dirname + "/public")); // this line need to be before -> app.use("", travelPlannerRouter);
+app.use("", travelPlannerRouter);
 app.use(express.urlencoded({extended: true}));
-app.use("/", travelPlannerRouter);
+
+app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
-
-
-app.get('/', (req, res) => {
-    res.render('home');
-});
 
 app.listen(port, () => {
     console.log(`Now listening on port ${port}`); 

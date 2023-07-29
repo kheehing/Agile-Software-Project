@@ -1,0 +1,17 @@
+
+
+.navbar {
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.navbar .btn {
+    margin-right: 10px;
+}
+
+.navbar-toggle .icon-bar {
+    background-color: #0FAF20;
+}
