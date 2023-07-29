@@ -28,13 +28,13 @@ const travelPlannerRouter = require('./routes/router');
 const flightRouter = require('./routes/flightRoute');
 const airbnbRouter = require('./routes/airbnbRoute');
 const hotelRouter = require('./routes/hotelRoute');
-const intineraryRouter = require('./routes/itinerary');
+const intineraryRouter = require('./routes/itineraryRoute');
 
-app.use('/', travelPlannerRouter);
 app.use('/flight', flightRouter);
 app.use('/airbnb', airbnbRouter);
 app.use('/hotel', hotelRouter);
 app.use('/itinerary', intineraryRouter);
+app.use('/', travelPlannerRouter);
 
 app.listen(port, () => {
   console.log(`Now listening on port ${port}`);
