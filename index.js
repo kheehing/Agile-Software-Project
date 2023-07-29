@@ -20,6 +20,7 @@ app.use("/", travelPlannerRouter);
 
 
 
+
 app.get('/', (req, res) => {
     res.render('', {root: __dirname});
 });
