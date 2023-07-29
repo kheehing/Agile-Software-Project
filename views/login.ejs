@@ -1,14 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <%- include ('base/head'); %>
-    <title>Agile test</title>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/stylesheets/login-register-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <%- include ('base/navbar'); %>
-    <h1>Hello World</h1>
-    <p>test</p>
-    <%- include ('base/footer'); %>
+    <div class="login-container">
+        <div class="login-left-side slideshow-container">
+            <!-- Image Slides -->
+            <div class="mySlides fade">
+                <img src="/images/travel_1.jpg" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <img src="/images/travel_2.jpg" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <img src="/images/travel_3.jpg" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <img src="/images/travel_4.jpg" style="width:100%">
+            </div>
+
+            <!-- The indicators -->
+            <div style="text-align:center">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+        <div class="login-right-side">
+            <!-- Title and Slogan -->
+            <div class="login-logo"></div>
+            <div class="login-title">Travel Planner</div>
+            <div class="login-slogan">Your one stop planning</div>
+
+            <!-- Username Input -->
+            <div class="login-input-label">Username</div>
+            <input type="text" class="input-field" placeholder="Enter your username">
+
+            <!-- Password Input -->
+            <div class="login-input-label">Password</div>
+            <input type="password" class="input-field" placeholder="Enter your password">
+
+            <!-- Login Button -->
+            <button class="login-btn">Log In</button>
+
+            <!-- Signup Link -->
+            <hr>
+            <div class="signup-link">Don't have an account? <a href="register">Sign Up</a></div>
+        </div>
+    </div>
+    <script>
+        let slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            let dots = document.getElementsByClassName("dot");
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) {
+                slideIndex = 1;
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
+            setTimeout(showSlides, 6000); // Change image every 4 seconds
+        }
+    </script>
 </body>
 
 </html>
