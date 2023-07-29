@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 router.get('', (req, res) => {
-  res.render('home');
+    res.render('airbnb');
 });
-
 
 
 
@@ -24,7 +23,7 @@ router.get('', (req, res) => {
 //  =============================================================
 
 router.get("*", (req, res) => {
-  res.status(404).render("404");
+    res.status(404).render("404");
 });
 
 module.exports = router;
