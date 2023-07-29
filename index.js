@@ -18,11 +18,11 @@ app.use(express.json);
 app.use(express.urlencoded({extended: true}));
 app.use("/", travelPlannerRouter);
 
-
+app.set('view engine', 'ejs');
 
 
 app.get('/', (req, res) => {
-    res.render('', {root: __dirname});
+    res.render('home');
 });
 
 app.listen(port, () => {
