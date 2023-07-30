@@ -5,6 +5,10 @@ const port = process.env.PORT || 8080;
 const admin = require("firebase-admin");
 const credentials = require("./ServiceAccountKey.json");
 
+// Body Parser
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(credentials),

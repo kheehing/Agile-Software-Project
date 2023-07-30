@@ -3,15 +3,13 @@
 
 <head>
     <%- include ('base/head'); %>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <title>Flights Page</title>
+    <title>Flights Page</title>
 </head>
 
 <body>
     <div class="container">
         <%- include ('base/navbar'); %>
     </div>
-
 
     <div class="container mt-5">
         <h1>Flight Booking Form</h1>
@@ -25,18 +23,17 @@
         </div>
 
         <div id="oneWayForm">
-            <form action="/airport/oneWay" method="POST">
+            <form action="/flight/oneWay" method="POST">
                 <div class="form-group">
                     <label for="origin">Origin</label>
-                    <input type="text" id="origin" class="form-control" name="origin" list="airportlist" required>
+                    <input type="text" class="form-control" id="origin" name="origin" list="airportlist" required>
                     <datalist id="airportlist">
                     </datalist>
                 </div>
 
                 <div class="form-group">
                     <label for="destination">Destination</label>
-                    <input type="text" class="form-control" id="destination" name="destination" list="airportlist"
-                        required>
+                    <input type="text" class="form-control" id="destination" name="destination" list="airportlist" required>
                     <datalist id="airportlist">
                     </datalist>
                 </div>
@@ -49,17 +46,17 @@
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="adults">Adults</label>
-                        <input type="number" class="form-control" id="adults" name="adults" min="1">
+                        <input type="number" class="form-control" id="adults" name="adults" min="1" required>
                     </div>
 
                     <div class="form-group col-md-4">
                         <label for="children">Children</label>
-                        <input type="number" class="form-control" id="children" name="children" min="0">
+                        <input type="number" class="form-control" id="children" name="children" min="0" required>
                     </div>
 
                     <div class="form-group col-md-4">
                         <label for="infants">Infants</label>
-                        <input type="number" class="form-control" id="infants" name="infants" min="0">
+                        <input type="number" class="form-control" id="infants" name="infants" min="0" required>
                     </div>
                 </div>
 
@@ -79,8 +76,7 @@
         </div>
 
         <div id="roundTripForm" style="display: none;">
-            <!-- Round-trip form elements -->
-            <form action="/airport/roundTrip" method="POST">
+            <form action="/flight/roundTrip" method="POST">
                 <div class="form-group">
                     <label for="origin">Origin</label>
                     <input type="text" id="origin" class="form-control" name="origin" list="airportlist" required>
@@ -97,13 +93,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="date">From</label>
-                    <input type="date" class="form-control" id="date" name="date" required>
+                    <label for="from">From</label>
+                    <input type="date" class="form-control" id="from" name="from" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="date">To</label>
-                    <input type="date" class="form-control" id="date" name="date" required>
+                    <label for="to">To</label>
+                    <input type="date" class="form-control" id="to" name="to" required>
                 </div>
 
                 <div class="form-row">
@@ -140,7 +136,7 @@
 
         <div id="multiStopForm" style="display: none;">
             <!-- Multi-stop form elements -->
-            <form id="multiStopFlightForm" action="/airport/multiStop" method="POST">
+            <form id="multiStopFlightForm" action="/flight/multiStop" method="POST">
                 <div class="form-group">
                     <label for="numberOfFlights">Number of Flights</label>
                     <select id="numberOfFlights" name="numberOfFlights" onchange="updateMultiStopFields()">
@@ -198,7 +194,6 @@
     fetch('/data/airports.json')
         .then(response => response.json())
         .then(data => {
-            console.log(data); // Log the data to see if it's being fetched correctly
             const datalist = document.getElementById('airportlist');
             for (const item of data) {
                 const option = document.createElement('option');
@@ -254,7 +249,6 @@
 
         div.appendChild(labelElement);
         div.appendChild(input);
-
         return div;
     }
 
