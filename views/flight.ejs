@@ -1,14 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include ('base/head'); %>
-    <title>Flights Page</title>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <title>Flights Page</title>
 </head>
+
 <body>
-    <%- include ('base/navbar'); %>
-    <h1>Hello World</h1>
-    <p>test</p>
+    <div class="container">
+        <%- include ('base/navbar'); %>
+    </div>
+
+
+    <div class="container mt-5">
+        <h1>Flight Booking Form</h1>
+        <div class="form-group">
+            <label for="flightType">Select flight type:</label>
+            <select class="form-control" id="flightType">
+                <option value="oneWay">One-way</option>
+                <option value="roundTrip">Round-trip</option>
+                <option value="multiStop">Multi-stop</option>
+            </select>
+        </div>
+
+        <div id="oneWayForm">
+            <form action="/airport/oneWay" method="POST">
+                <div class="form-group">
+                    <label for="origin">Origin</label>
+                    <input type="text" id="origin" class="form-control" name="origin" list="airportlist" required>
+                    <datalist id="airportlist">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="destination">Destination</label>
+                    <input type="text" class="form-control" id="destination" name="destination" list="airportlist"
+                        required>
+                    <datalist id="airportlist">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="adults">Adults</label>
+                        <input type="number" class="form-control" id="adults" name="adults" min="1">
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="children">Children</label>
+                        <input type="number" class="form-control" id="children" name="children" min="0">
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="infants">Infants</label>
+                        <input type="number" class="form-control" id="infants" name="infants" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cabinClass">Cabin Class</label>
+                    <select class="form-control" id="cabinClass" name="cabinClass" required>
+                        <option value="">Select Cabin Class</option>
+                        <option value="economy">Economy</option>
+                        <option value="premium_economy">Premium Economy</option>
+                        <option value="business">Business</option>
+                        <option value="first">First</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+
+        <div id="roundTripForm" style="display: none;">
+            <!-- Round-trip form elements -->
+            <form action="/airport/roundTrip" method="POST">
+                <div class="form-group">
+                    <label for="origin">Origin</label>
+                    <input type="text" id="origin" class="form-control" name="origin" list="airportlist" required>
+                    <datalist id="airportlist">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="destination">Destination</label>
+                    <input type="text" class="form-control" id="destination" name="destination" list="airportlist"
+                        required>
+                    <datalist id="airportlist">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">From</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">To</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="adults">Adults</label>
+                        <input type="number" class="form-control" id="adults" name="adults" min="1">
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="children">Children</label>
+                        <input type="number" class="form-control" id="children" name="children" min="0">
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="infants">Infants</label>
+                        <input type="number" class="form-control" id="infants" name="infants" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cabinClass">Cabin Class</label>
+                    <select class="form-control" id="cabinClass" name="cabinClass" required>
+                        <option value="">Select Cabin Class</option>
+                        <option value="economy">Economy</option>
+                        <option value="premium_economy">Premium Economy</option>
+                        <option value="business">Business</option>
+                        <option value="first">First</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+
+        <div id="multiStopForm" style="display: none;">
+            <!-- Multi-stop form elements -->
+            <form id="multiStopFlightForm" action="/airport/multiStop" method="POST">
+                <div class="form-group">
+                    <label for="numberOfFlights">Number of Flights</label>
+                    <select id="numberOfFlights" name="numberOfFlights" onchange="updateMultiStopFields()">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <!-- Placeholder for dynamic flight inputs -->
+                <div id="dynamicFlightInputs"></div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
     <%- include ('base/footer'); %>
 </body>
 
 </html>
+
+<script>
+    const flightTypeSelect = document.getElementById('flightType');
+    const oneWayForm = document.getElementById('oneWayForm');
+    const roundTripForm = document.getElementById('roundTripForm');
+    const multiStopForm = document.getElementById('multiStopForm');
+
+    flightTypeSelect.addEventListener('change', (event) => {
+        const selectedValue = event.target.value;
+        switch (selectedValue) {
+            case 'oneWay':
+                oneWayForm.style.display = 'block';
+                roundTripForm.style.display = 'none';
+                multiStopForm.style.display = 'none';
+                break;
+            case 'roundTrip':
+                oneWayForm.style.display = 'none';
+                roundTripForm.style.display = 'block';
+                multiStopForm.style.display = 'none';
+                break;
+            case 'multiStop':
+                oneWayForm.style.display = 'none';
+                roundTripForm.style.display = 'none';
+                multiStopForm.style.display = 'block';
+                break;
+            default:
+                oneWayForm.style.display = 'none';
+                roundTripForm.style.display = 'none';
+                multiStopForm.style.display = 'none';
+                break;
+        }
+    });
+
+    fetch('/data/airports.json')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Log the data to see if it's being fetched correctly
+            const datalist = document.getElementById('airportlist');
+            for (const item of data) {
+                const option = document.createElement('option');
+                option.value = item.Combine;
+                datalist.appendChild(option);
+            }
+        })
+        .catch(err => console.error(err));
+
+    function updateMultiStopFields() {
+        var numOfFlights = document.getElementById('numberOfFlights').value;
+        var form = document.getElementById('dynamicFlightInputs');
+        form.innerHTML = '';
+
+        for (var i = 0; i < numOfFlights; i++) {
+            var origin = createFormGroup('origin' + i, 'Origin', 'text', 'airportlist');
+            var destination = createFormGroup('destination' + i, 'Destination', 'text', 'airportlist');
+            var date = createFormGroup('date' + i, 'Date', 'date');
+
+            var row = document.createElement('div');
+            row.className = 'form-row';
+            var adults = createFormGroup('adults' + i, 'Adults', 'number', null, 'col-md-4');
+            var children = createFormGroup('children' + i, 'Children', 'number', null, 'col-md-4');
+            var infants = createFormGroup('infants' + i, 'Infants', 'number', null, 'col-md-4');
+            row.appendChild(adults);
+            row.appendChild(children);
+            row.appendChild(infants);
+
+            form.appendChild(origin);
+            form.appendChild(destination);
+            form.appendChild(date);
+            form.appendChild(row);
+        }
+    }
+
+    function createFormGroup(id, label, type, listId, className) {
+        var div = document.createElement('div');
+        div.className = className ? className + ' form-group' : 'form-group';
+
+        var labelElement = document.createElement('label');
+        labelElement.setAttribute('for', id);
+        labelElement.innerText = label;
+
+        var input = document.createElement('input');
+        input.type = type;
+        input.className = 'form-control';
+        input.id = id;
+        input.name = id;
+        input.required = true;
+        if (listId) {
+            input.setAttribute('list', listId);
+        }
+
+        div.appendChild(labelElement);
+        div.appendChild(input);
+
+        return div;
+    }
+
+</script>
