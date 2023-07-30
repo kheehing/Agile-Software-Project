@@ -183,6 +183,9 @@ router.post('/roundTrip', (req, res) => {
   });
 });
 
+router.post('/multiStop', (req,res) => {
+  console.log(req.body);
+});
 
 
 
