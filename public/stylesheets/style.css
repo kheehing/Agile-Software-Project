@@ -1,5 +1,4 @@
-
-
+/* NAVBAR */
 .navbar {
     background-color: transparent;
     position: absolute;
@@ -15,3 +14,12 @@
 .navbar-toggle .icon-bar {
     background-color: #0FAF20;
 }
+
+/* HR */
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    color: black;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }

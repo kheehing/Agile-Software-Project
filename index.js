@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
-
-const admin = require("firebase-admin");
-const credentials = require("./ServiceAccountKey.json");
+// const session = require('express-session');
+const admin = require('firebase-admin');
+const credentials = require('./ServiceAccountKey.json');
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
