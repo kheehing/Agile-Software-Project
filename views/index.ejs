@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include ('base/head'); %>
+    <title>Travel Planner</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;"> <!-- use flexbox to center vertically and horizontally -->
+                    <p>"Image"</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="container d-flex align-items-center justify-content-center flex-column" style="height: 100vh;">
+                    <H1>Travel Planner</H1>
+                    <br>
+                    <form>
+                        <div class="form-group">
+                            <label for="email"><strong>Email:</strong></label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd"><strong>Password:</strong></label>
+                            <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
+                        </div>
+                        <div class="form-group text-right"> <!-- Add 'text-right' class here -->
+                            <button type="submit" class="btn btn-default">Login</button>
+                        </div>
+                    </form>
+                    <hr/>
+                    <div class="container d-flex">
+                        <p>Don't have an account?</p> <!-- Prompt user to signup if they haven't yet -->
+                        <button type="button" class="btn btn-link" onclick="location.href='/'">Sign Up</button> <!-- Redirects user to 'signup.html' when clicked -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
