@@ -2,83 +2,145 @@
 <html>
 
 <head>
+    <%- include ('base/head'); %>
     <title>Register Page</title>
-    <link rel="stylesheet" href="/stylesheets/login-register-style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .carousel, .carousel-item, .carousel-item img {
+            height: 100vh;
+            max-height: 100vh;
+        }
+    
+        .carousel-item img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+    
+        .login-container {
+            max-width: 500px;
+        }
+
+        .spacer {
+            margin-bottom: 30px;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn.btn-primary {
+            padding-right: 30px;
+            padding-left: 30px;
+        }
+
+        .d-flex.justify-content-center.align-items-center {
+            padding-bottom: 10px;
+        }
+    </style>
 </head>
-
 <body>
-    <div class="login-container">
-        <div class="login-left-side slideshow-container">
-            <!-- Image Slides -->
-            <div class="mySlides fade">
-                <img src="/images/travel_1.jpg" style="width:100%">
+    <div class="container-fluid d-flex">
+        <div id="carouselExample" class="carousel slide w-50" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="images/travel_1.jpg" class="d-block w-100" alt="IMG 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/travel_2.jpg" class="d-block w-100" alt="IMG 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/travel_3.jpg" class="d-block w-100" alt="IMG 3">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/travel_4.jpg" class="d-block w-100" alt="IMG 4">
+                </div>
             </div>
-            <div class="mySlides fade">
-                <img src="/images/travel_2.jpg" style="width:100%">
-            </div>
-            <div class="mySlides fade">
-                <img src="/images/travel_3.jpg" style="width:100%">
-            </div>
-            <div class="mySlides fade">
-                <img src="/images/travel_4.jpg" style="width:100%">
-            </div>
-
-            <!-- The dots/bullets/indicators -->
-            <div style="text-align:center">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <div class="register-right-side">
-            <!-- Title and Slogan -->
-            <div class="login-logo"></div>
-            <div class="login-title">Travel Planner</div>
-            <div class="login-slogan">Your one stop planning</div>
-
-            <!-- Username Input -->
-            <div class="login-input-label">Username</div>
-            <input type="text" class="input-field" placeholder="Enter your username">
-
-            <!-- Username Input -->
-            <div class="login-input-label">Email</div>
-            <input type="text" class="input-field" placeholder="Enter your Email">
-
-            <!-- Password Input -->
-            <div class="login-input-label">Password</div>
-            <input type="password" class="input-field" placeholder="Enter your password">
-
-            <!-- Login Button -->
-            <button class="login-btn">Register</button>
-
-            <!-- Signup Link -->
-            <hr>
-            <div class="signup-link">Already have an account? <a href="login">Log In</a></div>
+        <div class="col-md-6 d-flex align-items-center">
+            <div class="container login-container rounded shadow mx-auto">
+                <H1 class="spacer">Travel Planner</H1>
+                <form id="register-form" method="POST">
+                    <div class="form-group spacer">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+                    </div>
+                    <div class="form-group spacer">
+                        <label for="email">Confirm Email:</label>
+                        <input type="email" class="form-control" id="cfm-email" placeholder="Retype email" name="confirm-email" required>
+                    </div>
+                    <div class="form-group spacer">
+                        <label for="pwd">Password:</label>
+                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
+                    </div>
+                    <div class="form-group spacer">
+                        <label for="pwd">Confirm Password:</label>
+                        <input type="password" class="form-control" id="cfm-pwd" placeholder="Retype password" name="confirm-password" required>
+                    </div>
+                    <div class="submit-btn">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <p class="m-0 me-2">Don't have an account?</p>
+                        <a href="/register" class="btn btn-link">Sign Up</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+    <%- include ('base/footer'); %>
     <script>
-        let slideIndex = 0;
-        showSlides();
+        $(document).ready(function() {
+            $("#register-form").submit(function(event) {
+                event.preventDefault();
+        
+                const email = $("#email").val();
+                const cfm_email = $("#cfm-email").val();
+                const password = $("#pwd").val();
+                const cfm_password = $("#cfm-pwd").val();
+        
+                if (email != cfm_email){
+                    alert("Emails does not match!");
+                    event.preventDefault();
+                    return;
+                } else if (password != cfm_password) {
+                    alert("Passwords does not match!");
+                    event.preventDefault();
+                    return;
+                }
 
-        function showSlides() {
-            let i;
-            let slides = document.getElementsByClassName("mySlides");
-            let dots = document.getElementsByClassName("dot");
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            slideIndex++;
-            if (slideIndex > slides.length) {
-                slideIndex = 1;
-            }
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-            slides[slideIndex - 1].style.display = "block";
-            dots[slideIndex - 1].className += " active";
-            setTimeout(showSlides, 6000); // Change image every 4 seconds
-        }
+                $.ajax({
+                    type: "POST",
+                    url: "/register",
+                    data: JSON.stringify({
+                        email: email,
+                        password: password
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(response) {
+                        alert("Login successful!");
+                        window.location.href = "/home";
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        if (xhr.status === 400) {
+                            alert("Invalid credentials. Please try again.");
+                        } else {
+                            alert("An error occurred. Please try again later.");
+                        }
+                    }
+                });
+            });
+        });
     </script>
 </body>
 
