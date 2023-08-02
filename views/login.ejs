@@ -69,7 +69,7 @@
         <div class="col-md-6 d-flex align-items-center">
             <div class="container login-container rounded shadow mx-auto">
                 <H1 class="spacer">Travel Planner</H1>
-                <form>
+                <form id="login-form" method="POST">
                     <div class="form-group spacer">
                         <label for="email">Email:</label>
                         <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
@@ -90,6 +90,38 @@
         </div>
     </div>
     <%- include ('base/footer'); %>
+    <script>
+        $(document).ready(function() {
+            $("#login-form").submit(function(event) {
+                event.preventDefault();
+        
+                const email = $("#email").val();
+                const password = $("#pwd").val();
+        
+                $.ajax({
+                    type: "POST",
+                    url: "/login",
+                    data: JSON.stringify({
+                        email: email,
+                        password: password
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(response) {
+                        alert("Login successful!");
+                        window.location.href = "/home";
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        if (xhr.status === 400) {
+                            alert("Invalid credentials. Please try again.");
+                        } else {
+                            alert("An error occurred. Please try again later.");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

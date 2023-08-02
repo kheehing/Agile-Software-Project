@@ -5,7 +5,21 @@ router.get('', (req, res) => {
   res.render('register');
 });
 
+router.post('/register', (req, res) => {
+  const { email, password } = req.body;
 
+  bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
+    if (err) {
+      return res.status(500).send('Error hashing password');
+    }
+
+    admin.auth().createUser({ mail: email, password: hashedPassword }).then(userRecord => {
+      res.status(201).send('User registered successfully');
+    }).catch(error => {
+      res.status(400).send('Registration failed');
+    });
+  });
+});
 
 
 
