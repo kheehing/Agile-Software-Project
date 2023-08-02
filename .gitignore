@@ -1,3 +1,4 @@
 
 ServiceAccountKey.json
 node_modules
+.env

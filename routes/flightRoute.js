@@ -3,6 +3,7 @@ const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 
+
 router.get('', (req, res) => {
   res.render('flight');
 });
@@ -33,21 +34,19 @@ router.post('/oneWay', (req, res) => {
 
     const optionsForOriginEntityId = {
       method: 'GET',
-      url: 'https://skyscanner50.p.rapidapi.com/api/v2/searchAirport',
+      url: process.env.AirportURL,
       params: { query: originIATA },
       headers: {
-        'X-RapidAPI-Key': '01ed34b342mshefc14e69833abd0p19335bjsnc209a23391d9',
-        'X-RapidAPI-Host': 'skyscanner50.p.rapidapi.com'
+        'Authorization': process.env.flightToken
       }
     };
 
     const optionsForDestinationEntityId = {
       method: 'GET',
-      url: 'https://skyscanner50.p.rapidapi.com/api/v2/searchAirport',
+      url: process.env.AirportURL,
       params: { query: destinationIATA },
       headers: {
-        'X-RapidAPI-Key': '01ed34b342mshefc14e69833abd0p19335bjsnc209a23391d9',
-        'X-RapidAPI-Host': 'skyscanner50.p.rapidapi.com'
+        'Authorization': process.env.flightToken
       }
     };
 
@@ -61,7 +60,7 @@ router.post('/oneWay', (req, res) => {
 
         const optionsForSearchFlights = {
           method: 'GET',
-          url: 'https://skyscanner50.p.rapidapi.com/api/v2/searchFlights',
+          url: process.env.FlightsURL,
           params: {
             originSkyId: originIATA,
             destinationSkyId: destinationIATA,
@@ -75,8 +74,7 @@ router.post('/oneWay', (req, res) => {
             currency: 'USD'
           },
           headers: {
-            'X-RapidAPI-Key': '01ed34b342mshefc14e69833abd0p19335bjsnc209a23391d9',
-            'X-RapidAPI-Host': 'skyscanner50.p.rapidapi.com'
+            'Authorization': process.env.flightToken
           }
         };
 
@@ -121,21 +119,19 @@ router.post('/roundTrip', (req, res) => {
 
     const optionsForOriginEntityId = {
       method: 'GET',
-      url: 'https://skyscanner50.p.rapidapi.com/api/v2/searchAirport',
+      url: process.env.AirportURL,
       params: { query: originIATA },
       headers: {
-        'X-RapidAPI-Key': '01ed34b342mshefc14e69833abd0p19335bjsnc209a23391d9',
-        'X-RapidAPI-Host': 'skyscanner50.p.rapidapi.com'
+        'Authorization': process.env.flightToken
       }
     };
 
     const optionsForDestinationEntityId = {
       method: 'GET',
-      url: 'https://skyscanner50.p.rapidapi.com/api/v2/searchAirport',
+      url: process.env.AirportURL,
       params: { query: destinationIATA },
       headers: {
-        'X-RapidAPI-Key': '01ed34b342mshefc14e69833abd0p19335bjsnc209a23391d9',
-        'X-RapidAPI-Host': 'skyscanner50.p.rapidapi.com'
+        'Authorization': process.env.flightToken
       }
     };
 
@@ -149,7 +145,7 @@ router.post('/roundTrip', (req, res) => {
 
         const optionsForSearchFlights = {
           method: 'GET',
-          url: 'https://skyscanner50.p.rapidapi.com/api/v2/searchFlights',
+          url: process.env.FlightsURL,
           params: {
             originSkyId: originIATA,
             destinationSkyId: destinationIATA,
@@ -164,8 +160,7 @@ router.post('/roundTrip', (req, res) => {
             currency: 'USD'
           },
           headers: {
-            'X-RapidAPI-Key': '01ed34b342mshefc14e69833abd0p19335bjsnc209a23391d9',
-            'X-RapidAPI-Host': 'skyscanner50.p.rapidapi.com'
+            'Authorization': process.env.flightToken
           }
         };
 

@@ -4,6 +4,8 @@ const port = process.env.PORT || 8080;
 // const session = require('express-session');
 const admin = require('firebase-admin');
 const credentials = require('./ServiceAccountKey.json');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // Body Parser
 const bodyParser = require('body-parser');
