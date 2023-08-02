@@ -56,8 +56,6 @@ function verifyFirebaseToken(req, res, next) {
     });
 }
 
-app.use(verifyFirebaseToken);  
-
 // ====================================================
 // ============== Routes and Middleware ===============
 // ====================================================
@@ -72,13 +70,13 @@ const loginRouter = require('./routes/loginRoute');
 const registerRouter = require('./routes/registerRoute');
 const homeRouter = require('./routes/homeRoute');
 
-app.use('/flight', flightRouter);
-app.use('/airbnb', airbnbRouter);
-app.use('/hotel', hotelRouter);
-app.use('/itinerary', intineraryRouter);
+app.use('/flight', verifyFirebaseToken, flightRouter);
+app.use('/airbnb', verifyFirebaseToken, airbnbRouter);
+app.use('/hotel', verifyFirebaseToken, hotelRouter);
+app.use('/itinerary', verifyFirebaseToken, intineraryRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
-app.use('/home', homeRouter);
+app.use('/home', verifyFirebaseToken, homeRouter);
 app.use('/', travelPlannerRouter);
 
 app.listen(port, () => {
