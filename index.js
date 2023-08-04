@@ -2,14 +2,7 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
 const session = require('express-session');
-<<<<<<< Updated upstream
-const admin = require('firebase-admin');
-const credentials = require('./ServiceAccountKey.json');
-const dotenv = require('dotenv');
-dotenv.config();
-=======
 const admin = require('./firebaseAdmin.js');
->>>>>>> Stashed changes
 
 // Body Parser
 const bodyParser = require('body-parser');
