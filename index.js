@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
-const session = require('express-session');
 const admin = require('./firebaseAdmin.js');
 
 // Body Parser
@@ -17,36 +16,20 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the "public" directory
 app.use(express.static(__dirname + "/public"));
 
-const generateSecretKey = () => {
-  const timestamp = Date.now().toString(36);
-  const randomString = Math.random().toString(36).slice(2);
-  const secret = timestamp + randomString;
-  return secret;
-};
-
-const secretKey = generateSecretKey();
-
-app.use(session({
-  secret: secretKey,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
-}));
-
 // ====================================================
 // ==================== Functions =====================
 // ====================================================
 
 function checkAuth(req, res, next) {
-  // const idToken = req.headers.authorization;
+  const idToken = req.headers.authorization;
 
-  // admin.auth().verifyIdToken(idToken).then((decodedToken) => {
-  //   const uid = decodedToken.uid;
-  //   req.uid = uid;
-  //   next();
-  // }).catch((error) => {
-  //   res.status(401).send('Unauthorized');
-  // });
+  admin.auth().verifyIdToken(idToken).then((decodedToken) => {
+    const uid = decodedToken.uid;
+    req.uid = uid;
+    next();
+  }).catch((error) => {
+    res.status(401).send('Unauthorized');
+  });
 }
 
 // ====================================================

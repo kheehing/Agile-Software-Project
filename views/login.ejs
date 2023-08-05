@@ -100,8 +100,8 @@
                 const password = $("#pwd").val();
               
                 firebase.auth().signInWithEmailAndPassword(email, password).then((userCredential) => {
-                  var user = userCredential.user;
-                  return window.location.href = "/home";
+                    var user = userCredential.user;
+                    window.location.href = "/home";
                 })
                 .catch((error) => {
                   var errorCode = error.code;
