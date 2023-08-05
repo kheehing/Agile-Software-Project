@@ -38,16 +38,15 @@ app.use(session({
 // ====================================================
 
 function checkAuth(req, res, next) {
-  const idToken = req.headers.authorization;
+  // const idToken = req.headers.authorization;
 
-  admin.auth().verifyIdToken(idToken)
-    .then((decodedToken) => {
-      const uid = decodedToken.uid;
-      req.uid = uid;
-      next();
-    }).catch((error) => {
-      res.status(401).send('Unauthorized');
-    });
+  // admin.auth().verifyIdToken(idToken).then((decodedToken) => {
+  //   const uid = decodedToken.uid;
+  //   req.uid = uid;
+  //   next();
+  // }).catch((error) => {
+  //   res.status(401).send('Unauthorized');
+  // });
 }
 
 // ====================================================

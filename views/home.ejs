@@ -9,6 +9,15 @@
     <h1>Hello World</h1>
     <p>test</p>
     <%- include ('base/footer'); %>
+    <script>
+        $.ajax({
+            url: '/home',
+            method: 'GET',
+            headers: {
+              Authorization: idToken
+            },
+          });
+    </script>
 </body>
 
 </html>

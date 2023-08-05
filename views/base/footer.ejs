@@ -18,23 +18,16 @@
     };
     // initialise firebase
     firebase.initializeApp(firebaseConfig);
-    // Change the Navbar depending if the user is logged in or not.
+
     firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        document.getElementById('userEmail').textContent = user.email;
-        document.getElementById('userDropdown').style.display = 'block';
-        document.getElementById('loginLink').style.display = 'none';
-      } else {
-        document.getElementById('userDropdown').style.display = 'none';
-        document.getElementById('loginLink').style.display = 'block';
-      }
-    });
-  
-    document.getElementById('logoutButton').addEventListener('click', function() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = '/login';
-      }).catch((error) => {
-        console.error('Error signing out', error);
+        if (user) {
+            user.getIdToken(true).then(function(idToken) {
+                window.idToken = idToken;
+            }).catch(function(error) {
+                console.error('Error getting ID token', error);
+            });
+        } else {
+          window.idToken = null;
+        }
       });
-    });
-  </script>
+</script>

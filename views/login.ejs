@@ -90,24 +90,25 @@
         </div>
     </div>
     <%- include ('base/footer'); %>
+    <%- include ('base/navbarJS'); %>
     <script>
         $(document).ready(function() {
             $("#login-form").submit(function(event) {
                 event.preventDefault();
-        
+              
                 const email = $("#email").val();
                 const password = $("#pwd").val();
-        
+              
                 firebase.auth().signInWithEmailAndPassword(email, password).then((userCredential) => {
-                    var user = userCredential.user;
-                    return window.location.href = "/home";
+                  var user = userCredential.user;
+                  return window.location.href = "/home";
                 })
                 .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    alert(errorMessage);
+                  var errorCode = error.code;
+                  var errorMessage = error.message;
+                  alert(errorMessage);
                 });
-            });
+              });
         });
     </script>
 </body>
