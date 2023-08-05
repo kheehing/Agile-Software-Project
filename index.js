@@ -20,17 +20,22 @@ app.use(express.static(__dirname + "/public"));
 // ==================== Functions =====================
 // ====================================================
 
-function checkAuth(req, res, next) {
-  const idToken = req.headers.authorization;
+// async function checkAuth(req, res, next) {
+//   const idToken = req.headers.authorization;
 
-  admin.auth().verifyIdToken(idToken).then((decodedToken) => {
-    const uid = decodedToken.uid;
-    req.uid = uid;
-    next();
-  }).catch((error) => {
-    res.status(401).send('Unauthorized');
-  });
-}
+//   if (!idToken) {
+//     return res.status(401).send('Unauthorized');
+//   }
+
+//   try {
+//     const decodedToken = await admin.auth().verifyIdToken(idToken);
+//     req.uid = decodedToken.uid; // Store the user's UID in the request object
+//     next(); // Continue to the next middleware or route handler
+//   } catch (error) {
+//     console.error('Error verifying ID token:', error);
+//     res.status(401).send('Unauthorized');
+//   }
+// }
 
 // ====================================================
 // ============== Routes and Middleware ===============
@@ -46,13 +51,13 @@ const loginRouter = require('./routes/loginRoute');
 const registerRouter = require('./routes/registerRoute');
 const homeRouter = require('./routes/homeRoute');
 
-app.use('/flight', checkAuth, flightRouter);
-app.use('/airbnb', checkAuth, airbnbRouter);
-app.use('/hotel', checkAuth, hotelRouter);
-app.use('/itinerary', checkAuth, intineraryRouter);
+app.use('/flight', flightRouter);
+app.use('/airbnb', airbnbRouter);
+app.use('/hotel', hotelRouter);
+app.use('/itinerary', intineraryRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
-app.use('/home', checkAuth, homeRouter);
+app.use('/home', homeRouter);
 app.use('/', travelPlannerRouter);
 
 app.listen(port, () => {

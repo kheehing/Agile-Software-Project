@@ -18,16 +18,4 @@
     };
     // initialise firebase
     firebase.initializeApp(firebaseConfig);
-
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            user.getIdToken(true).then(function(idToken) {
-                window.idToken = idToken;
-            }).catch(function(error) {
-                console.error('Error getting ID token', error);
-            });
-        } else {
-          window.idToken = null;
-        }
-      });
 </script>

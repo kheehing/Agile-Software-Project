@@ -93,6 +93,11 @@
     <%- include ('base/navbarJS'); %>
     <script>
         $(document).ready(function() {
+            firebase.auth().onAuthStateChanged(function(user){
+                if (user){
+                    window.location.href = '/home'
+                }
+            });
             $("#login-form").submit(function(event) {
                 event.preventDefault();
               
