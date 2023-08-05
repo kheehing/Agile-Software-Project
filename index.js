@@ -37,16 +37,16 @@ app.use(session({
 // ==================== Functions =====================
 // ====================================================
 
-function verifyFirebaseToken(req, res, next) {
+function checkAuth(req, res, next) {
   const idToken = req.headers.authorization;
 
   admin.auth().verifyIdToken(idToken)
-    .then(decodedToken => {
-      req.user = decodedToken;
+    .then((decodedToken) => {
+      const uid = decodedToken.uid;
+      req.uid = uid;
       next();
-    })
-    .catch(error => {
-      res.status(403).send('Unauthorized');
+    }).catch((error) => {
+      res.status(401).send('Unauthorized');
     });
 }
 
@@ -64,13 +64,13 @@ const loginRouter = require('./routes/loginRoute');
 const registerRouter = require('./routes/registerRoute');
 const homeRouter = require('./routes/homeRoute');
 
-app.use('/flight', verifyFirebaseToken, flightRouter);
-app.use('/airbnb', verifyFirebaseToken, airbnbRouter);
-app.use('/hotel', verifyFirebaseToken, hotelRouter);
-app.use('/itinerary', verifyFirebaseToken, intineraryRouter);
+app.use('/flight', checkAuth, flightRouter);
+app.use('/airbnb', checkAuth, airbnbRouter);
+app.use('/hotel', checkAuth, hotelRouter);
+app.use('/itinerary', checkAuth, intineraryRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
-app.use('/home', verifyFirebaseToken, homeRouter);
+app.use('/home', checkAuth, homeRouter);
 app.use('/', travelPlannerRouter);
 
 app.listen(port, () => {

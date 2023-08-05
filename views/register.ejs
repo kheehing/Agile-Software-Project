@@ -21,7 +21,6 @@
         }
 
         .spacer {
-            margin-bottom: 30px;
             margin-top: 30px;
         }
 
@@ -69,6 +68,7 @@
         <div class="col-md-6 d-flex align-items-center">
             <div class="container login-container rounded shadow mx-auto">
                 <H1 class="spacer">Travel Planner</H1>
+                <H5>Register</H5>
                 <form id="register-form" action="/register" method="POST">
                     <div class="form-group spacer">
                         <label for="email">Email:</label>
@@ -90,8 +90,8 @@
                         <button type="submit" class="btn btn-primary">Register</button>
                     </div>
                     <div class="d-flex justify-content-center align-items-center">
-                        <p class="m-0 me-2">Don't have an account?</p>
-                        <a href="/register" class="btn btn-link">Sign Up</a>
+                        <p class="m-0 me-2">Already have an account?</p>
+                        <a href="/login" class="btn btn-link">Sign In</a>
                     </div>
                 </form>
             </div>
@@ -115,27 +115,14 @@
                     alert("Passwords do not match!");
                     return;
                 }
-
-                $.ajax({
-                    type: "POST",
-                    url: "/register",
-                    data: JSON.stringify({
-                        email: email,
-                        password: password
-                    }),
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: function(response) {
-                        alert("Registration successful!");
-                        window.location.href = "/home";
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        if (xhr.status === 400) {
-                            alert(xhr.responseText);
-                        } else {
-                            alert("An error occurred. Please try again later.");
-                        }
-                    }
+                firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
+                    var user = userCredential.user;
+                    return window.location.href = "/home";
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    alert(errorMessage);
                 });
             });
         });

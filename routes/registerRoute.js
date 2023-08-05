@@ -7,27 +7,6 @@ router.get('', (req, res) => {
   res.render('register');
 });
 
-router.post('/', (req, res) => {
-  const { email, password } = req.body;
-  
-  console.log(email);
-  console.log(password);
-
-  if (!email || !password) {
-    console.log('Email and password are required.');
-    return res.status(400).send('Email and password are required');
-  }
-
-  admin.auth().createUser({ email, password })
-    .then(userRecord => {
-      res.status(201).send('User registered successfully');
-    })
-    .catch(error => {
-      console.error("Firebase error:", error.message);
-      res.status(400).send(error.message);
-    });
-});
-
 
 
 
