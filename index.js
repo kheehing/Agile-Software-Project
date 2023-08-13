@@ -3,6 +3,22 @@ const app = express();
 const port = process.env.PORT || 8080;
 const admin = require('./firebaseAdmin.js');
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+const session = require('express-session');
+const crypto = require('crypto');
+
+const generateSecretKey = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
+app.use(session({
+  secret: generateSecretKey(), // Replace with the generated secret key
+  resave: false,
+  saveUninitialized: true
+}));
+
 // Body Parser
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));

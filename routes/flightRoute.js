@@ -1,11 +1,25 @@
 const axios = require('axios');
 const fs = require('fs');
 const express = require('express');
+const session = require('express-session');
 const router = express.Router();
 
 
 router.get('', (req, res) => {
-  res.render('flight');
+  const origin = req.session.origin || '';
+  const destination = req.session.destination || '';
+  const date = req.session.date || '';
+  const to = req.session.to || '';
+  const from = req.session.from || '';
+  const adult = req.session.adult || 1;
+  const children = req.session.children || 0;
+  const infant = req.session.infant || 0;
+  const cabinClass = req.session.cabinClass || 'economy';
+  const flightData = req.session.flightData;
+  const flightType = req.session.flightType;
+  const formSubmitted = req.session.formSubmitted;
+
+  res.render('flight', { origin, destination, date, from, to, adult, children, infant, cabinClass, flightData, flightType, formSubmitted});
 });
 
 router.post('/oneWay', (req, res) => {
@@ -16,6 +30,16 @@ router.post('/oneWay', (req, res) => {
   const children = req.body.children;
   const infant = req.body.infant;
   const cabinClass = req.body.cabinClass;
+
+  req.session.origin = origin;
+  req.session.destination = destination;
+  req.session.date = date;
+  req.session.adult = adult;
+  req.session.children = children;
+  req.session.infant = infant;
+  req.session.cabinClass = cabinClass;
+  req.session.flightType = 'oneWay';
+
 
   fs.readFile('./public/data/airports.json', 'utf8', (err, data) => {
     if (err) {
@@ -31,6 +55,8 @@ router.post('/oneWay', (req, res) => {
 
     const originIATA = originAirport.IATA;
     const destinationIATA = destinationAirport.IATA;
+    req.session.originIATA = originIATA;
+    req.session.destinationIATA = destinationIATA;
 
     const optionsForOriginEntityId = {
       method: 'GET',
@@ -78,11 +104,15 @@ router.post('/oneWay', (req, res) => {
           }
         };
 
+        const remainingQuota = destinationResponse.headers['remainingquota'];
+        console.log('Remaining Quota:', remainingQuota);
         return axios.request(optionsForSearchFlights);
       }))
       .then(response => {
-        console.log(response.data);
-        res.status(200).json(response.data);
+        // res.status(200).json(response.data);
+        req.session.flightData = response.data;
+        req.session.formSubmitted = 'true';
+        res.redirect('/flight');
       })
       .catch(error => {
         console.error(error);
@@ -101,6 +131,16 @@ router.post('/roundTrip', (req, res) => {
   const children = req.body.children;
   const infant = req.body.infant;
   const cabinClass = req.body.cabinClass;
+
+  req.session.origin = origin;
+  req.session.destination = destination;
+  req.session.from = dateFrom;
+  req.session.to = dateTo;
+  req.session.adult = adult;
+  req.session.children = children;
+  req.session.infant = infant;
+  req.session.cabinClass = cabinClass;
+  req.session.flightType = "roundTrip";
 
   fs.readFile('./public/data/airports.json', 'utf8', (err, data) => {
     if (err) {
@@ -164,11 +204,15 @@ router.post('/roundTrip', (req, res) => {
           }
         };
 
+        const remainingQuota = destinationResponse.headers['remainingquota'];
+        console.log('Remaining Quota:', remainingQuota);
         return axios.request(optionsForSearchFlights);
       }))
       .then(response => {
-        console.log(response.data);
-        res.status(200).json(response.data);
+        // res.status(200).json(response.data);
+        req.session.flightData = response.data;
+        req.session.formSubmitted = 'true';
+        res.redirect('/flight');
       })
       .catch(error => {
         console.error(error);
@@ -181,11 +225,6 @@ router.post('/roundTrip', (req, res) => {
 router.post('/multiStop', (req,res) => {
   console.log(req.body);
 });
-
-
-
-
-
 
 
 

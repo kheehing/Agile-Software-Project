@@ -25860,16 +25860,6 @@
         "Combine": "Wuhan Tianhe International Airport (Wuhan), China"
     },
     {
-        "Name": "Pyongyang Sunan International Airport",
-        "City": "Pyongyang",
-        "Country": "North Korea",
-        "IATA": "FNJ",
-        "ICAO": "ZKPY",
-        "Latitude": "39.224098",
-        "Longitude": "125.669998",
-        "Combine": "Pyongyang Sunan International Airport (Pyongyang), North Korea"
-    },
-    {
         "Name": "Lanzhou Zhongchuan Airport",
         "City": "Lanzhou",
         "Country": "China",
@@ -53140,16 +53130,6 @@
         "Combine": "Lima Allen County Airport (Lima), United States"
     },
     {
-        "Name": "Sondok Airport",
-        "City": "Hamhung",
-        "Country": "North Korea",
-        "IATA": "DSO",
-        "ICAO": "ZKSD",
-        "Latitude": "39.745201",
-        "Longitude": "127.473999",
-        "Combine": "Sondok Airport (Hamhung), North Korea"
-    },
-    {
         "Name": "Malcolm McKinnon Airport",
         "City": "Brunswick",
         "Country": "United States",
@@ -53318,16 +53298,6 @@
         "Latitude": "42.066944",
         "Longitude": "127.602222",
         "Combine": "Changbaishan Airport (Baishan), China"
-    },
-    {
-        "Name": "Orang Airport",
-        "City": "Chongjin",
-        "Country": "North Korea",
-        "IATA": "RGO",
-        "ICAO": "ZKHM",
-        "Latitude": "41.428538",
-        "Longitude": "129.647555",
-        "Combine": "Orang Airport (Chongjin), North Korea"
     },
     {
         "Name": "Moomba Airport",
@@ -55928,16 +55898,6 @@
         "Latitude": "32.53154",
         "Longitude": "102.35224",
         "Combine": "Hongyuan Airport (Ngawa), China"
-    },
-    {
-        "Name": "Wonsan Kalma International Airport",
-        "City": "Wonsan",
-        "Country": "North Korea",
-        "IATA": "WOS",
-        "ICAO": "ZKWS",
-        "Latitude": "39.166801",
-        "Longitude": "127.486",
-        "Combine": "Wonsan Kalma International Airport (Wonsan), North Korea"
     },
     {
         "Name": "Magas Airport",
