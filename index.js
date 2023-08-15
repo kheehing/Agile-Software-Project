@@ -41,10 +41,17 @@ async function requireLogin(req, res, next) {
     req.uid = decodedToken.uid;
     next();
   } catch (error) {
+    if (error.code === 'auth/id-token-expired') {
+      return res.status(401).json({ message: 'Token expired, please refresh the token' });
+    }
     console.error('Error verifying ID token:', error);
     res.redirect('/');
   }
 }
+
+app.get('/verifyToken', requireLogin, (req, res) => {
+  res.status(200).send({ valid: true });
+});
 
 // ====================================================
 // ============== Routes and Middleware ===============

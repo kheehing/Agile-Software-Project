@@ -3,20 +3,30 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
+router.get('', (req, res) => {
+  res.render('itinerary');
+});
+
 // Create (Add) a Trip
-router.post('/trip/:userid/destination', async (req, res) => {
+router.post('/trip/:userid/destinations', async (req, res) => {
   const userId = req.params.userid;
-  const { destination, fromDate, toDate } = req.body;
+  const { destinations = [], fromDate, toDate, sharedWith = [] } = req.body;
 
   const tripData = {
-    destination,
+    destinations,
     fromDate,
     toDate,
-    userId
+    userId,
+    sharedWith
   };
+  console.log(destinations);
+  console.log(fromDate);
+  console.log(toDate);
+  console.log(userId);
+  console.log(sharedWith);
 
   try {
-    await db.collection('trips').add(tripData);
+    await db.collection('itinerary').add(tripData);
     res.status(201).json({ message: 'Trip added successfully!' });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while adding the trip.' });
@@ -24,12 +34,23 @@ router.post('/trip/:userid/destination', async (req, res) => {
 });
 
 // Read (Get) a Trip
-router.get('/trip/:userid/destination', async (req, res) => {
+router.get('/trip/:userid/destinations', async (req, res) => {
   const userId = req.params.userid;
 
   try {
-    const querySnapshot = await db.collection('trips').where('userId', '==', userId).get();
-    const trips = querySnapshot.docs.map(doc => doc.data());
+    const ownedTripsQuery = db.collection('trips').where('userId', '==', userId);
+    const sharedTripsQuery = db.collection('trips').where('sharedWith', 'array-contains', userId);
+
+    const [ownedTripsSnapshot, sharedTripsSnapshot] = await Promise.all([
+      ownedTripsQuery.get(),
+      sharedTripsQuery.get()
+    ]);
+
+    const ownedTrips = ownedTripsSnapshot.docs.map(doc => doc.data());
+    const sharedTrips = sharedTripsSnapshot.docs.map(doc => doc.data());
+
+    const trips = [...ownedTrips, ...sharedTrips];
+
     res.status(200).json(trips);
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while retrieving the trip.' });
@@ -37,14 +58,14 @@ router.get('/trip/:userid/destination', async (req, res) => {
 });
 
 // Update (Edit) a Trip
-router.put('/trip/:userid/destination/:tripId', async (req, res) => {
+router.put('/trip/:userid/destinations/:tripId', async (req, res) => {
   const userId = req.params.userid;
   const tripId = req.params.tripId;
-  const { destination, fromDate, toDate } = req.body;
+  const { destinations = [], fromDate, toDate, sharedWith = [] } = req.body;
 
   try {
     const tripRef = db.collection('trips').doc(tripId);
-    await tripRef.update({ destination, fromDate, toDate });
+    await tripRef.update({ destinations, fromDate, toDate, sharedWith });
     res.status(200).json({ message: 'Trip updated successfully!' });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while updating the trip.' });
@@ -52,7 +73,7 @@ router.put('/trip/:userid/destination/:tripId', async (req, res) => {
 });
 
 // Delete a Trip
-router.delete('/trip/:userid/destination/:tripId', async (req, res) => {
+router.delete('/trip/:userid/destinations/:tripId', async (req, res) => {
   const userId = req.params.userid;
   const tripId = req.params.tripId;
 
@@ -64,7 +85,6 @@ router.delete('/trip/:userid/destination/:tripId', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while deleting the trip.' });
   }
 });
-
 
 
 //  =============================================================
