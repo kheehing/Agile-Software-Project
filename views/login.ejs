@@ -90,14 +90,8 @@
         </div>
     </div>
     <%- include ('base/footer'); %>
-    <%- include ('base/navbarJS'); %>
     <script>
         $(document).ready(function() {
-            firebase.auth().onAuthStateChanged(function(user){
-                if (user){
-                    window.location.href = '/home'
-                }
-            });
             $("#login-form").submit(function(event) {
                 event.preventDefault();
               
@@ -105,13 +99,15 @@
                 const password = $("#pwd").val();
               
                 firebase.auth().signInWithEmailAndPassword(email, password).then((userCredential) => {
-                    var user = userCredential.user;
-                    window.location.href = "/home";
-                })
-                .catch((error) => {
-                  var errorCode = error.code;
-                  var errorMessage = error.message;
-                  alert(errorMessage);
+                    userCredential.user.getIdToken().then((idToken) => {
+                        document.cookie = `idToken=${idToken}; path=/`;
+                        window.location.href = "/home";
+                    });
+                }).catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    console.log(errorMessage);
+                    alert(errorMessage);
                 });
               });
         });

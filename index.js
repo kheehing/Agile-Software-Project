@@ -2,22 +2,14 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
 const admin = require('./firebaseAdmin.js');
-
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const session = require('express-session');
-const crypto = require('crypto');
 
-const generateSecretKey = () => {
-  return crypto.randomBytes(32).toString('hex');
-};
 
-app.use(session({
-  secret: generateSecretKey(), // Replace with the generated secret key
-  resave: false,
-  saveUninitialized: true
-}));
+// Cookie Parser
+app.use(cookieParser());
 
 // Body Parser
 const bodyParser = require('body-parser');
@@ -36,26 +28,50 @@ app.use(express.static(__dirname + "/public"));
 // ==================== Functions =====================
 // ====================================================
 
-// async function checkAuth(req, res, next) {
-//   const idToken = req.headers.authorization;
+async function requireLogin(req, res, next) {
+  const idToken = req.headers.authorization || req.cookies.idToken;
 
-//   if (!idToken) {
-//     return res.status(401).send('Unauthorized');
-//   }
+  if (!idToken) {
+    console.log('No ID token found. Redirecting to login.');
+    return res.redirect('/login');
+  }
 
-//   try {
-//     const decodedToken = await admin.auth().verifyIdToken(idToken);
-//     req.uid = decodedToken.uid; // Store the user's UID in the request object
-//     next(); // Continue to the next middleware or route handler
-//   } catch (error) {
-//     console.error('Error verifying ID token:', error);
-//     res.status(401).send('Unauthorized');
-//   }
-// }
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.uid = decodedToken.uid;
+    next();
+  } catch (error) {
+    console.error('Error verifying ID token:', error);
+    res.redirect('/login');
+  }
+}
+
+async function isLogin(req, res) {
+  const idToken = req.headers.authorization || req.cookies.idToken;
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.uid = decodedToken.uid;
+    return res.redirect('/home');
+  } catch (error) {
+    console.error('Error verifying ID token:', error);
+    res.redirect('/login');
+  }
+}
 
 // ====================================================
 // ============== Routes and Middleware ===============
 // ====================================================
+
+// Applying middleware
+app.use('/flight', requireLogin);
+app.use('/airbnb', requireLogin);
+app.use('/hotel', requireLogin);
+app.use('/itinerary', requireLogin);
+app.use('/home', requireLogin);
+
+app.use('/login', isLogin);
+app.use('/register', isLogin);
 
 // Import and mount routers
 const travelPlannerRouter = require('./routes/router');
