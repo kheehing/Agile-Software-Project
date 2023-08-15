@@ -11,7 +11,7 @@
         <h2 style="font-size: 100px;">Page Not Found</h2>
         <p class="lead" style="font-size: 50px;">Oops! The page you're looking for does not exist.</p>
         <br>
-        <a href="/" class="btn btn-primary">Go Back Home</a>
+        <a onclick="goBack()" class="btn btn-primary">Go Back</a>
     </div>
     <div style="position: absolute; bottom: 0; right: 0;">
         <div style="padding: 15px;">
@@ -19,5 +19,10 @@
         </div>
         
     </div>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 </body>
 </html>

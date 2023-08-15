@@ -100,6 +100,13 @@
     <%- include ('base/footer'); %>
     <%- include ('base/navbarJS'); %>
     <script>
+        window.onload = function(){
+            firebase.auth().onAuthStateChanged(function(user){
+                if (user){
+                   window.location.href = '/home'
+                }
+            });
+        }
         $(document).ready(function() {
             $("#register-form").submit(function(event) {
                 event.preventDefault();

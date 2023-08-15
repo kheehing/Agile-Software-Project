@@ -33,7 +33,7 @@ async function requireLogin(req, res, next) {
 
   if (!idToken) {
     console.log('No ID token found. Redirecting to login.');
-    return res.redirect('/login');
+    return res.redirect('/');
   }
 
   try {
@@ -42,20 +42,7 @@ async function requireLogin(req, res, next) {
     next();
   } catch (error) {
     console.error('Error verifying ID token:', error);
-    res.redirect('/login');
-  }
-}
-
-async function isLogin(req, res) {
-  const idToken = req.headers.authorization || req.cookies.idToken;
-
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.uid = decodedToken.uid;
-    return res.redirect('/home');
-  } catch (error) {
-    console.error('Error verifying ID token:', error);
-    res.redirect('/login');
+    res.redirect('/');
   }
 }
 
@@ -69,9 +56,6 @@ app.use('/airbnb', requireLogin);
 app.use('/hotel', requireLogin);
 app.use('/itinerary', requireLogin);
 app.use('/home', requireLogin);
-
-app.use('/login', isLogin);
-app.use('/register', isLogin);
 
 // Import and mount routers
 const travelPlannerRouter = require('./routes/router');
