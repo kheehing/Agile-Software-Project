@@ -19,20 +19,16 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// Cookie Parser
-app.use(cookieParser());
+// ====================================================
+// ==================== Middleware ====================
+// ====================================================
 
-// Body Parser
+app.use(cookieParser());
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.set('view engine', 'ejs');
-
-// Middleware to parse JSON data and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from the "public" directory
 app.use(express.static(__dirname + "/public"));
 
 // ====================================================

@@ -1,3 +1,4 @@
+<!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -16,6 +17,16 @@
         appId: "1:478089214846:web:2acbc6d5cb3eb83599912f",
         measurementId: "G-BK9G5K2QHV"
     };
-    // initialise firebase
+    // init firebase
     firebase.initializeApp(firebaseConfig);
+
+    // auto redirect if token is expired
+    fetch('/verifyToken').then(response => response.json()).then(data => {
+        if (data.message === 'Token expired, please refresh the token') {
+            document.cookie = 'idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/';
+        }
+    }).catch(error => {
+        console.error('An error occurred:', error);
+    });
 </script>
