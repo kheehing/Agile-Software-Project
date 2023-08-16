@@ -35,7 +35,6 @@ router.get('', (req, res) => {
   const valuesJSON = JSON.stringify(values);
   console.log(values);
 
-
   res.render('flight', { origin, destination, date, from, to, adults, children, infants, cabinClass, flightData, formSubmitted, valuesJSON, flightType});
 });
 

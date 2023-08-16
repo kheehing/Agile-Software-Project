@@ -6,7 +6,18 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const session = require('express-session');
+const crypto = require('crypto');
 
+const generateSecretKey = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
+app.use(session({
+  secret: generateSecretKey(),
+  resave: false,
+  saveUninitialized: true
+}));
 
 // Cookie Parser
 app.use(cookieParser());
@@ -58,7 +69,7 @@ app.get('/verifyToken', requireLogin, (req, res) => {
 // ====================================================
 
 // Applying middleware
-app.use('/flight', requireLogin);
+// app.use('/flight', requireLogin);
 app.use('/airbnb', requireLogin);
 app.use('/hotel', requireLogin);
 app.use('/itinerary', requireLogin);
