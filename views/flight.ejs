@@ -41,7 +41,7 @@
                     <div class="row g-3">
                         <div class="form-group col">
                             <label for="adults">Adults</label>
-                            <input type="number" class="form-control" id="adults" name="adults" min="1" value="<%= adult %>" required>
+                            <input type="number" class="form-control" id="adults" name="adults" min="1" value="<%= adults %>" required>
                         </div>
 
                         <div class="form-group col">
@@ -51,7 +51,7 @@
 
                         <div class="form-group col">
                             <label for="infants">Infants</label>
-                            <input type="number" class="form-control" id="infants" name="infants" min="0" value="<%= infant %>" required>
+                            <input type="number" class="form-control" id="infants" name="infants" min="0" value="<%= infants %>" required>
                         </div>
                     </div>
 
@@ -99,7 +99,7 @@
                     <div class="row g-3">
                         <div class="form-group col">
                             <label for="adults">Adults</label>
-                            <input type="number" class="form-control" id="adults" name="adults" min="1" value="<%= adult %>">
+                            <input type="number" class="form-control" id="adults" name="adults" min="1" value="<%= adults %>">
                         </div>
 
                         <div class="form-group col">
@@ -109,7 +109,7 @@
 
                         <div class="form-group col">
                             <label for="infants">Infants</label>
-                            <input type="number" class="form-control" id="infants" name="infants" min="0" value="<%= infant %>">
+                            <input type="number" class="form-control" id="infants" name="infants" min="0" value="<%= infants %>">
                         </div>
                     </div>
 
@@ -162,7 +162,12 @@
 
         <% if (formSubmitted) { %>
             <div class="container mt-4" id="flightResults">
-                <h2>Flight Search Results</h2>
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="mb-0">Flight Search Results</h2>
+                    <button class="btn btn-outline-dark" onclick="redirectToWebpage('<%= valuesJSON %>')">Book on Website</button>
+                </div>
+
                 <ul class="list-unstyled">
                     <% if (flightData.data.context.totalResults > 0) { %>
                         <% flightData.data.itineraries.forEach(itinerary => { %>
@@ -472,11 +477,34 @@
         input.min = currentDate;
     });
 
-    // function redirectToWebpage(values) {
-    //     if (values.length = 7) {
-    //         window.location.href="https://www.skyscanner.com/transport/flights/" + values[0] + "/" + values[1] + "/" + values[2] + "/?adultsv2=" + values[3] + "&cabinclass=" + values[4] + "&childrenv2=" + values[5] + "&infantv2=" + values[6];
-    //     }
-       
-    // }
+    function redirectToWebpage(valuesJSON) {
+
+        const values = JSON.parse(valuesJSON);
+        const [flightType, originIATA, destinationIATA, dateInYYMMDD, dateFromInYYMMDD, dateToInYYMMDD, adult, cabinClass, children, infant] = values;
+
+        if (flightType == "oneWay") {
+            const queryParams = new URLSearchParams({
+                adultsv2: adult,
+                cabinclass: cabinClass,
+                childrenv2: children,
+                infantv2: infant
+            });
+
+            const url = `https://www.skyscanner.com/transport/flights/${originIATA}/${destinationIATA}/${dateInYYMMDD}/?${queryParams.toString()}`;
+            window.open(url, '_blank');
+
+        } else if (flightType == "roundTrip") {
+            const queryParams = new URLSearchParams({
+                adultsv2: adult,
+                cabinclass: cabinClass,
+                childrenv2: children,
+                infantv2: infant
+            });
+
+            const url = `https://www.skyscanner.com/transport/flights/${originIATA}/${destinationIATA}/${dateFromInYYMMDD}/${dateToInYYMMDD}/?${queryParams.toString()}`;
+            window.open(url, '_blank');
+        }
+        
+    }
 
 </script>
