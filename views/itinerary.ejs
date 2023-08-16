@@ -3,12 +3,152 @@
 <head>
     <%- include ('base/head'); %>
     <title>Itinerary Page</title>
+    <style>
+        #dropdown {
+            top: 100%; /* Position the dropdown below the input field */
+            left: 0; /* Align the dropdown to the left of the input field */
+            border: 1px solid #ccc;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
     <%- include ('base/navbar'); %>
-    <h1>Hello World</h1>
-    <p>test</p>
+    <br>
+    <div class="container">
+        <form id="add-trip-form" class="mb-3">
+            <h4>Destination</h4>
+            <div class="input-group position-relative"> 
+                <input type="text" id="trip-destination" class="form-control" placeholder="Where to?">
+                <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end">Add destination</button>
+                <div id="dropdown" class="dropdown-menu position-absolute w-100" style="display: none;"></div>
+            </div>
+            <div id="selected-destinations" class="d-flex fkex-wrap"></div>
+            <br>
+            <div class="d-flex align-items-center">
+                <h4 class="mb-0">Dates</h4>
+                <span class="ms-2">(optional)</span>
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">From:</span>
+                <input type="date" id="trip-from-date" class="form-control">
+                <span class="input-group-text">To:</span>
+                <input type="date" id="trip-to-date" class="form-control">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Start Planning</button>
+        </form>
+          
+        <form id="edit-trip-form" class="mb-3">
+            <div class="input-group">
+                <select id="trip-select" class="form-select">
+                    <!-- Options will be populated with existing trips -->
+                </select>
+                <button type="submit" class="btn btn-secondary">Edit Trip</button>
+            </div>
+        </form>
+    </div>
     <%- include ('base/footer'); %>
+    <%- include ('base/navbarJS'); %>
+    <script>
+        var citiesAndCountries;
+        var addedDestinations = [];
+
+        $.getJSON('/data/airports.json', function(data) {
+            citiesAndCountries = data.map(item => ({
+                city: item.City,
+                country: item.Country
+            }));
+
+            citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country))
+        );
+        });
+    
+        // Hide the dropdown when the user clicks outside the input field
+        $(document).on('click', function() {
+            $('#dropdown').hide();
+        });
+
+        // Prevent the click event from propagating to the document when the user clicks inside the input field
+        $('#trip-destination').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Show the dropdown when the user types in the input field
+        $('#trip-destination').on('input', function() {
+            const query = $(this).val().toLowerCase();
+            const filteredOptions = citiesAndCountries.filter(item => item.city.toLowerCase().includes(query) || item.country.toLowerCase().includes(query));
+            
+            updateDropdown(filteredOptions.slice(0,5));
+        });
+
+        $('#add-destination-button').on('click', function() {
+            if (addedDestinations.length >= 5) {
+                alert('You can only add up to 5 destinations at one time.');
+                return;
+            }
+            const selectedDestination = $('#trip-destination').val();
+            if (selectedDestination && !addedDestinations.includes(selectedDestination)) {
+                addedDestinations.push(selectedDestination);
+                const destinationInput = $('<input>').attr('type', 'text').attr('readonly', true).addClass('form-control').val(selectedDestination);
+                const deleteButton = $('<button>').text('Delete').addClass('btn btn-danger rounded-end').on('click', function() {
+                    const index = addedDestinations.indexOf(selectedDestination);
+                    addedDestinations.splice(index, 1);
+                    $(this).closest('.input-group').remove();
+                });
+                const hiddenInput = $('<input>').attr('type', 'hidden').attr('name', 'destinations').val(selectedDestination);
+                const inputGroup = $('<div>').addClass('input-group mb-3').css({ 'width': 'auto', 'margin-right': '10px', 'margin-top': '10px' }).append(destinationInput, deleteButton, hiddenInput);
+                $('#selected-destinations').append(inputGroup);
+                $('#trip-destination').val(''); 
+            }
+        });
+
+        $('#add-trip-form').on('submit', function(e) {
+            e.preventDefault();
+        
+            const destinations = addedDestinations;
+            let fromDate = $('#trip-from-date').val();
+            let toDate = $('#trip-to-date').val();
+            fromDate = fromDate ? fromDate : '';
+            toDate = toDate ? toDate : '';
+            const userId = firebase.auth().currentUser.uid;
+            $.post(`/itinerary/trip/${userId}/destinations`, { destinations, fromDate, toDate }, function(response) {
+                alert(response.message);
+            }).fail(function(error) {
+                alert('An error occurred while adding the trip: ' + error.responseText);
+            });
+        });
+
+        function updateDropdown(options) {
+            const $dropdown = $('#dropdown');
+            $dropdown.empty();
+    
+            if (options.length > 0) {
+                $dropdown.show();
+            } else {
+                $dropdown.hide();
+            }
+    
+            options.forEach(item => {
+                const optionDiv = $('<div>').addClass('dropdown-item').text(`${item.city}, ${item.country}`);
+                optionDiv.on('click', function() {
+                    $('#trip-destination').val(`${item.city}, ${item.country}`);
+                    $dropdown.hide();
+                });
+                $dropdown.append(optionDiv);
+            });
+        }
+    </script>
 </body>
 
 </html>

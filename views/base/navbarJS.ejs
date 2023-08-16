@@ -13,7 +13,8 @@
   
     document.getElementById('logoutButton').addEventListener('click', function() {
       firebase.auth().signOut().then(() => {
-        window.location.href = '/login';
+        document.cookie = 'idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+        window.location.href = '/';
       }).catch((error) => {
         console.error('Error signing out', error);
       });
