@@ -81,28 +81,25 @@
     <script>
     $(document).ready(function() {
         function loadTrips() {
-            const currentUser = firebase.auth().currentUser;
-            if (!currentUser) {
-                console.log('No user is authenticated');
-                return;
-            }
-            const userId = currentUser.uid;
-            fetch(`/itinerary/trip/${userId}/destinations`).then(response => response.json()).then(trips => {
+            fetch('/itinerary/trip/destinations')
+              .then(response => response.json())
+              .then(trips => {
                 console.log('loadTrips()');
                 const currentTripDiv = document.getElementById('current-trip');
                 if (trips.length === 0) {
-                    currentTripDiv.innerHTML = '<p>No trips at the moment...</p>';
+                  currentTripDiv.innerHTML = '<p>No trips at the moment...</p>';
                 } else {
-                    currentTripDiv.innerHTML = '<ul class="list-group">';
-                    trips.forEach(trip => {
-                        currentTripDiv.innerHTML += `<li class="list-group-item">${trip.destinations.join(', ')}</li>`;
-                    });
-                    currentTripDiv.innerHTML += '</ul>';
+                  currentTripDiv.innerHTML = '<ul class="list-group">';
+                  trips.forEach(trip => {
+                    currentTripDiv.innerHTML += `<li class="list-group-item">${trip.destinations.join(', ')}</li>`;
+                  });
+                  currentTripDiv.innerHTML += '</ul>';
                 }
-            }).catch(error => {
-                    console.error('An error occurred while loading the trips:', error);
-            });
-        }
+              })
+              .catch(error => {
+                console.error('An error occurred while loading the trips:', error);
+              });
+          }
         loadTrips();
         
         var citiesAndCountries;
@@ -155,6 +152,26 @@
                 $('#trip-destination').val(''); 
             }
         });
+
+        function updateDropdown(options) {
+            const $dropdown = $('#dropdown');
+            $dropdown.empty();
+    
+            if (options.length > 0) {
+                $dropdown.show();
+            } else {
+                $dropdown.hide();
+            }
+    
+            options.forEach(item => {
+                const optionDiv = $('<div>').addClass('dropdown-item').text(`${item.city}, ${item.country}`);
+                optionDiv.on('click', function() {
+                    $('#trip-destination').val(`${item.city}, ${item.country}`);
+                    $dropdown.hide();
+                });
+                $dropdown.append(optionDiv);
+            });
+        }
 
         $('#add-trip-form').on('submit', function(e) {
             e.preventDefault();

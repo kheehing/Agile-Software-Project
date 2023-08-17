@@ -38,8 +38,8 @@ router.post('/trip/:userid/destinations', async (req, res) => {
 });
 
 // Read (Get) a Trip
-router.get('/trip/:userid/destinations', async (req, res) => {
-  const userId = req.params.userid;
+router.get('/trip/destinations', async (req, res) => {
+  const userId = req.session.user.uid;
 
   try {
     const ownedTripsQuery = db.collection('itinerary').where('userId', '==', userId);
@@ -62,7 +62,8 @@ router.get('/trip/:userid/destinations', async (req, res) => {
   }
 });
 
-// Update (Edit) a Trip
+
+// Update (Edit) a Trip  NEED TO UPDATE
 router.put('/trip/:userid/destinations/:tripId', async (req, res) => {
   const userId = req.params.userid;
   const tripId = req.params.tripId;
@@ -77,7 +78,7 @@ router.put('/trip/:userid/destinations/:tripId', async (req, res) => {
   }
 });
 
-// Delete a Trip
+// Delete a Trip NEED TO UPDATED
 router.delete('/trip/:userid/destinations/:tripId', async (req, res) => {
   const userId = req.params.userid;
   const tripId = req.params.tripId;
