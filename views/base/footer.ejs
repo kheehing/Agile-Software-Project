@@ -19,14 +19,4 @@
     };
     // init firebase
     firebase.initializeApp(firebaseConfig);
-
-    // auto redirect if token is expired
-    fetch('/verifyToken').then(response => response.json()).then(data => {
-        if (data.message === 'Token expired, please refresh the token') {
-            document.cookie = 'idToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            window.location.href = '/';
-        }
-    }).catch(error => {
-        console.error('An error occurred:', error);
-    });
 </script>

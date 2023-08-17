@@ -91,13 +91,6 @@
     </div>
     <%- include ('base/footer'); %>
     <script>
-        window.onload = function(){
-            $.get("/verifyToken", function(data, status) {
-                if (status === "success" && data.valid) {
-                    window.location.href = '/home';
-                }
-            });
-        }
         $(document).ready(function() {
             $("#login-form").submit(function(event) {
                 event.preventDefault();
@@ -106,17 +99,30 @@
                 const password = $("#pwd").val();
               
                 firebase.auth().signInWithEmailAndPassword(email, password).then((userCredential) => {
-                    userCredential.user.getIdToken().then((idToken) => {
-                        document.cookie = `idToken=${idToken}; path=/`;
+                  userCredential.user.getIdToken().then((idToken) => {
+                    // Send the ID token to the server for verification
+                    $.ajax({
+                      url: "/login", // Update this to the correct endpoint if needed
+                      method: "POST",
+                      data: { idToken: idToken },
+                      success: function(response) {
+                        // Redirect to the home page on successful login
                         window.location.href = "/home";
+                      },
+                      error: function(jqXHR, textStatus, errorThrown) {
+                        // Handle error on failed login
+                        alert(jqXHR.responseJSON.message || "An error occurred during login.");
+                      }
                     });
+                  });
                 }).catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    console.log(errorMessage);
-                    alert(errorMessage);
+                  var errorCode = error.code;
+                  var errorMessage = error.message;
+                  console.log(errorMessage);
+                  alert(errorMessage);
                 });
               });
+              
         });
     </script>
 </body>

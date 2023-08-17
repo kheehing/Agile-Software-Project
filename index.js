@@ -35,30 +35,38 @@ app.use(express.static(__dirname + "/public"));
 // ==================== Functions =====================
 // ====================================================
 
-async function requireLogin(req, res, next) {
-  const idToken = req.headers.authorization || req.cookies.idToken;
+// async function requireLogin(req, res, next) {
+//   const idToken = req.headers.authorization || req.cookies.idToken;
 
-  if (!idToken) {
-    console.log('No ID token found. Redirecting to login.');
+//   if (!idToken) {
+//     console.log('No ID token found. Redirecting to login.');
+//     return res.redirect('/');
+//   }
+
+//   try {
+//     const decodedToken = await admin.auth().verifyIdToken(idToken);
+//     req.uid = decodedToken.uid;
+//     next();
+//   } catch (error) {
+//     if (error.code === 'auth/id-token-expired') {
+//       return res.status(401).json({ message: 'Token expired, please refresh the token' });
+//     }
+//     console.error('Error verifying ID token:', error);
+//     res.redirect('/');
+//   }
+// }
+async function requireLogin(req, res, next) {
+  if (!req.session || !req.session.user) {
+    console.log('Not authenticated. Redirecting to login.');
     return res.redirect('/');
   }
-
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.uid = decodedToken.uid;
-    next();
-  } catch (error) {
-    if (error.code === 'auth/id-token-expired') {
-      return res.status(401).json({ message: 'Token expired, please refresh the token' });
-    }
-    console.error('Error verifying ID token:', error);
-    res.redirect('/');
-  }
+  req.uid = req.session.user.uid;
+  next();
 }
 
-app.get('/verifyToken', requireLogin, (req, res) => {
-  res.status(200).send({ valid: true });
-});
+// app.get('/verifyToken', requireLogin, (req, res) => {
+//   res.status(200).send({ valid: true });
+// });
 
 // ====================================================
 // ============== Routes and Middleware ===============
