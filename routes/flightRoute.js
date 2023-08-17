@@ -6,19 +6,45 @@ const router = express.Router();
 
 
 router.get('', (req, res) => {
-  const origin = req.session.origin || '';
-  const destination = req.session.destination || '';
-  const date = req.session.date || '';
-  const to = req.session.to || '';
-  const from = req.session.from || '';
-  const adults = req.session.adults || 1;
-  const children = req.session.children || 0;
-  const infants = req.session.infants || 0;
-  const cabinClass = req.session.cabinClass || 'economy';
-  const flightData = req.session.flightData;
-  const flightType = req.session.flightType;
-  const formSubmitted = req.session.formSubmitted;
 
+  // const origin = req.session.origin || '';
+  // const destination = req.session.destination || '';
+  // const date = req.session.date || '';
+  // const to = req.session.to || '';
+  // const from = req.session.from || '';
+  // const adults = req.session.adults || 1;
+  // const children = req.session.children || 0;
+  // const infants = req.session.infants || 0;
+  // const cabinClass = req.session.cabinClass || 'economy';
+  // const flightType = req.session.flightType;
+  // const formSubmitted = req.session.formSubmitted;
+
+  // const flightData = req.session.flightData;
+  
+
+  // const values = [
+  //   req.session.flightType,
+  //   req.session.originIATA,
+  //   req.session.destinationIATA,
+  //   req.session.dateInYYMMDD,
+  //   req.session.dateFromInYYMMDD,
+  //   req.session.dateToInYYMMDD,
+  //   req.session.adults,
+  //   req.session.cabinClass,
+  //   req.session.children,
+  //   req.session.infants
+  // ];
+
+  // const valuesJSON = JSON.stringify(values);
+  // console.log(values);
+
+  // res.render('flight', { origin, destination, date, from, to, adults, children, infants, cabinClass, flightData, formSubmitted, valuesJSON, flightType});
+  res.render('flight');
+});
+
+router.get('/flightDetails', (req, res) => {
+  const flightData = req.session.flightData;
+  
   const values = [
     req.session.flightType,
     req.session.originIATA,
@@ -35,7 +61,7 @@ router.get('', (req, res) => {
   const valuesJSON = JSON.stringify(values);
   console.log(values);
 
-  res.render('flight', { origin, destination, date, from, to, adults, children, infants, cabinClass, flightData, formSubmitted, valuesJSON, flightType});
+  res.render('flightDetails', {flightData, valuesJSON});
 });
 
 router.post('/oneWay', (req, res) => {
@@ -129,7 +155,7 @@ router.post('/oneWay', (req, res) => {
         // res.status(200).json(response.data);
         req.session.flightData = response.data;
         req.session.formSubmitted = 'true';
-        res.redirect('/flight');
+        res.redirect('/flight/flightDetails');
       })
       .catch(error => {
         console.error(error);
@@ -238,7 +264,7 @@ router.post('/roundTrip', (req, res) => {
         // res.status(200).json(response.data);
         req.session.flightData = response.data;
         req.session.formSubmitted = 'true';
-        res.redirect('/flight');
+        res.redirect('/flight/flightDetails');
       })
       .catch(error => {
         console.error(error);
