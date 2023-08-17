@@ -6,11 +6,82 @@
 </head>
 <body>
     <%- include ('base/navbar'); %>
-    <div class="container">
-        <h1>Hello World</h1>
-        <p>test</p>
+    <div class="container mt-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="row">
+                    <h2 class="col-3 user-select-none edit-element" style="display: none;" id="trip-name-label">Trip Name:</h2>
+                    <h1 class="col user-select-none display-element" id="trip-name-display"><%= trip.tripName %></h1>
+                    <input type="text" id="trip-name-input" class="form-control edit-element col" value="<%= trip.tripName %>" style="display: none;">
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary display-element" id="edit-trip-button">Edit Trip</button>
+                <button type="button" class="btn btn-success edit-element" id="update-trip-button" style="display: none;">Update</button>
+                <button type="button" class="btn btn-secondary edit-element" id="cancel-edit-button" style="display: none;">Cancel</button>
+            </div>
+        </div>
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">Destinations:</h5>
+                    <button type="button" class="btn btn-success edit-element col-auto" id="add-destination-button" style="display: none;">Add Destination</button>
+                </div>
+                <div id="destinations-input-group" class="edit-element" style="display: none;">
+                   <% trip.destinations.forEach((destination, index) => { %>
+                        <input type="text" class="form-control mb-2 destination-input" value="<%= destination %>">
+                    <% }); %>
+                </div>
+                <p class="card-text display-element" id="destinations-display"><%= trip.destinations.join(', ') %></p>
+                <!-- Other fields go here -->
+            </div>
+        </div>
     </div>
     <%- include ('base/footer'); %>
-</body>
+    <script>
+        $(document).ready(function() {
+            var citiesAndCountries;
+            $.getJSON('/data/airports.json', function(data) {
+                citiesAndCountries = data.map(item => ({
+                    city: item.City,
+                    country: item.Country
+                }));
+                // filter the same text out
+                citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country)));
+            });
 
+            $('#edit-trip-button').on('click', function() {
+                $('.display-element').hide();
+                $('.edit-element').show();
+            });
+
+            $('#cancel-edit-button').on('click', function() {
+                $('.display-element').show();
+                $('.edit-element').hide();
+            });
+
+            $('#update-trip-button').on('click', function() {
+                // Handle the update here
+                // You can use AJAX to send the updated data to the server
+            });
+
+            $('#add-destination-button').on('click', function() {
+                const numberOfDestinations = $('#destinations-input-group .destination-input-group').length;
+                if (numberOfDestinations < 5) {
+                    const destinationInputGroup = $('<div>').addClass('input-group mb-2');
+                    const destinationInput = $('<input>').attr('type', 'text').addClass('form-control destination-input');
+                    const removeButtonDiv = $('<div>').addClass('input-group-append');
+                    const removeButton = $('<button>').text('Remove').addClass('btn btn-danger').on('click', function() {
+                        $(this).closest('.destination-input-group').remove();
+                    });
+                    removeButtonDiv.append(removeButton);
+                    destinationInputGroup.append(destinationInput, removeButtonDiv);
+                    $('#destinations-input-group').append(destinationInputGroup);
+                } else {
+                    alert('You can add a maximum of 5 destinations.');
+                }
+            });
+        });
+    </script>
+</body>
 </html>
