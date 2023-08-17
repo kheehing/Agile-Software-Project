@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ('base/head'); %>
+        <link rel="stylesheet" href="/stylesheets/hotelInfo-style.css">
+        <title>Hotel Information Page</title>
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
+            async defer>
+            </script>
+</head>
+
+<body>
+    <%- include ('base/navbar'); %>
+        <!-- Big Image Stretching from Left to Right -->
+        <img src="/images/image-placeholder.png" class="full-width-image" alt="Big Image">
+
+        <!-- Secondary Nav Bar -->
+        <div class="secondary-navbar">
+            <a href="#overview">Overview</a>
+            <a href="#rooms">Rooms</a>
+            <a href="#location">Location</a>
+            <a href="#reviews">Reviews</a>
+            <a href="#gallery">Gallery</a>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="content-section" id="overview">
+            <!-- Overview Content -->
+            <h2>Overview</h2>
+            <p>
+                <%= hotelDescription %>
+            </p>
+            <img src="" class="overview-image" alt="Overview Image">
+        </div>
+
+        <div class="content-section" id="rooms">
+            <!-- Rooms Content -->
+            <h2>Rooms</h2>
+            
+        </div>
+
+        <div class="content-section" id="location">
+            <!-- Location Content -->
+            <h2>Location</h2>
+            <div id="map" style="height: 400px;"></div>
+            <script>
+                // JavaScript code to initialize the map
+                function initMap() {
+                    const mapData = <% - JSON.stringify(mapData.landmarks[0]) %>; // Get the map data from the template
+                    const hotelLoc = <% - JSON.stringify(hotelLocation) %>;
+
+                    // Create a new Google Map instance
+                    const map = new google.maps.Map(document.getElementById('map'), {
+                        center: { lat: mapData.latitude, lng: mapData.longitude }, // Set the center point of the map
+                        zoom: 15, // Set the initial zoom level
+                    });
+
+                    // Create a marker for the hotel location
+                    const marker = new google.maps.Marker({
+                        position: { lat: hotelLoc.latitude, lng: hotelLoc.longitude }, // Set the marker position
+                        map: map, // Set the map to display the marker
+                        title: 'Hotel Location', // Marker title
+                    });
+
+                    console.log('Marker Position:', marker.position.lat(), marker.position.lng());
+                }
+
+                // Initialize the map when the page is loaded
+                initMap();
+            </script>
+        </div>
+
+        <div class="content-section" id="reviews">
+            <h2>Guest Reviews</h2>
+            <div class="reviews-container">
+                <% hotelReviews.forEach(review=> { %>
+                    <div class="review">
+                        <div class="review-header">
+                            <div class="review-details">
+                                <div class="review-user">
+                                    <h3 class="user-title">
+                                        <%= review.title %>
+                                    </h3>
+                                </div>
+                                <div class="review-date">
+                                    Reviewed on <%= review.date %>
+                                </div>
+                            </div>
+                            <div class="review-score">
+                                <% if (review.average_score>= 4) { %>
+                                    <span class="excellent">Excellent</span>
+                                    <% } else if (review.average_score>= 3) { %>
+                                        <span class="good">Good</span>
+                                        <% } else if (review.average_score>= 2) { %>
+                                            <span class="average">Average</span>
+                                            <% } else { %>
+                                                <span class="poor">Poor</span>
+                                                <% } %>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p class="pros"><strong>Comment:</strong>
+                                <%= review.pros %>
+                            </p>
+                        </div>
+                        <div class="review-room">
+                            Stayed in: <%= review.stayed_room_info.room_name %>
+                        </div>
+                        <div class="review-image">
+                            <img src="<%= review.stayed_room_info.photo.url_max300 %>" alt="Review Image">
+                        </div>
+                        <div class="review-author">
+                            Reviewed by: <%= review.author.name %>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div>
+        </div>
+
+        <div class="content-section" id="gallery">
+            <!-- Gallery Content -->
+            <h2>Gallery</h2>
+            <div class="gallery-images">
+                <% if (hotelImages && hotelImages.length> 0) { %>
+                    <% for (let i=0; i < hotelImages.length; i++) { %>
+                        <img src="<%= hotelImages[i] %>" class="gallery-image" alt="Hotel Image">
+                        <% } %>
+                            <% } else { %>
+                                <p>No images available.</p>
+                                <% } %>
+            </div>
+        </div>
+
+        <!-- Book Button -->
+        <div class="book-button-div">
+            <button class="book-button">Book</button>
+        </div>
+
+        <!-- Our Travel Planner Logo and Title, Quick Links, and Contact Us -->
+        <div class="row mt-5">
+            <!-- Our Travel Planner Logo and Title -->
+            <div class="col-md-6">
+                <img src="/images/image-placeholder.png" class="hotel-travel-planner-logo img-fluid"
+                    alt="Travel Planner Logo">
+                <h2 class="hotel-travel-planner-title">Travel Planner</h2>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-3 hotel-quick-links">
+                <h2>Quick Links</h2>
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="#">Home</a></li>
+                    <li class="list-group-item"><a href="#">Flight</a></li>
+                    <li class="list-group-item"><a href="#">Hotel</a></li>
+                    <li class="list-group-item"><a href="#">Airbnb</a></li>
+                    <li class="list-group-item"><a href="#">Itinerary</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Us -->
+            <div class="col-md-3 hotel-contact-us">
+                <h2>Contact Us</h2>
+                <p>Telephone: +65-1234-5678</p>
+                <p>Email: info@travelplanner.com</p>
+            </div>
+        </div>
+
+        <script>
+            // JavaScript to handle content section toggling
+            document.addEventListener("DOMContentLoaded", function () {
+                const sections = document.querySelectorAll(".content-section");
+                const navLinks = document.querySelectorAll(".secondary-navbar a");
+
+                // Hide all content sections except the "Overview" section
+                sections.forEach((section) => {
+                    if (section.id !== "overview") {
+                        section.style.display = "none";
+                    }
+                });
+
+                // Add event listeners to navigation links
+                navLinks.forEach((link) => {
+                    link.addEventListener("click", (event) => {
+                        event.preventDefault();
+
+                        const targetSectionId = link.getAttribute("href");
+                        sections.forEach((section) => {
+                            if (section.id === targetSectionId.substring(1)) {
+                                section.style.display = "block";
+                            } else {
+                                section.style.display = "none";
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+
+        <%- include ('base/footer'); %>
+</body>
+
+</html>

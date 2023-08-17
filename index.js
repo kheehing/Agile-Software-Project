@@ -84,6 +84,7 @@ const homeRouter = require('./routes/homeRoute');
 app.use('/flight', flightRouter);
 app.use('/airbnb', airbnbRouter);
 app.use('/hotel', hotelRouter);
+app.use('/hotelSearch', hotelRouter);
 app.use('/itinerary', intineraryRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ('base/head'); %>
+    <title>Hotel Search Results</title>
+    <link rel="stylesheet" href="/stylesheets/hotelSearch-style.css">
+</head>
+
+<body>
+    <%- include ('base/navbar'); %>
+
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>Search Results for Hotels in <%= location %></h2>
+            </div>
+        </div>
+        <div class="hotel-list">
+            <% if (hotels && hotels.length > 0) { %>
+                <% for (let i = 0; i < hotels.length; i++) { %>
+                    <% const hotel = hotels[i]; %>
+                    <a href="/hotel/information?hotel_id=<%= hotel.hotel_id %>&checkin=<%= checkinDate %>&checkout=<%= checkoutDate %>&pax=<%= adultsNumber %>" class="hotel-item-link">
+                    <div class="hotel-item">
+                        <img src="<%= hotel.max_photo_url %>" alt="<%= hotel.hotel_name %>" class="hotel-image">
+                        <div class="hotel-details">
+                            <h3><%= hotel.hotel_name %></h3>
+                            <div class="hotel-address">
+                                <span><%= hotel.hotel_address %>, </span>
+                                <span><%= hotel.hotel_city %></span>
+                            </div>
+                            <div class="rating">
+                                <span class="rating-value"><%= hotel.review_score %></span>
+                                <span class="rating-text"><%= hotel.review_score_word %></span>
+                            </div>
+                            <h7 class="price-text">Price per night: <%= hotel.price_currency %>$ <%= hotel.price_per_night %></h7>
+                        </div>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <p>No hotels found for your search.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include ('base/footer'); %>
+</body>
+
+</html>
