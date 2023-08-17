@@ -5,8 +5,8 @@
     <title>Itinerary Page</title>
     <style>
         #dropdown {
-            top: 100%; /* Position the dropdown below the input field */
-            left: 0; /* Align the dropdown to the left of the input field */
+            top: 100%;
+            left: 0;
             border: 1px solid #ccc;
             background-color: #fff;
             z-index: 1000;
@@ -26,41 +26,86 @@
     <%- include ('base/navbar'); %>
     <br>
     <div class="container">
-        <form id="add-trip-form" class="mb-3">
-            <h4>Destination</h4>
-            <div class="input-group position-relative"> 
-                <input type="text" id="trip-destination" class="form-control" placeholder="Where to?">
-                <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end">Add destination</button>
-                <div id="dropdown" class="dropdown-menu position-absolute w-100" style="display: none;"></div>
+        <div class="row align-items-center">
+            <div class="col text-center">
+                <h3>Current Trips</h3>
             </div>
-            <div id="selected-destinations" class="d-flex fkex-wrap"></div>
-            <br>
-            <div class="d-flex align-items-center">
-                <h4 class="mb-0">Dates</h4>
-                <span class="ms-2">(optional)</span>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addTripModal">Add Trip</button>
             </div>
-            <div class="input-group">
-                <span class="input-group-text">From:</span>
-                <input type="date" id="trip-from-date" class="form-control">
-                <span class="input-group-text">To:</span>
-                <input type="date" id="trip-to-date" class="form-control">
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addTripModal" tabindex="-1" aria-labelledby="addTripModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="add-trip-form" class="mb-3"></form>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addTripModalLabel">Add Trip</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="d-flex align-items-center">
+                                <h4 class="mb-0">Destination</h4>
+                            </div>
+                            <div class="input-group position-relative">
+                                <input type="text" id="trip-destination" class="form-control" placeholder="Where to?">
+                                <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end">Add destination</button>
+                                <div id="dropdown" class="dropdown-menu position-absolute w-100" style="display: none;"></div>
+                            </div>
+                            <div id="selected-destinations" class="d-flex fkex-wrap"></div>
+                            <br>
+                            <div class="d-flex align-items-center">
+                                <h4 class="mb-0">Dates</h4>
+                                <span class="ms-2">(optional)</span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">From:</span>
+                                <input type="date" id="trip-from-date" class="form-control">
+                                <span class="input-group-text">To:</span>
+                                <input type="date" id="trip-to-date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save Trip</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <br>
-            <button type="submit" class="btn btn-primary">Start Planning</button>
-        </form>
-          
-        <form id="edit-trip-form" class="mb-3">
-            <div class="input-group">
-                <select id="trip-select" class="form-select">
-                    <!-- Options will be populated with existing trips -->
-                </select>
-                <button type="submit" class="btn btn-secondary">Edit Trip</button>
-            </div>
-        </form>
+        </div>
+        <div id="current-trip">
+            <p>no trips...</p>
+        </div>
     </div>
     <%- include ('base/footer'); %>
     <%- include ('base/navbarJS'); %>
     <script>
+    $(document).ready(function() {
+        function loadTrips() {
+            const currentUser = firebase.auth().currentUser;
+            if (!currentUser) {
+                console.log('No user is authenticated');
+                return;
+            }
+            const userId = currentUser.uid;
+            fetch(`/itinerary/trip/${userId}/destinations`).then(response => response.json()).then(trips => {
+                console.log('loadTrips()');
+                const currentTripDiv = document.getElementById('current-trip');
+                if (trips.length === 0) {
+                    currentTripDiv.innerHTML = '<p>No trips at the moment...</p>';
+                } else {
+                    currentTripDiv.innerHTML = '<ul class="list-group">';
+                    trips.forEach(trip => {
+                        currentTripDiv.innerHTML += `<li class="list-group-item">${trip.destinations.join(', ')}</li>`;
+                    });
+                    currentTripDiv.innerHTML += '</ul>';
+                }
+            }).catch(error => {
+                    console.error('An error occurred while loading the trips:', error);
+            });
+        }
+        loadTrips();
+        
         var citiesAndCountries;
         var addedDestinations = [];
 
@@ -69,22 +114,21 @@
                 city: item.City,
                 country: item.Country
             }));
-
-            citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country))
-        );
+            // filter the same text out
+            citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country)));
         });
-    
-        // Hide the dropdown when the user clicks outside the input field
+
+        // Hide the dropdown when the user clicks outside the input
         $(document).on('click', function() {
             $('#dropdown').hide();
         });
 
-        // Prevent the click event from propagating to the document when the user clicks inside the input field
+        // Prevent the click event when the user clicks inside the input
         $('#trip-destination').on('click', function(e) {
             e.stopPropagation();
         });
 
-        // Show the dropdown when the user types in the input field
+        // Show the dropdown when the user types in the input
         $('#trip-destination').on('input', function() {
             const query = $(this).val().toLowerCase();
             const filteredOptions = citiesAndCountries.filter(item => item.city.toLowerCase().includes(query) || item.country.toLowerCase().includes(query));
@@ -128,26 +172,7 @@
                 alert('An error occurred while adding the trip: ' + error.responseText);
             });
         });
-
-        function updateDropdown(options) {
-            const $dropdown = $('#dropdown');
-            $dropdown.empty();
-    
-            if (options.length > 0) {
-                $dropdown.show();
-            } else {
-                $dropdown.hide();
-            }
-    
-            options.forEach(item => {
-                const optionDiv = $('<div>').addClass('dropdown-item').text(`${item.city}, ${item.country}`);
-                optionDiv.on('click', function() {
-                    $('#trip-destination').val(`${item.city}, ${item.country}`);
-                    $dropdown.hide();
-                });
-                $dropdown.append(optionDiv);
-            });
-        }
+    });
     </script>
 </body>
 

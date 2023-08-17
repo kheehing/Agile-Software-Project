@@ -7,6 +7,10 @@ router.get('', (req, res) => {
   res.render('itinerary');
 });
 
+router.get('/p', (req, res) => {
+  res.render('planning');
+});
+
 // Create (Add) a Trip
 router.post('/trip/:userid/destinations', async (req, res) => {
   const userId = req.params.userid;
@@ -38,8 +42,8 @@ router.get('/trip/:userid/destinations', async (req, res) => {
   const userId = req.params.userid;
 
   try {
-    const ownedTripsQuery = db.collection('trips').where('userId', '==', userId);
-    const sharedTripsQuery = db.collection('trips').where('sharedWith', 'array-contains', userId);
+    const ownedTripsQuery = db.collection('itinerary').where('userId', '==', userId);
+    const sharedTripsQuery = db.collection('itinerary').where('sharedWith', 'array-contains', userId);
 
     const [ownedTripsSnapshot, sharedTripsSnapshot] = await Promise.all([
       ownedTripsQuery.get(),
@@ -50,7 +54,8 @@ router.get('/trip/:userid/destinations', async (req, res) => {
     const sharedTrips = sharedTripsSnapshot.docs.map(doc => doc.data());
 
     const trips = [...ownedTrips, ...sharedTrips];
-
+    console.log("read itinerary ItineraryRoute.js");
+    console.log(trips);
     res.status(200).json(trips);
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while retrieving the trip.' });
@@ -64,7 +69,7 @@ router.put('/trip/:userid/destinations/:tripId', async (req, res) => {
   const { destinations = [], fromDate, toDate, sharedWith = [] } = req.body;
 
   try {
-    const tripRef = db.collection('trips').doc(tripId);
+    const tripRef = db.collection('itinerary').doc(tripId);
     await tripRef.update({ destinations, fromDate, toDate, sharedWith });
     res.status(200).json({ message: 'Trip updated successfully!' });
   } catch (error) {
@@ -78,7 +83,7 @@ router.delete('/trip/:userid/destinations/:tripId', async (req, res) => {
   const tripId = req.params.tripId;
 
   try {
-    const tripRef = db.collection('trips').doc(tripId);
+    const tripRef = db.collection('itinerary').doc(tripId);
     await tripRef.delete();
     res.status(200).json({ message: 'Trip deleted successfully!' });
   } catch (error) {
