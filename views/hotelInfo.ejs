@@ -109,7 +109,10 @@
                             Stayed in: <%= review.stayed_room_info.room_name %>
                         </div>
                         <div class="review-image">
-                            <img src="<%= review.stayed_room_info.photo.url_max300 %>" alt="Review Image">
+                            <% if (review.reviewer_photos.length > 0) { %>
+                                <img src="<%= review.reviewer_photos[0].max500_ao %>" alt="Review Image">
+                                <% } else { %>
+                                    <% } %>
                         </div>
                         <div class="review-author">
                             Reviewed by: <%= review.author.name %>
