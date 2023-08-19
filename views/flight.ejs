@@ -26,7 +26,6 @@
                             <select class="form-control" id="flightType">
                                 <option value="oneWay">One-way</option>
                                 <option value="roundTrip">Round-trip</option>
-                                <option value="multiStop">Multi-stop</option>
                             </select>
                         </div>
             
@@ -296,13 +295,7 @@
 
     <%- include ('base/footer'); %>
 
-    <script>
-        // Set MultiStopForm to appear 1 as default
-        window.onload = function () {
-            document.getElementById('numberOfFlights').value = 1;
-            updateMultiStopFields();
-        };
-    
+    <script>   
     
         // Creates the options for the origin and destination using the json
         fetch('/data/airports.json')
@@ -334,12 +327,6 @@
                     multiStopForm.style.display = 'none';
                     flightResult.style.display = 'none';
                     break;
-                case 'multiStop':
-                    oneWayForm.style.display = 'none';
-                    roundTripForm.style.display = 'none';
-                    multiStopForm.style.display = 'block';
-                    flightResult.style.display = 'none';
-                    break;
                 default:
                     oneWayForm.style.display = 'none';
                     roundTripForm.style.display = 'none';
@@ -347,139 +334,6 @@
                     break;
             }
         });
-    
-        // Function to create new form fields based on the user selection
-        function updateMultiStopFields() {
-            var numOfFlights = document.getElementById('numberOfFlights').value;
-            var form = document.getElementById('dynamicFlightInputs');
-            form.innerHTML = '';
-    
-            for (var i = 0; i < numOfFlights; i++) {
-    
-                var row1 = document.createElement('div');
-                row1.className = 'row g-3';
-                var origin = createFormGroup('origin' + i, 'Origin', 'text', 'airportlist', 'col');
-                var destination = createFormGroup('destination' + i, 'Destination', 'text', 'airportlist', 'col');
-                row1.appendChild(origin);
-                row1.appendChild(destination);
-    
-                var row2 = document.createElement('div');
-                row2.className = 'row g-3';
-                var adults = createFormGroup('adults' + i, 'Adults', 'number', null, 'col', 1);
-                var children = createFormGroup('children' + i, 'Children', 'number', null, 'col', 0);
-                var infants = createFormGroup('infants' + i, 'Infants', 'number', null, 'col', 0);
-                row2.appendChild(adults);
-                row2.appendChild(children);
-                row2.appendChild(infants);
-    
-                var row3 = document.createElement('div');
-                row3.className = 'row g-3';
-                var date = createFormGroup('date' + i, 'Date', 'date', null, 'col');
-                var cabinClass = createFormGroupSelect('cabinClass' + i, 'Cabin Class', 'cabinClass', 'col');
-                row3.appendChild(date);
-                row3.appendChild(cabinClass);
-    
-                form.appendChild(row1);
-                form.appendChild(row2);
-                form.appendChild(row3);
-            }
-        }
-    
-        function createFormGroup(id, label, type, listId, className, defaultValue) {
-            var div = document.createElement('div');
-            div.className = className ? className + ' form-group' : 'form-group';
-    
-            var labelElement = document.createElement('label');
-            labelElement.setAttribute('for', id);
-            labelElement.innerText = label;
-    
-            var input = document.createElement('input');
-            input.type = type;
-            input.className = 'form-control';
-            input.id = id;
-            input.name = id;
-            input.required = true;
-    
-            if (type === 'number' && defaultValue !== undefined) {
-                input.value = defaultValue;
-            }
-    
-            if (listId) {
-                input.setAttribute('list', listId);
-            }
-    
-            div.appendChild(labelElement);
-            div.appendChild(input);
-            return div;
-        }
-    
-        function createFormGroupSelect(id, label, name, className) {
-            var div = document.createElement('div');
-            div.className = className ? className + ' form-group' : 'form-group';
-    
-            var labelElement = document.createElement('label');
-            labelElement.setAttribute('for', id);
-            labelElement.innerText = label;
-    
-            var select = document.createElement('select');
-            select.className = 'form-control';
-            select.id = id;
-            select.name = name;
-            select.required = true;
-    
-            var options = ["", "economy", "premium_economy", "business", "first"];
-            var optionsText = ["Select Cabin Class", "Economy", "Premium Economy", "Business", "First"];
-    
-            for (var i = 0; i < options.length; i++) {
-                var option = document.createElement('option');
-                option.value = options[i];
-                option.text = optionsText[i];
-    
-                if (i === 0) {
-                    option.disabled = true;
-                }
-                select.appendChild(option);
-            }
-    
-            div.appendChild(labelElement);
-            div.appendChild(select);
-            return div;
-        }
-        // End of MultiStopForm creation
-    
-    
-        // MultiStopForm submit button event listener
-        document.getElementById('multiStopForm').addEventListener('submit', function (event) {
-            var numOfFlights = document.getElementById('numberOfFlights').value;
-            if (!checkMultiStop(numOfFlights)) {
-                event.preventDefault();
-            }
-        });
-    
-        // MultiStopForm validation
-        function checkMultiStop(numOfFlights) {
-            var airportListOptions = Array.from(document.getElementById('airportlist').options).map(option => option.value);
-            var isValid = true;
-    
-            for (var i = 0; i < numOfFlights; i++) {
-                var originInput = document.getElementById('origin' + i);
-                var destinationInput = document.getElementById('destination' + i);
-    
-                var originValue = originInput.value;
-                var destinationValue = destinationInput.value;
-    
-                if (!airportListOptions.includes(originValue)) {
-                    alert("The origin input for flight " + (i + 1) + " does not match any value in the airport list.");
-                    isValid = false;
-                }
-    
-                if (!airportListOptions.includes(destinationValue)) {
-                    alert("The destination input for flight " + (i + 1) + " does not match any value in the airport list.");
-                    isValid = false;
-                }
-            }
-            return isValid;
-        }
     
     
         // oneWayForm and roundTripForm validation

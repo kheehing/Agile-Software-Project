@@ -73,7 +73,7 @@ async function requireLogin(req, res, next) {
 // ====================================================
 
 // Applying middleware
-// app.use('/flight', requireLogin);
+app.use('/flight', requireLogin);
 app.use('/airbnb', requireLogin);
 app.use('/hotel', requireLogin);
 app.use('/itinerary', requireLogin);
