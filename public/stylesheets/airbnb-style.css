@@ -1,0 +1,122 @@
+.container {
+    margin: 0px 292.5px;
+}
+
+.airbnb-medium-image {
+    width: 100%;
+}
+
+.airbnb-right-content {
+    padding: 20px;
+}
+
+.booking-search-box {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.booking-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.booking-label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.booking-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.booking-date {
+    display: inline-block;
+    width: 48%;
+    margin-right: 4%;
+}
+
+.booking-button-container {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.booking-button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.search-bar {
+    align: center;
+}
+
+.airbnb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.airbnb-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    background-color: #fff;
+    display: flex;
+}
+
+.airbnb-item:hover {
+    transform: translateY(-5px);
+    cursor: pointer;
+}
+
+.airbnb-image {
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.airbnb-details {
+    padding: 15px;
+}
+
+.airbnb-details h3 {
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.airbnb-details p {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+}
+
+.review {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.review-score {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 5px;
+    color: #333;
+}
+
+.review-count {
+    font-size: 14px;
+    color: #757575;
+}

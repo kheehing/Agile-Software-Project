@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include ('base/head'); %>
+    <title>Airbnb Search Results</title>
+    <link rel="stylesheet" href="/stylesheets/airbnb-style.css">
+</head>
+<body>
+    <%- include ('base/navbar'); %><br>
+    <form method="GET" id="formId">
+        <table class="search-bar">
+            <tr>
+                <td><label for="destination" class="booking-label">Destination</label></td>
+                <td><label for="checkin" class="booking-label">Check-in</label></td>
+                <td><label for="checkout" class="booking-label">Check-out</label></td>
+                <td><label for="adults" class="booking-label">Adults</label></td>
+                <td><label for="children" class="booking-label">Children</label></td>
+                <td><label for="infants" class="booking-label">Infants</label></td>
+                <td><label for="pets" class="booking-label">Pets</label></td>
+                <td rowspan="2"><button onclick="submitForm('searchResults')" class="btn btn-primary booking-button">Search</button></td>
+            </tr>
+            <tr>
+                <td><input type="text" class="form-control booking-input" id="destination" name="destination" placeholder="Enter destination" value="<%= searchInputs.destination %>" required /></td>
+                <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" value="<%= searchInputs.checkin %>" required /></td>
+                <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" value="<%= searchInputs.checkout %>" required /></td>
+                <td><input type="number" class="form-control booking-input" id="adults" name="adults" value="<%= searchInputs.adults %>" required /></td>
+                <td><input type="number" class="form-control booking-input" id="children" name="children" value="<%= searchInputs.children %>" required /></td>
+                <td><input type="number" class="form-control booking-input" id="infants" name="infants" value="<%= searchInputs.infants %>" required /></td>
+                <td><input type="number" class="form-control booking-input" id="pets" name="pets" value="<%= searchInputs.pets %>" required /></td>
+            </tr>
+        </table>
+        <div class="container">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h2>Search Results for Airbnbs in <%= searchInputs.destination %></h2>
+                </div>
+            </div>
+            <div class="airbnb-list">
+                <% searchResults.forEach(entry => { %>
+                    <div onclick="submitForm('<%= entry.id %>')" class="airbnb-item">
+                        <img src="<%= entry.images[0] %>" class="airbnb-image">
+                        <div class="airbnb-details">
+                            <h3><%= entry.listingName %></h3>
+                            <span>address</span>
+                            <div class="review">
+                                <span class="review-score"><%= entry.avgRating %></span>
+                                <span class="review-count"><%= entry.reviewsCount %></span>
+                            </div>
+                            <h7><%= entry.accessibilityLabel %></h7>
+                        </div>
+                    </div>
+                <% }) %>
+                <% if (searchResults.length == 0) { %>
+                    <p>No airbnbs found for your search.</p>
+                <% } %>
+            </div>
+        </div>
+    </form>
+    <%- include ('base/footer'); %>
+</body>
+</html>
+<script>
+    function submitForm(action) {
+        var form = document.getElementById("formId");
+        form.action = "/airbnb/" + action;
+        if (action != "searchResults") {
+            form.target = "_blank";
+        }
+        form.submit();
+    }
+</script>

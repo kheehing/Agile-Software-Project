@@ -21,41 +21,45 @@ function delay(time) {
 } 
 
 router.get('', (req, res) => {
-    res.render('airbnb', {searchInputs: {adults: 1, children: 0, infants: 0}, searchResults: []});
+    res.render('airbnb');
 });
 
-router.post('/searchResults', (req, res) => {
-    const inputs = {destination: req.body.destination, 
-                    adults: req.body.adults, 
-                    children: req.body.children, 
-                    infants: req.body.infants, 
-                    checkin: req.body.checkin, 
-                    checkout: req.body.checkout};
-    getData('searchDestination', {query: req.body.destination})
+router.get('/searchResults', (req, res) => {
+    const inputs = {destination: req.query.destination, 
+                    adults: req.query.adults, 
+                    children: req.query.children, 
+                    infants: req.query.infants,
+                    pets: req.query.pets,
+                    checkin: req.query.checkin, 
+                    checkout: req.query.checkout};
+    getData('searchDestination', {query: req.query.destination})
     .then(destinationResponse => {
         getData('searchPropertyByPlace', {id: destinationResponse.data.data[0].id, 
                                           currency: 'SGD', 
-                                          adults: req.body.adults, 
-                                          children: req.body.children, 
-                                          infants: req.body.infants, 
-                                          checkin: req.body.checkin, 
-                                          checkout: req.body.checkout})
+                                          adults: req.query.adults, 
+                                          children: req.query.children, 
+                                          infants: req.query.infants,
+                                          pets: req.query.pets,
+                                          checkin: req.query.checkin, 
+                                          checkout: req.query.checkout})
         .then(propertiesResponse => {
             const results = propertiesResponse.data.data;
             console.log(results);
-            res.render('airbnb', {searchInputs: inputs, searchResults: results});
+            console.log(results.location);
+            res.render('airbnbSearch', {searchInputs: inputs, searchResults: results});
         });
     });
 });
 
-router.post('/:id', (req, res) => {
+router.get('/:id', (req, res) => {
     const tripDetails = {propertyId: req.params.id,
                          currency: 'SGD',
-                         checkIn: req.body.checkin, 
-                         checkOut: req.body.checkout,
-                         adults: req.body.adults, 
-                         children: req.body.children, 
-                         infants: req.body.infants};
+                         checkIn: req.query.checkin, 
+                         checkOut: req.query.checkout,
+                         adults: req.query.adults, 
+                         children: req.query.children, 
+                         infants: req.query.infants,
+                         pets: req,query,pets};
     getData('getPropertyDetails', tripDetails)
     .then(propertyResponse => {
         const propertyDetails = propertyResponse.data.data;
@@ -63,15 +67,6 @@ router.post('/:id', (req, res) => {
         res.render('airbnbDetails', {tripDetails: tripDetails, propertyDetails: propertyDetails});
     });
 });
-
-
-
-
-
-
-
-
-
 
 //  =============================================================
 //  ========== Redirect nonexistent MUST BE LAST ROUTE ==========
