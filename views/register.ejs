@@ -21,7 +21,6 @@
         }
 
         .spacer {
-            margin-bottom: 30px;
             margin-top: 30px;
         }
 
@@ -69,7 +68,8 @@
         <div class="col-md-6 d-flex align-items-center">
             <div class="container login-container rounded shadow mx-auto">
                 <H1 class="spacer">Travel Planner</H1>
-                <form id="register-form" method="POST">
+                <H5>Register</H5>
+                <form id="register-form" action="/register" method="POST">
                     <div class="form-group spacer">
                         <label for="email">Email:</label>
                         <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
@@ -90,8 +90,8 @@
                         <button type="submit" class="btn btn-primary">Register</button>
                     </div>
                     <div class="d-flex justify-content-center align-items-center">
-                        <p class="m-0 me-2">Don't have an account?</p>
-                        <a href="/register" class="btn btn-link">Sign Up</a>
+                        <p class="m-0 me-2">Already have an account?</p>
+                        <a href="/login" class="btn btn-link">Sign In</a>
                     </div>
                 </form>
             </div>
@@ -99,45 +99,40 @@
     </div>
     <%- include ('base/footer'); %>
     <script>
+        window.onload = function(){
+            firebase.auth().onAuthStateChanged(function(user){
+                if (user){
+                   window.location.href = '/home'
+                }
+            });
+        }
         $(document).ready(function() {
             $("#register-form").submit(function(event) {
                 event.preventDefault();
-        
+    
                 const email = $("#email").val();
                 const cfm_email = $("#cfm-email").val();
                 const password = $("#pwd").val();
                 const cfm_password = $("#cfm-pwd").val();
-        
-                if (email != cfm_email){
-                    alert("Emails does not match!");
-                    event.preventDefault();
+
+                if (email !== cfm_email) {
+                    alert("Emails do not match!");
                     return;
-                } else if (password != cfm_password) {
-                    alert("Passwords does not match!");
-                    event.preventDefault();
+                }
+                if (password !== cfm_password) {
+                    alert("Passwords do not match!");
                     return;
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "/register",
-                    data: JSON.stringify({
-                        email: email,
-                        password: password
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(response) {
-                        alert("Login successful!");
-                        window.location.href = "/home";
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        if (xhr.status === 400) {
-                            alert("Invalid credentials. Please try again.");
-                        } else {
-                            alert("An error occurred. Please try again later.");
-                        }
-                    }
+                firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
+                    var user = userCredential.user;
+                    return window.location.href = "/home";
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    console.error('Error signing in', errorCode, errorMessage);
+                    alert(errorMessage);
                 });
             });
         });

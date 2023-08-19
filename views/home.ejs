@@ -1,120 +1,14 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Homepage</title>
-    <link rel="stylesheet" href="/stylesheets/homepage-style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <%- include ('base/head'); %>
+    <title>Home</title>
 </head>
-
-<body class="homepage-body">
-    <!-- Top Navigation -->
-    <div class="homepage-top-nav">
-        <div class="logo">
-            <img src="/images/image-placeholder.png" alt="Travel Planner Logo">
-            <h1 class="homepage-title">Travel Planner</h1>
-            <p class="homepage-slogan">Your one stop planning</p>
-        </div>
-        <div class="homepage-menu">
-            <a href="#">Home</a>
-            <a href="#">Flight</a>
-            <a href="#">Hotel</a>
-            <a href="#">AirBnB</a>
-            <a href="#">Itinerary</a>
-            <img style="height: 60px; width: 60px; filter: brightness(0%);" src="/images/gray-avatar.png" alt="User Logo">
-        </div>
-    </div>
-
-    <!-- Banner Image -->
-    <div class="homepage-banner-placeholder">
-        <img src="#" alt="Banner Image">
-    </div>
-
-    <!-- Introduction Section -->
-    <div class="homepage-introduction">
-        <div class="homepage-image-placeholder">
-            <img src="/images/image-placeholder.png" alt="Image Placeholder">
-        </div>
-        <div class="homepage-intro-buttons">
-            <div class="homepage-intro-text">
-                <h2>Take a trip across the globe with us</h2>
-                <p>Travel the world and plan a trip with us! Use our fuss-free services that we've provided just for
-                    you!</p>
-            </div>
-            <div class="homepage-buttons">
-                <div class="homepage-button">
-                    <img src="/images/image-placeholder.png" alt="Flight Logo">
-                    <button>Flight</button>
-                </div>
-                <div class="homepage-button">
-                    <img src="/images/image-placeholder.png" alt="Hotel Logo">
-                    <button>Hotel</button>
-                </div>
-                <div class="homepage-button">
-                    <img src="/images/image-placeholder.png" alt="AirBnB Logo">
-                    <button>AirBnB</button>
-                </div>
-                <div class="homepage-button">
-                    <img src="/images/image-placeholder.png" alt="Itinerary Logo">
-                    <button>Itinerary</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Socials Section -->
-    <div class="socials-section">
-        <h2 class="socials-title">Your Socials</h2>
-        <p class="socials-text">Explore the world around you</p>
-        <a class="socials-view-all-link" href="#">View All</a>
-    </div>
-
-    <!-- Image Gallery -->
-    <div class="socials-image-gallery" id="gallery">
-        <img src="/images/image-placeholder.png" alt="Image Placeholder 1">
-        <img src="/images/image-placeholder.png" alt="Image Placeholder 2">
-        <img src="/images/image-placeholder.png" alt="Image Placeholder 3">
-        <img src="/images/image-placeholder.png" alt="Image Placeholder 4">
-        <img src="/images/image-placeholder.png" alt="Image Placeholder 5">
-        <img src="/images/image-placeholder.png" alt="Image Placeholder 6">
-        <img src="/images/image-placeholder.png" alt="Image Placeholder 7">
-    </div>
-
-    <!-- Add Hammer.js library for swipe scrolling -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-
-<!-- Handle swipe gestures for gallery scrolling -->
-<script>
-    // Add event listener to handle click and drag scroll
-document.addEventListener('DOMContentLoaded', function () {
-    const gallery = document.getElementById('gallery');
-    let isMouseDown = false;
-    let startX;
-    let scrollLeft;
-
-    gallery.addEventListener('mousedown', (e) => {
-        isMouseDown = true;
-        startX = e.pageX - gallery.offsetLeft;
-        scrollLeft = gallery.scrollLeft;
-    });
-
-    gallery.addEventListener('mouseleave', () => {
-        isMouseDown = false;
-    });
-
-    gallery.addEventListener('mouseup', () => {
-        isMouseDown = false;
-    });
-
-    gallery.addEventListener('mousemove', (e) => {
-        if (!isMouseDown) return;
-        e.preventDefault();
-        const x = e.pageX - gallery.offsetLeft;
-        const walk = (x - startX) * 3; // You can adjust the scrolling speed here
-        gallery.scrollLeft = scrollLeft - walk;
-    });
-});
-</script>
+<body>
+    <%- include ('base/navbar'); %>
+    <h1>Hello World</h1>
+    <p>test</p>
+    <%- include ('base/footer'); %>
 </body>
 
 </html>

@@ -1,38 +1,28 @@
 const express = require('express');
 const router = express.Router();
+const admin = require('../firebaseAdmin.js');
 
 router.get('', (req, res) => {
   res.redirect('/');
 });
 
-router.post('/login', (req, res) => {
-  const { email, password } = req.body;
+router.post('', async (req, res) => {
+  const idToken = req.body.idToken;
 
-  admin.auth().getUserByEmail(email)
-    .then(userRecord => {
-      const hashedPassword = userRecord.password;
+  try {
+    // Verify the ID token using Firebase Admin SDK
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
 
-      bcrypt.compare(password, hashedPassword, (err, result) => {
-        if (err) {
-          return res.status(500).send('Error verifying password');
-        }
+    // Store user information in session
+    req.session.user = { uid: decodedToken.uid, email: decodedToken.email };
 
-        if (result) {
-          req.session.userId = userRecord.uid;
-          res.status(200).send('Login successful');
-        } else {
-          res.status(400).send('Invalid credentials');
-        }
-      });
-    }).catch(error => {
-      res.status(400).send('Invalid credentials');
-    });
+    // Send success response
+    res.status(200).json({ message: 'Login successful' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(401).json({ message: 'Invalid token' });
+  }
 });
-
-
-
-
-
 
 
 

@@ -1,5 +1,125 @@
 [
     {
+        "Name": "Singapore Changi Airport",
+        "City": "Singapore",
+        "Country": "Singapore",
+        "IATA": "SIN",
+        "ICAO": "WSSS",
+        "Latitude": "1.35019",
+        "Longitude": "103.994003",
+        "Combine": "Singapore Changi Airport (Singapore), Singapore"
+    },
+    {
+        "Name": "Kuala Lumpur International Airport",
+        "City": "Kuala Lumpur",
+        "Country": "Malaysia",
+        "IATA": "KUL",
+        "ICAO": "WMKK",
+        "Latitude": "2.745579958",
+        "Longitude": "101.7099991",
+        "Combine": "Kuala Lumpur International Airport (Kuala Lumpur), Malaysia"
+    },
+    {
+        "Name": "Incheon International Airport",
+        "City": "Seoul",
+        "Country": "South Korea",
+        "IATA": "ICN",
+        "ICAO": "RKSI",
+        "Latitude": "37.46910095",
+        "Longitude": "126.4509964",
+        "Combine": "Incheon International Airport (Seoul), South Korea"
+    },
+    {
+        "Name": "Narita International Airport",
+        "City": "Tokyo",
+        "Country": "Japan",
+        "IATA": "NRT",
+        "ICAO": "RJAA",
+        "Latitude": "35.76470184",
+        "Longitude": "140.3860016",
+        "Combine": "Narita International Airport (Tokyo), Japan"
+    },
+    {
+        "Name": "Taiwan Taoyuan International Airport",
+        "City": "Taipei",
+        "Country": "Taiwan",
+        "IATA": "TPE",
+        "ICAO": "RCTP",
+        "Latitude": "25.0777",
+        "Longitude": "121.233002",
+        "Combine": "Taiwan Taoyuan International Airport (Taipei), Taiwan"
+    },
+    {
+        "Name": "Don Mueang International Airport",
+        "City": "Bangkok",
+        "Country": "Thailand",
+        "IATA": "DMK",
+        "ICAO": "VTBD",
+        "Latitude": "13.91259956",
+        "Longitude": "100.6070023",
+        "Combine": "Don Mueang International Airport (Bangkok), Thailand"
+    },
+    {
+        "Name": "Ngurah Rai (Bali) International Airport",
+        "City": "Denpasar",
+        "Country": "Indonesia",
+        "IATA": "DPS",
+        "ICAO": "WADD",
+        "Latitude": "-8.748169899",
+        "Longitude": "115.1669998",
+        "Combine": "Ngurah Rai (Bali) International Airport (Denpasar), Indonesia"
+    },
+    {
+        "Name": "Ninoy Aquino International Airport",
+        "City": "Manila",
+        "Country": "Philippines",
+        "IATA": "MNL",
+        "ICAO": "RPLL",
+        "Latitude": "14.5086",
+        "Longitude": "121.019997",
+        "Combine": "Ninoy Aquino International Airport (Manila), Philippines"
+    },
+    {
+        "Name": "John F Kennedy International Airport",
+        "City": "New York",
+        "Country": "United States",
+        "IATA": "JFK",
+        "ICAO": "KJFK",
+        "Latitude": "40.63980103",
+        "Longitude": "-73.77890015",
+        "Combine": "John F Kennedy International Airport (New York), United States"
+    },
+    {
+        "Name": "Geneva Cointrin International Airport",
+        "City": "Geneva",
+        "Country": "Switzerland",
+        "IATA": "GVA",
+        "ICAO": "LSGG",
+        "Latitude": "46.23809814",
+        "Longitude": "6.108950138",
+        "Combine": "Geneva Cointrin International Airport (Geneva), Switzerland"
+    },
+    {
+        "Name": "Berlin-Sch\u00f6nefeld Airport",
+        "City": "Berlin",
+        "Country": "Germany",
+        "IATA": "SXF",
+        "ICAO": "EDDB",
+        "Latitude": "52.380001",
+        "Longitude": "13.5225",
+        "Combine": "Berlin-Sch\u00f6nefeld Airport (Berlin), Germany"
+    },
+    {
+        "Name": "Hong Kong International Airport",
+        "City": "Hong Kong",
+        "Country": "Hong Kong",
+        "IATA": "HKG",
+        "ICAO": "VHHH",
+        "Latitude": "22.308901",
+        "Longitude": "113.915001",
+        "Combine": "Hong Kong International Airport (Hong Kong), Hong Kong"
+    },
+    {
         "Name": "Goroka Airport",
         "City": "Goroka",
         "Country": "Papua New Guinea",
@@ -2938,16 +3058,6 @@
         "Latitude": "51.889442",
         "Longitude": "14.531944",
         "Combine": "Cottbus-Drewitz Airport (Cottbus), Germany"
-    },
-    {
-        "Name": "Berlin-Sch\u00f6nefeld Airport",
-        "City": "Berlin",
-        "Country": "Germany",
-        "IATA": "SXF",
-        "ICAO": "EDDB",
-        "Latitude": "52.380001",
-        "Longitude": "13.5225",
-        "Combine": "Berlin-Sch\u00f6nefeld Airport (Berlin), Germany"
     },
     {
         "Name": "Dresden Airport",
@@ -12490,16 +12600,6 @@
         "Combine": "Timi?oara Traian Vuia Airport (Timisoara), Romania"
     },
     {
-        "Name": "Geneva Cointrin International Airport",
-        "City": "Geneva",
-        "Country": "Switzerland",
-        "IATA": "GVA",
-        "ICAO": "LSGG",
-        "Latitude": "46.23809814",
-        "Longitude": "6.108950138",
-        "Combine": "Geneva Cointrin International Airport (Geneva), Switzerland"
-    },
-    {
         "Name": "Sion Airport",
         "City": "Sion",
         "Country": "Switzerland",
@@ -17170,16 +17270,6 @@
         "Combine": "Taipei Songshan Airport (Taipei), Taiwan"
     },
     {
-        "Name": "Taiwan Taoyuan International Airport",
-        "City": "Taipei",
-        "Country": "Taiwan",
-        "IATA": "TPE",
-        "ICAO": "RCTP",
-        "Latitude": "25.0777",
-        "Longitude": "121.233002",
-        "Combine": "Taiwan Taoyuan International Airport (Taipei), Taiwan"
-    },
-    {
         "Name": "Wang-an Airport",
         "City": "Wang An",
         "Country": "Taiwan",
@@ -17198,16 +17288,6 @@
         "Latitude": "24.0230999",
         "Longitude": "121.6179962",
         "Combine": "Hualien Airport (Hualien), Taiwan"
-    },
-    {
-        "Name": "Narita International Airport",
-        "City": "Tokyo",
-        "Country": "Japan",
-        "IATA": "NRT",
-        "ICAO": "RJAA",
-        "Latitude": "35.76470184",
-        "Longitude": "140.3860016",
-        "Combine": "Narita International Airport (Tokyo), Japan"
     },
     {
         "Name": "Matsumoto Airport",
@@ -18058,16 +18138,6 @@
         "Latitude": "24.46689987",
         "Longitude": "122.9779968",
         "Combine": "Yonaguni Airport (Yonaguni Jima), Japan"
-    },
-    {
-        "Name": "Ninoy Aquino International Airport",
-        "City": "Manila",
-        "Country": "Philippines",
-        "IATA": "MNL",
-        "ICAO": "RPLL",
-        "Latitude": "14.5086",
-        "Longitude": "121.019997",
-        "Combine": "Ninoy Aquino International Airport (Manila), Philippines"
     },
     {
         "Name": "Awang Airport",
@@ -23580,16 +23650,6 @@
         "Combine": "Hazrat Shahjalal International Airport (Dhaka), Bangladesh"
     },
     {
-        "Name": "Hong Kong International Airport",
-        "City": "Hong Kong",
-        "Country": "Hong Kong",
-        "IATA": "HKG",
-        "ICAO": "VHHH",
-        "Latitude": "22.308901",
-        "Longitude": "113.915001",
-        "Combine": "Hong Kong International Airport (Hong Kong), Hong Kong"
-    },
-    {
         "Name": "Agra Airport",
         "City": "Agra",
         "Country": "India",
@@ -24198,16 +24258,6 @@
         "Latitude": "4.191830158",
         "Longitude": "73.52909851",
         "Combine": "Mal\u00e9 International Airport (Male), Maldives"
-    },
-    {
-        "Name": "Don Mueang International Airport",
-        "City": "Bangkok",
-        "Country": "Thailand",
-        "IATA": "DMK",
-        "ICAO": "VTBD",
-        "Latitude": "13.91259956",
-        "Longitude": "100.6070023",
-        "Combine": "Don Mueang International Airport (Bangkok), Thailand"
     },
     {
         "Name": "Kamphaeng Saen Airport",
@@ -25220,16 +25270,6 @@
         "Combine": "Senai International Airport (Johor Bahru), Malaysia"
     },
     {
-        "Name": "Kuala Lumpur International Airport",
-        "City": "Kuala Lumpur",
-        "Country": "Malaysia",
-        "IATA": "KUL",
-        "ICAO": "WMKK",
-        "Latitude": "2.745579958",
-        "Longitude": "101.7099991",
-        "Combine": "Kuala Lumpur International Airport (Kuala Lumpur), Malaysia"
-    },
-    {
         "Name": "Langkawi International Airport",
         "City": "Langkawi",
         "Country": "Malaysia",
@@ -25328,16 +25368,6 @@
         "Latitude": "1.416949987",
         "Longitude": "103.8679962",
         "Combine": "Seletar Airport (Singapore), Singapore"
-    },
-    {
-        "Name": "Singapore Changi Airport",
-        "City": "Singapore",
-        "Country": "Singapore",
-        "IATA": "SIN",
-        "ICAO": "WSSS",
-        "Latitude": "1.35019",
-        "Longitude": "103.994003",
-        "Combine": "Singapore Changi Airport (Singapore), Singapore"
     },
     {
         "Name": "Brisbane Archerfield Airport",
@@ -25858,16 +25888,6 @@
         "Latitude": "30.7838",
         "Longitude": "114.208",
         "Combine": "Wuhan Tianhe International Airport (Wuhan), China"
-    },
-    {
-        "Name": "Pyongyang Sunan International Airport",
-        "City": "Pyongyang",
-        "Country": "North Korea",
-        "IATA": "FNJ",
-        "ICAO": "ZKPY",
-        "Latitude": "39.224098",
-        "Longitude": "125.669998",
-        "Combine": "Pyongyang Sunan International Airport (Pyongyang), North Korea"
     },
     {
         "Name": "Lanzhou Zhongchuan Airport",
@@ -29820,16 +29840,6 @@
         "Combine": "Kapalua Airport (Lahania-kapalua), United States"
     },
     {
-        "Name": "John F Kennedy International Airport",
-        "City": "New York",
-        "Country": "United States",
-        "IATA": "JFK",
-        "ICAO": "KJFK",
-        "Latitude": "40.63980103",
-        "Longitude": "-73.77890015",
-        "Combine": "John F Kennedy International Airport (New York), United States"
-    },
-    {
         "Name": "Homestead ARB Airport",
         "City": "Homestead",
         "Country": "United States",
@@ -31050,16 +31060,6 @@
         "Combine": "Adi Sumarmo Wiryokusumo Airport (Solo City), Indonesia"
     },
     {
-        "Name": "Incheon International Airport",
-        "City": "Seoul",
-        "Country": "South Korea",
-        "IATA": "ICN",
-        "ICAO": "RKSI",
-        "Latitude": "37.46910095",
-        "Longitude": "126.4509964",
-        "Combine": "Incheon International Airport (Seoul), South Korea"
-    },
-    {
         "Name": "Chiang Mai International Airport",
         "City": "Chiang Mai",
         "Country": "Thailand",
@@ -31138,16 +31138,6 @@
         "Latitude": "17.23800087",
         "Longitude": "99.81819916",
         "Combine": "Sukhothai Airport (Sukhothai), Thailand"
-    },
-    {
-        "Name": "Ngurah Rai (Bali) International Airport",
-        "City": "Denpasar",
-        "Country": "Indonesia",
-        "IATA": "DPS",
-        "ICAO": "WADD",
-        "Latitude": "-8.748169899",
-        "Longitude": "115.1669998",
-        "Combine": "Ngurah Rai (Bali) International Airport (Denpasar), Indonesia"
     },
     {
         "Name": "Eleftherios Venizelos International Airport",
@@ -53140,16 +53130,6 @@
         "Combine": "Lima Allen County Airport (Lima), United States"
     },
     {
-        "Name": "Sondok Airport",
-        "City": "Hamhung",
-        "Country": "North Korea",
-        "IATA": "DSO",
-        "ICAO": "ZKSD",
-        "Latitude": "39.745201",
-        "Longitude": "127.473999",
-        "Combine": "Sondok Airport (Hamhung), North Korea"
-    },
-    {
         "Name": "Malcolm McKinnon Airport",
         "City": "Brunswick",
         "Country": "United States",
@@ -53318,16 +53298,6 @@
         "Latitude": "42.066944",
         "Longitude": "127.602222",
         "Combine": "Changbaishan Airport (Baishan), China"
-    },
-    {
-        "Name": "Orang Airport",
-        "City": "Chongjin",
-        "Country": "North Korea",
-        "IATA": "RGO",
-        "ICAO": "ZKHM",
-        "Latitude": "41.428538",
-        "Longitude": "129.647555",
-        "Combine": "Orang Airport (Chongjin), North Korea"
     },
     {
         "Name": "Moomba Airport",
@@ -55928,16 +55898,6 @@
         "Latitude": "32.53154",
         "Longitude": "102.35224",
         "Combine": "Hongyuan Airport (Ngawa), China"
-    },
-    {
-        "Name": "Wonsan Kalma International Airport",
-        "City": "Wonsan",
-        "Country": "North Korea",
-        "IATA": "WOS",
-        "ICAO": "ZKWS",
-        "Latitude": "39.166801",
-        "Longitude": "127.486",
-        "Combine": "Wonsan Kalma International Airport (Wonsan), North Korea"
     },
     {
         "Name": "Magas Airport",

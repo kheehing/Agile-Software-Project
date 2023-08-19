@@ -3,12 +3,246 @@
 <head>
     <%- include ('base/head'); %>
     <title>Itinerary Page</title>
+    <style>
+        #dropdown {
+            top: 100%;
+            left: 0;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
     <%- include ('base/navbar'); %>
-    <h1>Hello World</h1>
-    <p>test</p>
+    <br>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col text-center">
+                <h3>Current Trips</h3>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addTripModal">Add Trip</button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addTripModal" tabindex="-1" aria-labelledby="addTripModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="add-trip-form" class="mb-3">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addTripModalLabel">Add Trip</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="d-flex align-items-center">
+                                <h4 class="mb-0">Trip Name</h4>
+                            </div>
+                            <input type="text" id="trip-name" class="form-control" placeholder="e.g. Trip to Bali" required>
+                            <br>
+                            <div class="d-flex align-items-center">
+                                <h4 class="mb-0">Destination</h4>
+                            </div>
+                            <div class="input-group position-relative">
+                                <input type="text" id="trip-destination" class="form-control" placeholder="Where to?">
+                                <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end">Add destination</button>
+                                <div id="dropdown" class="dropdown-menu position-absolute w-100" style="display: none;"></div>
+                            </div>
+                            <div id="selected-destinations" class="d-flex fkex-wrap"></div>
+                            <br>
+                            <div class="d-flex align-items-center">
+                                <h4 class="mb-0">Dates</h4>
+                                <span class="ms-2">(optional)</span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">From:</span>
+                                <input type="date" id="trip-from-date" class="form-control">
+                                <span class="input-group-text">To:</span>
+                                <input type="date" id="trip-to-date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save Trip</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div id="current-trip"></div>
+    </div>
     <%- include ('base/footer'); %>
+    <script>
+    $(document).ready(function() {
+        function loadTrips() {
+            fetch('/itinerary/trip/destinations').then(response => response.json()).then(trips => {
+                const currentTripDiv = document.getElementById('current-trip');
+                currentTripDiv.innerHTML = '';
+                if (trips.length === 0) {
+                    currentTripDiv.innerHTML = '<p>No trips at the moment...</p>';
+                } else {
+                    currentTripDiv.innerHTML = '<div class="row">';
+                    trips.forEach(trip => {
+                        const tripDiv = document.createElement('div');
+                        tripDiv.className = 'col-12';
+                        tripDiv.innerHTML = `
+                          <div class="card mb-4">
+                            <div class="card-body">
+                              <h5 class="card-title">${trip.tripName}</h5>
+                              <p class="card-text">Trip to ${trip.destinations.join(', ')}</p>
+                              <a href="#" class="btn btn-primary view-trip" data-trip-id="${trip.id}">View</a>
+                              <a href="#" class="btn btn-danger delete-trip" data-trip-id="${trip.id}">Delete</a>
+                            </div>
+                          </div>`;
+                        currentTripDiv.appendChild(tripDiv);
+                    });
+                    currentTripDiv.innerHTML += '</div>';
+                }
+            }).catch(error => {
+                console.error('An error occurred while loading the trips:', error);
+            });
+        }
+        loadTrips();
+
+        // Delete Card
+        $(document).on('click', '.delete-trip', function() {
+            const tripId = $(this).data('trip-id');
+            const userId = '<%= user.uid %>';
+            const tripElement = $(this).closest('.col-12');
+            fetch(`/itinerary/trip/${userId}/destinations/${tripId}`, {
+                method: 'DELETE'
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                tripElement.remove();
+                if (tripElement.parent().children().length === 0) {
+                    loadTrips();
+                }
+            }).catch(error => {
+                alert('An error occurred while deleting the trip.');
+            });
+        });
+        
+        // View Redirect
+        $(document).on('click', '.view-trip', function() {
+            const tripId = $(this).data('trip-id');
+            window.location.href = `/itinerary/p?tripId=${tripId}`;
+        });
+
+
+        var citiesAndCountries;
+        var addedDestinations = [];
+
+        $.getJSON('/data/airports.json', function(data) {
+            citiesAndCountries = data.map(item => ({
+                city: item.City,
+                country: item.Country
+            }));
+            // filter the same text out
+            citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country)));
+        });
+
+        // Hide the dropdown when the user clicks outside the input
+        $(document).on('click', function() {
+            $('#dropdown').hide();
+        });
+
+        // Prevent the click event when the user clicks inside the input
+        $('#trip-destination').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Show the dropdown when the user types in the input
+        $('#trip-destination').on('input', function() {
+            const query = $(this).val().toLowerCase();
+            const filteredOptions = citiesAndCountries.filter(item => item.city.toLowerCase().includes(query) || item.country.toLowerCase().includes(query));
+            
+            updateDropdown(filteredOptions.slice(0,5));
+        });
+
+        $('#add-destination-button').on('click', function() {
+            if (addedDestinations.length >= 5) {
+                alert('You can only add up to 5 destinations at one time.');
+                return;
+            }
+            const selectedDestination = $('#trip-destination').val();
+            if (selectedDestination && !addedDestinations.includes(selectedDestination)) {
+                addedDestinations.push(selectedDestination);
+                const destinationInput = $('<input>').attr('type', 'text').attr('readonly', true).addClass('form-control').val(selectedDestination);
+                const deleteButton = $('<button>').text('Delete').addClass('btn btn-danger rounded-end').on('click', function() {
+                    const index = addedDestinations.indexOf(selectedDestination);
+                    addedDestinations.splice(index, 1);
+                    $(this).closest('.input-group').remove();
+                });
+                const hiddenInput = $('<input>').attr('type', 'hidden').attr('name', 'destinations').val(selectedDestination);
+                const inputGroup = $('<div>').addClass('input-group mb-3').css({ 'width': 'auto', 'margin-right': '10px', 'margin-top': '10px' }).append(destinationInput, deleteButton, hiddenInput);
+                $('#selected-destinations').append(inputGroup);
+                $('#trip-destination').val(''); 
+            }
+        });
+
+        // Clear modal when closed
+        $('#addTripModal').on('hidden.bs.modal', function() {
+            $('#add-trip-form')[0].reset();
+            $('#selected-destinations').empty();
+            addedDestinations.length = 0;
+        });
+
+        function updateDropdown(options) {
+            const $dropdown = $('#dropdown');
+            $dropdown.empty();
+    
+            if (options.length > 0) {
+                $dropdown.show();
+            } else {
+                $dropdown.hide();
+            }
+    
+            options.forEach(item => {
+                const optionDiv = $('<div>').addClass('dropdown-item').text(`${item.city}, ${item.country}`);
+                optionDiv.on('click', function() {
+                    $('#trip-destination').val(`${item.city}, ${item.country}`);
+                    $dropdown.hide();
+                });
+                $dropdown.append(optionDiv);
+            });
+        }
+
+        $('#add-trip-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            if (addedDestinations.length === 0) {
+                alert('Please add at least one destination.');
+                return;
+            }
+
+            const destinations = addedDestinations;
+            let fromDate = $('#trip-from-date').val();
+            let toDate = $('#trip-to-date').val();
+            fromDate = fromDate ? fromDate : '';
+            toDate = toDate ? toDate : '';
+            const tripName = $('#trip-name').val();
+            const userId = '<%= user.uid %>';
+            $.post(`/itinerary/trip/${userId}/destinations`, { destinations, tripName, fromDate, toDate }, function(response) {
+                alert(response.message);
+                loadTrips();
+                currentTripDiv.appendChild(tripDiv);
+                $('#addTripModal').modal('hide');
+            }).fail(function(error) {
+                alert('An error occurred while adding the trip: ' + error.responseText);
+            });
+        });
+    });
+    </script>
 </body>
 
 </html>

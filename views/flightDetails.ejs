@@ -1,14 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include ('base/head'); %>
-    <title>Airbnb Page</title>
+        <title>Flight's Details Page</title>
 </head>
+
 <body>
     <%- include ('base/navbar'); %>
-    <h1>Hello World</h1>
-    <p>test</p>
-    <%- include ('base/footer'); %>
+
+            <div class="container mt-4" id="flightResults">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="mb-0">Flight Search Results</h2>
+                    <button class="btn btn-outline-dark" onclick="redirectToWebpage('<%= valuesJSON %>')">Book on Website</button>
+                </div>
+
+                <ul class="list-unstyled">
+                    <% if (flightData.data.context.totalResults > 0) { %>
+                        <% flightData.data.itineraries.forEach(itinerary => { %>
+                            <li class="card mb-3">
+                                <div class="card-header">
+                                    <h5>Price: <%= itinerary.price.formatted %></h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <% itinerary.legs.forEach(leg => { %>
+                                            <li>
+                                                <strong>Origin:</strong> <%= leg.origin.name %><br>
+                                                <strong>Destination:</strong> <%= leg.destination.name %><br>
+                                                <strong>Duration:</strong> <%= leg.durationInMinutes %> minutes<br>
+                                                <strong>Stop Count:</strong> <%= leg.stopCount %><br>
+                                                <strong>Departure:</strong> <%= new Date(leg.departure).toLocaleString() %><br>
+                                                <strong>Arrival:</strong> <%= new Date(leg.arrival).toLocaleString() %><br>
+                                                <strong>Carrier:</strong> <%= leg.carriers.marketing[0].name %><br>
+                                                <strong>Carrier Logo:</strong> <img src="<%= leg.carriers.marketing[0].logoUrl %>" alt="<%= leg.carriers.marketing[0].name %> Logo" width="100"><br>
+                                            </li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="alert alert-warning">
+                            No flight data available.
+                        </div>
+                    <% } %>
+                </ul>
+            </div>
+        
+
+        <%- include ('base/footer'); %>
 </body>
 
 </html>
+
+<script>
+    // function to redirect the user to webpage
+    function redirectToWebpage(valuesJSON) {
+
+        const values = JSON.parse(valuesJSON);
+        const [flightType, originIATA, destinationIATA, dateInYYMMDD, dateFromInYYMMDD, dateToInYYMMDD, adult, cabinClass, children, infant] = values;
+
+        if (flightType == "oneWay") {
+            const queryParams = new URLSearchParams({
+                adultsv2: adult,
+                cabinclass: cabinClass,
+                childrenv2: children,
+                infantv2: infant
+            });
+
+            const url = `https://www.skyscanner.com/transport/flights/${originIATA}/${destinationIATA}/${dateInYYMMDD}/?${queryParams.toString()}`;
+            window.open(url, '_blank');
+
+        } else if (flightType == "roundTrip") {
+            const queryParams = new URLSearchParams({
+                adultsv2: adult,
+                cabinclass: cabinClass,
+                childrenv2: children,
+                infantv2: infant
+            });
+
+            const url = `https://www.skyscanner.com/transport/flights/${originIATA}/${destinationIATA}/${dateFromInYYMMDD}/${dateToInYYMMDD}/?${queryParams.toString()}`;
+            window.open(url, '_blank');
+        }
+        
+    }
+
+</script>

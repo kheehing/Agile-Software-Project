@@ -69,7 +69,7 @@
         <div class="col-md-6 d-flex align-items-center">
             <div class="container login-container rounded shadow mx-auto">
                 <H1 class="spacer">Travel Planner</H1>
-                <form id="login-form" method="POST">
+                <form id="login-form">
                     <div class="form-group spacer">
                         <label for="email">Email:</label>
                         <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
@@ -94,32 +94,35 @@
         $(document).ready(function() {
             $("#login-form").submit(function(event) {
                 event.preventDefault();
-        
+              
                 const email = $("#email").val();
                 const password = $("#pwd").val();
-        
-                $.ajax({
-                    type: "POST",
-                    url: "/login",
-                    data: JSON.stringify({
-                        email: email,
-                        password: password
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(response) {
-                        alert("Login successful!");
+              
+                firebase.auth().signInWithEmailAndPassword(email, password).then((userCredential) => {
+                  userCredential.user.getIdToken().then((idToken) => {
+                    // Send the ID token to the server for verification
+                    $.ajax({
+                      url: "/login", // Update this to the correct endpoint if needed
+                      method: "POST",
+                      data: { idToken: idToken },
+                      success: function(response) {
+                        // Redirect to the home page on successful login
                         window.location.href = "/home";
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        if (xhr.status === 400) {
-                            alert("Invalid credentials. Please try again.");
-                        } else {
-                            alert("An error occurred. Please try again later.");
-                        }
-                    }
+                      },
+                      error: function(jqXHR, textStatus, errorThrown) {
+                        // Handle error on failed login
+                        alert(jqXHR.responseJSON.message || "An error occurred during login.");
+                      }
+                    });
+                  });
+                }).catch((error) => {
+                  var errorCode = error.code;
+                  var errorMessage = error.message;
+                  console.log(errorMessage);
+                  alert(errorMessage);
                 });
-            });
+              });
+              
         });
     </script>
 </body>
