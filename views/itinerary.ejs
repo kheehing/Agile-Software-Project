@@ -38,12 +38,17 @@
         <div class="modal fade" id="addTripModal" tabindex="-1" aria-labelledby="addTripModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form id="add-trip-form" class="mb-3"></form>
+                    <form id="add-trip-form" class="mb-3">
                         <div class="modal-header">
                             <h5 class="modal-title" id="addTripModalLabel">Add Trip</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            <div class="d-flex align-items-center">
+                                <h4 class="mb-0">Trip Name</h4>
+                            </div>
+                            <input type="text" id="trip-name" class="form-control" placeholder="e.g. Trip to Bali" required>
+                            <br>
                             <div class="d-flex align-items-center">
                                 <h4 class="mb-0">Destination</h4>
                             </div>
@@ -73,35 +78,67 @@
                 </div>
             </div>
         </div>
-        <div id="current-trip">
-            <p>no trips...</p>
-        </div>
+        <br>
+        <div id="current-trip"></div>
     </div>
     <%- include ('base/footer'); %>
     <script>
     $(document).ready(function() {
         function loadTrips() {
-            fetch('/itinerary/trip/destinations')
-              .then(response => response.json())
-              .then(trips => {
-                console.log('loadTrips()');
+            fetch('/itinerary/trip/destinations').then(response => response.json()).then(trips => {
                 const currentTripDiv = document.getElementById('current-trip');
+                currentTripDiv.innerHTML = '';
                 if (trips.length === 0) {
-                  currentTripDiv.innerHTML = '<p>No trips at the moment...</p>';
+                    currentTripDiv.innerHTML = '<p>No trips at the moment...</p>';
                 } else {
-                  currentTripDiv.innerHTML = '<ul class="list-group">';
-                  trips.forEach(trip => {
-                    currentTripDiv.innerHTML += `<li class="list-group-item">${trip.destinations.join(', ')}</li>`;
-                  });
-                  currentTripDiv.innerHTML += '</ul>';
+                    currentTripDiv.innerHTML = '<div class="row">';
+                    trips.forEach(trip => {
+                        const tripDiv = document.createElement('div');
+                        tripDiv.className = 'col-12';
+                        tripDiv.innerHTML = `
+                          <div class="card mb-4">
+                            <div class="card-body">
+                              <h5 class="card-title">${trip.tripName}</h5>
+                              <p class="card-text">Trip to ${trip.destinations.join(', ')}</p>
+                              <a href="#" class="btn btn-primary view-trip" data-trip-id="${trip.id}">View</a>
+                              <a href="#" class="btn btn-danger delete-trip" data-trip-id="${trip.id}">Delete</a>
+                            </div>
+                          </div>`;
+                        currentTripDiv.appendChild(tripDiv);
+                    });
+                    currentTripDiv.innerHTML += '</div>';
                 }
-              })
-              .catch(error => {
+            }).catch(error => {
                 console.error('An error occurred while loading the trips:', error);
-              });
-          }
+            });
+        }
         loadTrips();
+
+        // Delete Card
+        $(document).on('click', '.delete-trip', function() {
+            const tripId = $(this).data('trip-id');
+            const userId = '<%= user.uid %>';
+            const tripElement = $(this).closest('.col-12');
+            fetch(`/itinerary/trip/${userId}/destinations/${tripId}`, {
+                method: 'DELETE'
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                tripElement.remove();
+                if (tripElement.parent().children().length === 0) {
+                    loadTrips();
+                }
+            }).catch(error => {
+                alert('An error occurred while deleting the trip.');
+            });
+        });
         
+        // View Redirect
+        $(document).on('click', '.view-trip', function() {
+            const tripId = $(this).data('trip-id');
+            window.location.href = `/itinerary/p?tripId=${tripId}`;
+        });
+
+
         var citiesAndCountries;
         var addedDestinations = [];
 
@@ -153,6 +190,13 @@
             }
         });
 
+        // Clear modal when closed
+        $('#addTripModal').on('hidden.bs.modal', function() {
+            $('#add-trip-form')[0].reset();
+            $('#selected-destinations').empty();
+            addedDestinations.length = 0;
+        });
+
         function updateDropdown(options) {
             const $dropdown = $('#dropdown');
             $dropdown.empty();
@@ -175,15 +219,24 @@
 
         $('#add-trip-form').on('submit', function(e) {
             e.preventDefault();
-        
+            
+            if (addedDestinations.length === 0) {
+                alert('Please add at least one destination.');
+                return;
+            }
+
             const destinations = addedDestinations;
             let fromDate = $('#trip-from-date').val();
             let toDate = $('#trip-to-date').val();
             fromDate = fromDate ? fromDate : '';
             toDate = toDate ? toDate : '';
-            const userId = firebase.auth().currentUser.uid;
-            $.post(`/itinerary/trip/${userId}/destinations`, { destinations, fromDate, toDate }, function(response) {
+            const tripName = $('#trip-name').val();
+            const userId = '<%= user.uid %>';
+            $.post(`/itinerary/trip/${userId}/destinations`, { destinations, tripName, fromDate, toDate }, function(response) {
                 alert(response.message);
+                loadTrips();
+                currentTripDiv.appendChild(tripDiv);
+                $('#addTripModal').modal('hide');
             }).fail(function(error) {
                 alert('An error occurred while adding the trip: ' + error.responseText);
             });

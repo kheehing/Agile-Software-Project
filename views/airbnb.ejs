@@ -3,12 +3,83 @@
 <head>
     <%- include ('base/head'); %>
     <title>Airbnb Page</title>
+    <style>
+        table, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        .tableRow:hover {
+            cursor: pointer;
+            background-color: #f3f3f3;
+        }
+    </style>
 </head>
 <body>
     <%- include ('base/navbar'); %>
-    <h1>Hello World</h1>
-    <p>test</p>
+    <form method="POST" id="formId">
+        <div class="container mt-1">
+            <h1>Search Airbnbs</h1>
+            <div class="row g-3">
+                <div class="form-group col">
+                    <label for="destination">Destination</label>
+                    <input type="text" class="form-control" id="destination" name="destination" value="<%= searchInputs.destination %>" required />
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="form-group col">
+                    <label for="adults">Adults</label>
+                    <input type="number" class="form-control" id="adults" name="adults" min="1" value="<%= searchInputs.adults %>" />
+                </div>
+                <div class="form-group col">
+                    <label for="children">Children</label>
+                    <input type="number" class="form-control" id="children" name="children" min="0" value="<%= searchInputs.children %>" />
+                </div>
+                <div class="form-group col">
+                    <label for="infants">Infants</label>
+                    <input type="number" class="form-control" id="infants" name="infants" min="0" value="<%= searchInputs.infants %>" />
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="form-group col">
+                    <label for="checkin">Check-in Date</label>
+                    <input type="date" class="form-control" id="checkin" name="checkin" value="<%= searchInputs.checkin %>" required />
+                </div>
+                <div class="form-group col">
+                    <label for="checkout">Check-out Date</label>
+                    <input type="date" class="form-control" id="checkout" name="checkout" value="<%= searchInputs.checkout %>" required />
+                </div>
+            </div>
+            <button onclick="submitForm('searchResults')" class="btn btn-primary mt-2">Search</button><br><br>
+            <table>
+                <% searchResults.forEach(entry => { %>
+                    <tr onclick="submitForm('<%= entry.id %>')" class="tableRow">
+                        <td rowspan="4"><img src="<%= entry.images[0] %>" width="200" height="200"></td>
+                        <td><%= entry.title %></td>
+                        <td width="100" style="text-align: right;"><%= entry.avgRatingLocalized %></td>
+                    </tr>
+                    <tr onclick="submitForm('<%= entry.id %>')" class="tableRow">
+                        <td colspan="2"><%= entry.listingName %></td>
+                    </tr>
+                    <tr onclick="submitForm('<%= entry.id %>')" class="tableRow">
+                        <td colspan="2"><%= entry.listingBedLabel %></td>
+                    </tr>
+                    <tr onclick="submitForm('<%= entry.id %>')" class="tableRow">
+                        <td colspan="2"><%= entry.accessibilityLabel %></td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+    </form>
     <%- include ('base/footer'); %>
 </body>
-
 </html>
+<script>
+    function submitForm(action) {
+        var form = document.getElementById("formId");
+        form.action = "/airbnb/" + action;
+        if (action != "searchResults") {
+            form.target = "_blank";
+        }
+        form.submit();
+    }
+</script>
