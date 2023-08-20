@@ -41,12 +41,9 @@
                         <img src="<%= entry.images[0] %>" class="airbnb-image">
                         <div class="airbnb-details">
                             <h3><%= entry.listingName %></h3>
-                            <span>address</span>
-                            <div class="review">
-                                <span class="review-score"><%= entry.avgRating %></span>
-                                <span class="review-count"><%= entry.reviewsCount %></span>
-                            </div>
-                            <h7><%= entry.accessibilityLabel %></h7>
+                            <span><%= entry.publicAddress %></span><br>
+                            <span><%= entry.avgRatingLocalized %></span><br>
+                            <span><%= entry.accessibilityLabel %></span>
                         </div>
                     </div>
                 <% }) %>

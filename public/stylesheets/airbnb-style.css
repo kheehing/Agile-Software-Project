@@ -56,7 +56,7 @@
 }
 
 .search-bar {
-    align: center;
+    margin: auto;
 }
 
 .airbnb-list {
@@ -97,26 +97,16 @@
     margin-bottom: 5px;
 }
 
-.airbnb-details p {
-    font-size: 14px;
-    color: #757575;
-    margin: 0;
+.info-booking-search-box {
+    width: 100%;
 }
 
-.review {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+s {
+    color: #717171;
 }
 
-.review-score {
+.info-booking-button {
+    padding: 10px 20px;
     font-size: 16px;
-    font-weight: bold;
-    margin-right: 5px;
-    color: #333;
-}
-
-.review-count {
-    font-size: 14px;
-    color: #757575;
+    width: 100%;
 }

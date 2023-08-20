@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include ('base/head'); %>
+    <title>Airbnb Information Page</title>
+    <link rel="stylesheet" href="/stylesheets/airbnb-style.css">
+</head>
+<body>
+    <%- include ('base/navbar'); %><br>
+    <h3><%= propertyDetails.title %></h3>
+    <% propertyDetails.images.forEach(image => { %>
+        <img src="<%= image %>">
+    <% }) %>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <% propertyDetails.details.forEach(detail => { %>
+                    <% if ("amenities" in detail) { %>
+                        <h3><%= detail.title %></h3>
+                        <% detail.amenities.forEach(amenity => { %>
+                            <%= amenity %>
+                        <% }) %>
+                    <% } %>
+                <% }) %>
+            </div>
+            <div class="col-md-6">
+                <div class="booking-search-box">
+                    <table class="info-booking-search-box">
+                        <tr>
+                            <% if ("price" in propertyDetails.price.structuredDisplayPrice) { %>
+                                <td colspan="2"><h3><%= propertyDetails.price.accessibilityLabel %></h3></td>
+                            <% } else { %>
+                                <td colspan="2"><h3><s><%= propertyDetails.price.structuredDisplayPrice.originalPrice %></s> <%= propertyDetails.price.structuredDisplayPrice.discountedPrice %> per night</h3></td>
+                            <% } %>
+                        </tr>
+                        <form action="" method="GET">
+                            <div class="form-group">
+                                <tr>
+                                    <td><label for="checkin" class="booking-label">Check-in</label></td>
+                                    <td><label for="checkout" class="booking-label">Check-out</label></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" value="<%= tripDetails.checkIn %>" required /></td>
+                                    <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" value="<%= tripDetails.checkOut %>" required /></td>
+                                </tr>
+                            </div>
+                            <div class="form-group">
+                                <tr>
+                                    <td colspan="2"><label for="adults" class="booking-label">Adults</label></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><input type="number" class="form-control booking-input" id="adults" name="adults" value="<%= tripDetails.adults %>" required /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><label for="children" class="booking-label">Children</label></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><input type="number" class="form-control booking-input" id="children" name="children" value="<%= tripDetails.children %>" required /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><label for="infants" class="booking-label">Infants</label></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><input type="number" class="form-control booking-input" id="infants" name="infants" value="<%= tripDetails.infants %>" required /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><label for="pets" class="booking-label">Pets</label></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><input type="number" class="form-control booking-input" id="pets" name="pets" value="<%= tripDetails.pets %>" required /></td>
+                                </tr>
+                            </div>
+                            <div class="booking-button-container">
+                                <tr>
+                                    <td colspan="2"><button type="submit" class="btn btn-primary info-booking-button">Reserve</button></td>
+                                </tr>
+                            </div>
+                        </form>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include ('base/footer'); %>
+</body>
+</html>
