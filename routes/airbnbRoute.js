@@ -68,7 +68,6 @@ router.get('/:id', (req, res) => {
     .then(propertyResponse => {
         const propertyDetails = propertyResponse.data.data;
         console.log(propertyDetails);
-        console.log(propertyDetails.details[0].amenities[0].amenities);
         res.render('airbnbInfo', {user: req.session.user, tripDetails: tripDetails, propertyDetails: propertyDetails});
     });
 });

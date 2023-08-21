@@ -1,5 +1,13 @@
-.container {
-    margin: 0px 292.5px;
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+h3 {
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 5px;
 }
 
 .airbnb-medium-image {
@@ -17,16 +25,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.booking-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
 .booking-label {
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin: 5px 0px;
     display: block;
 }
 
@@ -43,6 +45,25 @@
     display: inline-block;
     width: 48%;
     margin-right: 4%;
+}
+
+.guests-input {
+    cursor: pointer;
+}
+
+.guests-input:focus {
+    box-shadow: none;
+    border: 1px solid #ccc;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+#dropdownContent {
+    display: none;
 }
 
 .booking-button-container {
@@ -91,10 +112,41 @@
     padding: 15px;
 }
 
-.airbnb-details h3 {
-    font-size: 18px;
-    margin: 0;
-    margin-bottom: 5px;
+.image-slideshow {
+    width: 100%;
+}
+
+.current-image-div {
+    width: 1000px;
+    height: 500px;
+    background-color: #e4dfda;
+    margin: auto;
+}
+
+#currentImage {
+    width: 1000px;
+    height: 500px;
+    object-fit: contain;
+}
+
+.indicators {
+    width: 1000px;
+    height: 140px;
+    background-color: #e4dfda;
+    display: flex;
+    overflow-x: scroll;
+    margin: auto;
+}
+
+.indicator-image {
+    width: 200px;
+    height: 140px;
+    object-fit: contain;
+    padding: 0px 5px;
+}
+
+.indicator-image:hover, .prev-arrow:hover, .next-arrow:hover {
+    cursor: pointer;
 }
 
 .info-booking-search-box {
@@ -109,4 +161,5 @@ s {
     padding: 10px 20px;
     font-size: 16px;
     width: 100%;
+    margin-top: 15px;
 }

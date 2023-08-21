@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-6 airbnb-right-content">
                 <div class="booking-search-box">
-                    <h2 class="booking-title">Where do you want to stay?</h2>
+                    <h2>Where do you want to stay?</h2>
                     <form action="/airbnb/searchResults" method="GET">
                         <div class="form-group">
                             <label for="destination" class="booking-label">Destination</label>
@@ -23,22 +23,26 @@
                         <div class="form-group">
                             <div class="booking-date">
                                 <label for="checkin" class="booking-label">Check-in</label>
-                                <input type="date" class="form-control booking-input" id="checkin" name="checkin" required />
+                                <input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" required />
                             </div>
                             <div class="booking-date">
                                 <label for="checkout" class="booking-label">Check-out</label>
-                                <input type="date" class="form-control booking-input" id="checkout" name="checkout" required />
+                                <input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" required />
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="adults" class="booking-label">Adults</label>
-                            <input type="number" class="form-control booking-input" id="adults" name="adults" value="0" required />
-                            <label for="children" class="booking-label">Children</label>
-                            <input type="number" class="form-control booking-input" id="children" name="children" value="0" required />
-                            <label for="infants" class="booking-label">Infants</label>
-                            <input type="number" class="form-control booking-input" id="infants" name="infants" value="0" required />
-                            <label for="pets" class="booking-label">Pets</label>
-                            <input type="number" class="form-control booking-input" id="pets" name="pets" value="0" required />
+                        <div class="form-group dropdown">
+                            <label for="guests" class="booking-label">Guests</label>
+                            <input type="number" class="form-control booking-input guests-input" id="guests" name="guests" placeholder="No. of guests" onclick="dropdownVisible()" required readonly />
+                            <div id="dropdownContent">
+                                <label for="adults" class="booking-label">Adults</label>
+                                <input type="number" class="form-control booking-input" id="adults" name="adults" value="0" required />
+                                <label for="children" class="booking-label">Children</label>
+                                <input type="number" class="form-control booking-input" id="children" name="children" value="0" required />
+                                <label for="infants" class="booking-label">Infants</label>
+                                <input type="number" class="form-control booking-input" id="infants" name="infants" value="0" required />
+                                <label for="pets" class="booking-label">Pets</label>
+                                <input type="number" class="form-control booking-input" id="pets" name="pets" value="0" required />
+                            </div>
                         </div>
                         <div class="booking-button-container">
                             <button type="submit" class="btn btn-primary booking-button">Search</button>
@@ -51,3 +55,14 @@
     <%- include ('base/footer'); %>
 </body>
 </html>
+<script>
+    function dropdownVisible() {
+        var dropdownContent = document.getElementById("dropdownContent");
+        if (dropdownContent.style.display == "" || dropdownContent.style.display == "none") {
+            dropdownContent.style.display = "block";
+        }
+        else {
+            dropdownContent.style.display = "none";
+        }
+    }
+</script>

@@ -21,8 +21,8 @@
             </tr>
             <tr>
                 <td><input type="text" class="form-control booking-input" id="destination" name="destination" placeholder="Enter destination" value="<%= searchInputs.destination %>" required /></td>
-                <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" value="<%= searchInputs.checkin %>" required /></td>
-                <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" value="<%= searchInputs.checkout %>" required /></td>
+                <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkin %>" required /></td>
+                <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkout %>" required /></td>
                 <td><input type="number" class="form-control booking-input" id="adults" name="adults" value="<%= searchInputs.adults %>" required /></td>
                 <td><input type="number" class="form-control booking-input" id="children" name="children" value="<%= searchInputs.children %>" required /></td>
                 <td><input type="number" class="form-control booking-input" id="infants" name="infants" value="<%= searchInputs.infants %>" required /></td>
