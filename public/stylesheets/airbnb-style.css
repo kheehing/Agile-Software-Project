@@ -32,6 +32,12 @@ h3 {
     display: block;
 }
 
+.booking-label-caption {
+    font-size: 13px;
+    margin-bottom: 5px;
+    color: #858786;
+}
+
 .booking-input {
     width: 100%;
     padding: 10px;
@@ -47,11 +53,11 @@ h3 {
     margin-right: 4%;
 }
 
-.guests-input {
+.guests-input:hover {
     cursor: pointer;
 }
 
-.guests-input:focus {
+.guests-input:focus, .dropdown-input:focus {
     box-shadow: none;
     border: 1px solid #ccc;
 }
@@ -62,8 +68,56 @@ h3 {
     width: 100%;
 }
 
+#dropdownArrow {
+    position: absolute;
+    top: 41px;
+    right: 10px;
+    width: 25px;
+}
+
 #dropdownContent {
     display: none;
+    position: absolute;
+    top: 80px;
+    width: 350px;
+    padding: 15px 20px 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.dropdown-table {
+    width: 100%;
+}
+
+.dropdown-table-divider {
+    border-bottom: 1px solid #ccc;
+}
+
+.minus-button, .minus-button-disabled, .plus-button {
+    background-color: #fff;
+    border: none;
+}
+
+.minus-button-disabled:hover {
+    cursor: not-allowed;
+}
+
+.minus-icon, .plus-icon {
+    width: 20px;
+}
+
+.dropdown-input {
+    width: 30px;
+    border: none;
+    font-size: 14px;
+    text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0px;
 }
 
 .booking-button-container {
@@ -114,12 +168,13 @@ h3 {
 
 .image-slideshow {
     width: 100%;
+    border-radius: 10px;
 }
 
 .current-image-div {
     width: 1000px;
     height: 500px;
-    background-color: #e4dfda;
+    background-color: #eee;
     margin: auto;
 }
 
@@ -132,7 +187,7 @@ h3 {
 .indicators {
     width: 1000px;
     height: 140px;
-    background-color: #e4dfda;
+    background-color: #eee;
     display: flex;
     overflow-x: scroll;
     margin: auto;
