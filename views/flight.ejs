@@ -3,7 +3,8 @@
 
 <head>
     <%- include ('base/head'); %>
-        <title>Flights Page</title>
+    <title>Flights Page</title>
+    <link rel="stylesheet" href="/stylesheets/flight-style.css">
 </head>
 
 <body>
@@ -12,72 +13,82 @@
         <!-- First Row -->
         <div class="container mt-3">
             <div class="row">
-                <!-- Image Column -->
+                <!-- Placeholder image on the left of form -->
                 <div class="col-md-6 d-none d-md-block">
-                    <img src="images/image-placeholder.png" alt="Image" class="img-fluid" style="object-fit: cover; height: 100%;"">
+                    <img src="images/image-placeholder.png" alt="Image" class="img-fluid" style="object-fit: cover; height: 100%;">
                 </div>
                 
                 <!-- Form Column -->
-                <div class="col-md-6">
+                <div class="col-md-6 booking-search-box">
                     <div class="container mt-3">
-                        <h2 style="text-align: center;">Flight Booking Form</h2>
+                        <!-- Booking title -->
+                        <h2 style="text-align: center;" class="booking-title">Flight Booking Form</h2>
                         <div class="form-group mt-3">
-                            <label for="flightType">Select flight type:</label>
-                            <select class="form-control" id="flightType">
-                                <option value="oneWay">One-way</option>
-                                <option value="roundTrip">Round-trip</option>
+                            <!-- Dropdown to display One-way or Round-trip Form -->
+                            <label for="flightType" class="booking-label">Select flight type:</label>
+                            <select class="form-control booking-input" id="flightType">
+                                <option value="oneWay">One-Way</option>
+                                <option value="roundTrip">Round-Trip</option>
                             </select>
                         </div>
             
+                        <!-- One-way form -->
                         <div id="oneWayForm">
                             <form action="/flight/oneWay" method="POST">
+
+                                <!-- First Row of One-Way Form -->
                                 <div class="row g-3">
+                                    <!-- Input for Origin -->
                                     <div class="form-group col">
-                                        <label for="origin">Origin</label>
-                                        <input type="text" class="form-control" id="origin" name="origin" list="airportlist"
-                                            required>
-                                        <datalist id="airportlist">
-                                        </datalist>
+                                        <label for="origin" class="booking-label">Origin</label>
+                                        <input type="text" class="form-control booking-input" id="origin" name="origin" list="airportlist" required>
+                                        <!-- Datalist from airports.json -->
+                                        <datalist id="airportlist"></datalist>
                                     </div>
             
+                                    <!-- Input for Destination -->
                                     <div class="form-group col">
-                                        <label for="destination">Destination</label>
-                                        <input type="text" class="form-control" id="destination" name="destination"
-                                            list="airportlist" required>
+                                        <label for="destination" class="booking-label">Destination</label>
+                                        <input type="text" class="form-control booking-input" id="destination" name="destination" list="airportlist" required>
+                                        <!-- Datalist from airports.json -->
                                         <datalist id="airportlist">
                                         </datalist>
                                     </div>
                                 </div>
-            
+
+                                <!-- Second Row of One-Way Form -->
                                 <div class="row g-3">
+                                    <!-- Input for Adults -->
                                     <div class="form-group col">
-                                        <label for="adults">Adults</label>
-                                        <input type="number" class="form-control" id="adults" name="adults" min="1" value="1"
-                                            required>
+                                        <label for="adults" class="booking-label">Adults</label>
+                                        <input type="number" class="form-control booking-input" id="adults" name="adults" min="1" value="1" required>
                                     </div>
             
+                                    <!-- Input for Children -->
                                     <div class="form-group col">
-                                        <label for="children">Children</label>
-                                        <input type="number" class="form-control" id="children" name="children" min="0" value="0"
-                                            required>
+                                        <label for="children" class="booking-label">Children</label>
+                                        <input type="number" class="form-control booking-input" id="children" name="children" min="0" value="0" required>
                                     </div>
             
+                                    <!-- Input for Infant -->
                                     <div class="form-group col">
-                                        <label for="infants">Infants</label>
-                                        <input type="number" class="form-control" id="infants" name="infants" min="0" value="0"
-                                            required>
+                                        <label for="infants" class="booking-label">Infants</label>
+                                        <input type="number" class="form-control booking-input" id="infants" name="infants" min="0" value="0" required>
                                     </div>
                                 </div>
             
+                                <!-- Third Row of One-Way Form -->
                                 <div class="row g-3">
+                                    <!-- Input for Date -->
                                     <div class="form-group col">
-                                        <label for="date">Date</label>
-                                        <input type="date" class="form-control" id="date" name="date" required>
+                                        <label for="date" class="booking-label">Date</label>
+                                        <input type="date" class="form-control booking-input" id="date" name="date" required>
                                     </div>
             
                                     <div class="form-group col">
-                                        <label for="cabinClass">Cabin Class</label>
-                                        <select class="form-control" id="cabinClass" name="cabinClass" required>
+                                        <!-- Dropdown for Cabin Class -->
+                                        <label for="cabinClass" class="booking-label">Cabin Class</label>
+                                        <select class="form-control booking-input" id="cabinClass" name="cabinClass" required>
                                             <option disabled>Select Cabin Class</option>
                                             <option value="economy" selected>Economy</option>
                                             <option value="premium_economy">Premium Economy</option>
@@ -87,62 +98,74 @@
                                     </div>
                                 </div>
             
-                                <button type="submit" class="btn btn-primary mt-2">Search</button>
+                                <!-- Submit button for One-Way Form -->
+                                <button type="submit" class="btn btn-primary mt-2 booking-button">Search</button>
                             </form>
                         </div>
             
+                        <!-- Round-Trip Form -->
                         <div id="roundTripForm" style="display: none;">
                             <form action="/flight/roundTrip" method="POST">
-            
+
+                                <!-- First Row of Form -->
                                 <div class="row g-3">
+                                    <!-- Input for Origin -->
                                     <div class="form-group col">
-                                        <label for="origin">Origin</label>
-                                        <input type="text" id="origin" class="form-control" name="origin" list="airportlist"
-                                            required>
-                                        <datalist id="airportlist">
-                                        </datalist>
+                                        <label for="origin" class="booking-label">Origin</label>
+                                        <input type="text" id="origin" class="form-control booking-input" name="origin" list="airportlist" required>
+                                        <!-- Datalist from airports.json -->
+                                        <datalist id="airportlist"></datalist>
                                     </div>
             
+                                    <!-- Input for Destination -->
                                     <div class="form-group col">
-                                        <label for="destination">Destination</label>
-                                        <input type="text" class="form-control" id="destination" name="destination"
-                                            list="airportlist" required>
-                                        <datalist id="airportlist">
-                                        </datalist>
+                                        <label for="destination" class="booking-label">Destination</label>
+                                        <input type="text" class="form-control booking-input" id="destination" name="destination" list="airportlist" required>
+                                        <!-- Datalist from airports.json -->
+                                        <datalist id="airportlist"></datalist>
                                     </div>
                                 </div>
+
             
+                                <!-- Second Row of Form -->
                                 <div class="row g-3">
+                                    <!-- Input for Adults -->
                                     <div class="form-group col">
-                                        <label for="adults">Adults</label>
-                                        <input type="number" class="form-control" id="adults" name="adults" min="1" value="1">
+                                        <label for="adults" class="booking-label">Adults</label>
+                                        <input type="number" class="form-control booking-input" id="adults" name="adults" min="1" value="1">
                                     </div>
             
+                                    <!-- Input for Children -->
                                     <div class="form-group col">
-                                        <label for="children">Children</label>
-                                        <input type="number" class="form-control" id="children" name="children" min="0" value="0">
+                                        <label for="children" class="booking-label">Children</label>
+                                        <input type="number" class="form-control booking-input" id="children" name="children" min="0" value="0">
                                     </div>
             
+                                    <!-- Input for Infants -->
                                     <div class="form-group col">
-                                        <label for="infants">Infants</label>
-                                        <input type="number" class="form-control" id="infants" name="infants" min="0" value="0">
+                                        <label for="infants" class="booking-label">Infants</label>
+                                        <input type="number" class="form-control booking-input" id="infants" name="infants" min="0" value="0">
                                     </div>
                                 </div>
-            
+
+                                <!-- Third Row of Form -->
                                 <div class="row g-3">
+                                    <!-- Input for From Date -->
                                     <div class="form-group col">
-                                        <label for="from">From</label>
-                                        <input type="date" class="form-control" id="from" name="from" required>
+                                        <label for="from" class="booking-label">From</label>
+                                        <input type="date" class="form-control booking-input" id="from" name="from" required>
                                     </div>
             
+                                    <!-- Input for To Date -->
                                     <div class="form-group col">
-                                        <label for="to">To</label>
-                                        <input type="date" class="form-control" id="to" name="to" required>
+                                        <label for="to" class="booking-label">To</label>
+                                        <input type="date" class="form-control booking-input" id="to" name="to" required>
                                     </div>
             
+                                    <!-- Dropdown for Cabin Class -->
                                     <div class="form-group col">
-                                        <label for="cabinClass">Cabin Class</label>
-                                        <select class="form-control" id="cabinClass" name="cabinClass" required>
+                                        <label for="cabinClass" class="booking-label">Cabin Class</label>
+                                        <select class="form-control booking-input" id="cabinClass" name="cabinClass" required>
                                             <option disabled>Select Cabin Class</option>
                                             <option value="economy" selected>Economy</option>
                                             <option value="premium_economy">Premium Economy</option>
@@ -152,25 +175,8 @@
                                     </div>
                                 </div>
             
-                                <button type="submit" class="btn btn-primary mt-2">Search</button>
-                            </form>
-                        </div>
-            
-                        <div id="multiStopForm" style="display: none;">
-                            <form id="multiStopForm" action="/flight/multiStop" method="POST">
-                                <div class="mb-3">
-                                    <label for="numberOfFlights" class="form-label">Number of Flights</label>
-                                    <select id="numberOfFlights" name="numberOfFlights" class="form-select"
-                                        onchange="updateMultiStopFields()">
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
-                                </div>
-                                <div id="dynamicFlightInputs"></div>
-                                <button type="submit" class="btn btn-primary">Search</button>
+                                <!-- Submit button for Round-Trip Form -->
+                                <button type="submit" class="btn btn-primary mt-2 booking-button">Search</button>
                             </form>
                         </div>
             
@@ -178,20 +184,23 @@
                 </div>
             </div>
         </div>
-        <!-- First Row End -->
+        <!-- First Row End (Placeholder left image and form) -->
 
-        <!-- Second Row -->
+
+        <!-- Second Row Image-->
         <div class="container mt-4">
             <img src="images/flight.jpg" class="img-fluid rounded-1" alt="Flight Image">
         </div>
         <!-- Second Row End -->
+
 
         <!-- Third Row -->
         <div class="container mt-3">
             <h4>Popular places to travel to</h4>
         </div>
 
-        <div class="container mt-3">
+        <!-- 9 Images within its card -->
+        <div class="container mt-3 mb-5">
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <div class="col">
                     <div class="card">
@@ -318,19 +327,16 @@
                 case 'oneWay':
                     oneWayForm.style.display = 'block';
                     roundTripForm.style.display = 'none';
-                    multiStopForm.style.display = 'none';
                     flightResult.style.display = 'none';
                     break;
                 case 'roundTrip':
                     oneWayForm.style.display = 'none';
                     roundTripForm.style.display = 'block';
-                    multiStopForm.style.display = 'none';
                     flightResult.style.display = 'none';
                     break;
                 default:
                     oneWayForm.style.display = 'none';
                     roundTripForm.style.display = 'none';
-                    multiStopForm.style.display = 'none';
                     break;
             }
         });
