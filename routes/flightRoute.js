@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.get('', (req, res) => {
-  res.render('flight');
+  res.render('flight', {user: req.session.user});
 });
 
 router.get('/flightDetails', (req, res) => {
@@ -28,11 +28,8 @@ router.get('/flightDetails', (req, res) => {
   ];
 
   const valuesJSON = JSON.stringify(values);
-  //console.log(values);
-  console.log(OriginAirportName);
-  console.log(DestinationAirportName);
 
-  res.render('flightDetails', {flightData, valuesJSON, OriginAirportName, DestinationAirportName});
+  res.render('flightDetails', {flightData, valuesJSON, OriginAirportName, DestinationAirportName, user: req.session.user});
 });
 
 router.post('/oneWay', (req, res) => {
@@ -254,10 +251,6 @@ router.post('/roundTrip', (req, res) => {
 
   });
 });
-
-
-
-
 
 //  =============================================================
 //  ========== Redirect nonexistent MUST BE LAST ROUTE ==========
