@@ -13,20 +13,59 @@
                 <td><label for="destination" class="booking-label">Destination</label></td>
                 <td><label for="checkin" class="booking-label">Check-in</label></td>
                 <td><label for="checkout" class="booking-label">Check-out</label></td>
-                <td><label for="adults" class="booking-label">Adults</label></td>
-                <td><label for="children" class="booking-label">Children</label></td>
-                <td><label for="infants" class="booking-label">Infants</label></td>
-                <td><label for="pets" class="booking-label">Pets</label></td>
+                <td><label for="guests" class="booking-label">Guests</label></td>
                 <td rowspan="2"><button onclick="submitForm('searchResults')" class="btn btn-primary booking-button">Search</button></td>
             </tr>
             <tr>
                 <td><input type="text" class="form-control booking-input" id="destination" name="destination" placeholder="Enter destination" value="<%= searchInputs.destination %>" required /></td>
                 <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkin %>" required /></td>
                 <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkout %>" required /></td>
-                <td><input type="number" class="form-control booking-input" id="adults" name="adults" value="<%= searchInputs.adults %>" required /></td>
-                <td><input type="number" class="form-control booking-input" id="children" name="children" value="<%= searchInputs.children %>" required /></td>
-                <td><input type="number" class="form-control booking-input" id="infants" name="infants" value="<%= searchInputs.infants %>" required /></td>
-                <td><input type="number" class="form-control booking-input" id="pets" name="pets" value="<%= searchInputs.pets %>" required /></td>
+                <td>
+                    <div class="dropdown">
+                        <input type="text" class="form-control booking-input guests-input" id="guests" name="guests" placeholder="No. of guests" required readonly />
+                        <img src="/images/down-arrow.png" class="dropdown-arrow-airbnbSearch" id="dropdownArrow">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <table class="dropdown-table">
+                                <tr>
+                                    <td><label for="adults" class="booking-label">Adults</label></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('adults', -1)" class="minus-button-disabled" id="adultsMinusButton" disabled><img src="/images/minus-disabled.png" class="minus-icon" id="adultsMinusIcon"></button></td>
+                                    <td rowspan="2"><input type="number" class="dropdown-input" id="adults" name="adults" value="0" required readonly /></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('adults', 1)" class="plus-button"><img src="/images/plus.png" class="plus-icon"></button></td>
+                                </tr>
+                                <tr class="dropdown-table-divider">
+                                    <td><label for="adults" class="booking-label-caption">Ages 13 or above</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="children" class="booking-label">Children</label></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('children', -1)" class="minus-button-disabled" id="childrenMinusButton" disabled><img src="/images/minus-disabled.png" class="minus-icon" id="childrenMinusIcon"></button></td>
+                                    <td rowspan="2"><input type="number" class="dropdown-input" id="children" name="children" value="0" required readonly /></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('children', 1)" class="plus-button"><img src="/images/plus.png" class="plus-icon"></button></td>
+                                </tr>
+                                <tr class="dropdown-table-divider">
+                                    <td><label for="children" class="booking-label-caption">Ages 2-12</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="infants" class="booking-label">Infants</label></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('infants', -1)" class="minus-button-disabled" id="infantsMinusButton" disabled><img src="/images/minus-disabled.png" class="minus-icon" id="infantsMinusIcon"></button></td>
+                                    <td rowspan="2"><input type="number" class="dropdown-input" id="infants" name="infants" value="0" required readonly /></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('infants', 1)" class="plus-button"><img src="/images/plus.png" class="plus-icon"></button></td>
+                                </tr>
+                                <tr class="dropdown-table-divider">
+                                    <td><label for="infants" class="booking-label-caption">Under 2</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="pets" class="booking-label">Pets</label></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('pets', -1)" class="minus-button-disabled" id="petsMinusButton" disabled><img src="/images/minus-disabled.png" class="minus-icon" id="petsMinusIcon"></button></td>
+                                    <td rowspan="2"><input type="number" class="dropdown-input" id="pets" name="pets" value="0" required readonly /></td>
+                                    <td rowspan="2"><button type="button" onclick="updateGuests('pets', 1)" class="plus-button"><img src="/images/plus.png" class="plus-icon"></button></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="pets" class="booking-label-caption">Excluding service animals</label></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
             </tr>
         </table>
         <div class="container">
@@ -57,6 +96,37 @@
 </body>
 </html>
 <script>
+    var adults = document.getElementById("adults");
+    var children = document.getElementById("children");
+    var infants = document.getElementById("infants");
+    var pets = document.getElementById("pets");
+    adults.value = "<%= searchInputs.adults %>";
+    children.value = "<%= searchInputs.children %>";
+    infants.value = "<%= searchInputs.infants %>";
+    pets.value = "<%= searchInputs.pets %>";
+    updateGuests("adults", 0);
+    updateGuests("children", 0);
+    updateGuests("infants", 0);
+    updateGuests("pets", 0);
+    document.onclick = function(e) {
+        var guests = document.getElementById("guests");
+        var dropdownContent = document.getElementById("dropdownContent");
+        var dropdownArrow = document.getElementById("dropdownArrow");
+        if (e.target == guests || e.target == dropdownArrow) {
+            if (dropdownContent.style.display == "" || dropdownContent.style.display == "none") {
+                dropdownContent.style.display = "block";
+                dropdownArrow.src = "/images/up-arrow.png";
+            }
+            else {
+                dropdownContent.style.display = "none";
+                dropdownArrow.src = "/images/down-arrow.png";
+            }
+        }
+        else if (dropdownContent.style.display == "block" && !dropdownContent.contains(e.target)) {
+            dropdownContent.style.display = "none";
+            dropdownArrow.src = "/images/down-arrow.png";
+        }
+    }
     function submitForm(action) {
         var form = document.getElementById("formId");
         form.action = "/airbnb/" + action;
@@ -64,5 +134,73 @@
             form.target = "_blank";
         }
         form.submit();
+    }
+    function updateGuests(guestType, number) {
+        // minus/plus value depending on button clicked
+        var guestTypeInput = document.getElementById(guestType);
+        guestTypeInput.value = (parseInt(guestTypeInput.value) + number).toString();
+        // set disabled to true/false depending on value
+        var guestTypeMinusButton = document.getElementById(guestType + "MinusButton");
+        var guestTypeMinusImage = document.getElementById(guestType + "MinusIcon");
+        if (parseInt(guestTypeInput.value) > 0) {
+            guestTypeMinusButton.disabled = false;
+            guestTypeMinusButton.className = "minus-button";
+            guestTypeMinusImage.src = "/images/minus.png";
+        }
+        else {
+            guestTypeMinusButton.disabled = true;
+            guestTypeMinusButton.className = "minus-button-disabled";
+            guestTypeMinusImage.src = "/images/minus-disabled.png";
+        }
+        // get values
+        var adults = document.getElementById("adults");
+        var children = document.getElementById("children");
+        var infants = document.getElementById("infants");
+        var pets = document.getElementById("pets");
+        var guests = document.getElementById("guests");
+        // have minimum 1 adult
+        var adultsMinusButton = document.getElementById("adultsMinusButton");
+        var adultsMinusImage = document.getElementById("adultsMinusIcon");
+        if ((adults.value == "0" || adults.value == "1") && (children.value != "0" || infants.value != "0" || pets.value != "0")) {
+            adults.value = "1";
+            adultsMinusButton.disabled = true;
+            adultsMinusButton.className = "minus-button-disabled";
+            adultsMinusImage.src = "/images/minus-disabled.png";
+        }
+        else if (adults.value == "1" && children.value == "0" && infants.value == "0" && pets.value == "0") {
+            adultsMinusButton.disabled = false;
+            adultsMinusButton.className = "minus-button";
+            adultsMinusImage.src = "/images/minus.png";
+        }
+        // calculate number of guests
+        var adultsAndChildrenValue = parseInt(adults.value) + parseInt(children.value);
+        var infantsValue = parseInt(infants.value);
+        var petsValue = parseInt(pets.value);
+        var guestsValue = "";
+        if (adultsAndChildrenValue > 0) {
+            if (adultsAndChildrenValue == 1) {
+                guestsValue += adultsAndChildrenValue.toString() + " guest";
+            }
+            else {
+                guestsValue += adultsAndChildrenValue.toString() + " guests";
+            }
+        }
+        if (infantsValue > 0) {
+            if (infantsValue == 1) {
+                guestsValue += ", " + infantsValue.toString() + " infant";
+            }
+            else {
+                guestsValue += ", " + infantsValue.toString() + " infants";
+            }
+        }
+        if (petsValue > 0) {
+            if (petsValue == 1) {
+                guestsValue += ", " + petsValue.toString() + " pet";
+            }
+            else {
+                guestsValue += ", " + petsValue.toString() + " pets";
+            }
+        }
+        guests.value = guestsValue;
     }
 </script>

@@ -32,9 +32,9 @@
                         </div>
                         <div class="form-group dropdown">
                             <label for="guests" class="booking-label">Guests</label>
-                            <input type="text" class="form-control booking-input guests-input" id="guests" name="guests" placeholder="No. of guests" onclick="dropdownVisible()" required readonly />
-                            <img src="/images/down-arrow.png" id="dropdownArrow">
-                            <div id="dropdownContent">
+                            <input type="text" class="form-control booking-input guests-input" id="guests" name="guests" placeholder="No. of guests" required readonly />
+                            <img src="/images/down-arrow.png" class="dropdown-arrow-airbnb" id="dropdownArrow">
+                            <div class="dropdown-content" id="dropdownContent">
                                 <table class="dropdown-table">
                                     <tr>
                                         <td><label for="adults" class="booking-label">Adults</label></td>
@@ -87,14 +87,21 @@
 </body>
 </html>
 <script>
-    function dropdownVisible() {
+    document.onclick = function(e) {
+        var guests = document.getElementById("guests");
         var dropdownContent = document.getElementById("dropdownContent");
         var dropdownArrow = document.getElementById("dropdownArrow");
-        if (dropdownContent.style.display == "" || dropdownContent.style.display == "none") {
-            dropdownContent.style.display = "block";
-            dropdownArrow.src = "/images/up-arrow.png";
+        if (e.target == guests || e.target == dropdownArrow) {
+            if (dropdownContent.style.display == "" || dropdownContent.style.display == "none") {
+                dropdownContent.style.display = "block";
+                dropdownArrow.src = "/images/up-arrow.png";
+            }
+            else {
+                dropdownContent.style.display = "none";
+                dropdownArrow.src = "/images/down-arrow.png";
+            }
         }
-        else {
+        else if (dropdownContent.style.display == "block" && !dropdownContent.contains(e.target)) {
             dropdownContent.style.display = "none";
             dropdownArrow.src = "/images/down-arrow.png";
         }
