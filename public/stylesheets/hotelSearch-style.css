@@ -96,3 +96,118 @@ body {
     color: #fff;
     text-align: center;
 }
+
+/* styles for the booking search container */
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.date-input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date-input-container .form-group {
+    width: 80%;
+}
+
+.booking-search-box {
+    box-sizing: border-box;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.booking-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.booking-label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.booking-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.booking-date {
+    display: inline-block;
+    width: 48%;
+    margin-right: 4%;
+}
+
+.booking-button-container {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.booking-button {
+    padding: 10px 40px;
+    font-size: 16px;
+    width: 100%;
+}
+
+/* Style for the autocomplete suggestions */
+#suggestions {
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    top: 100%; /* Position the suggestions list below the input field */
+  }
+  
+  #suggestions li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* Style for each suggestion item on hover */
+  #suggestions li:hover {
+    background-color: #f7f7f7;
+  }
+  
+  /* Style for the suggestion label */
+  #suggestions li span {
+    font-weight: bold;
+  }
+  
+  /* Style for the suggestion description */
+  #suggestions li p {
+    margin: 0;
+    color: #888;
+  }
+  
+  /* Hide the suggestions initially */
+  #suggestions {
+    display: none;
+  }
+  
+  /* Show the suggestions when there's content */
+  #suggestions li {
+    display: block;
+  }
+
+  #suggestions li:last-child {
+    border-bottom: none;
+  }
