@@ -7,11 +7,14 @@ router.get('', async (req, res) => {
     try {
         const airbnbBookingsSnapshot = await db.collection('airbnb').where('userId', '==', req.session.user.uid).get();
         const airbnbBookings = airbnbBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
-        res.render('bookings', {user: req.session.user, airbnbBookings: airbnbBookings});
+        const flightBookingsSnapshot = await db.collection('flights').where('userid', '==', req.session.user.uid).get();
+        const flightBookings = flightBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
+
+        res.render('bookings', {user: req.session.user, airbnbBookings: airbnbBookings, flightBookings: flightBookings});
     }
     catch {
         console.error('An error occurred while retrieving the bookings.');
-        res.render('bookings', {user: req.session.user, airbnbBookings: []});
+        res.render('bookings', {user: req.session.user, airbnbBookings: [], flightBookings: []});
     }
 });
 

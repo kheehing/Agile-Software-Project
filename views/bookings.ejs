@@ -35,7 +35,145 @@
             <% } %>
         </div>
     </div>
+
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h2>Flight Bookings</h2>
+            </div>
+        </div>
+        
+        <ul class="list-unstyled">
+            <% flightBookings.forEach(data => { %>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <img src="<%= data.carrierLogo %>" alt="<%= data.carrierName %> Logo" width="30" class="me-2">
+                                <h5 class="mb-0"><%= data.carrierName %></h5>
+                            </div>
+                            <button class="btn btn-danger" onclick="deleteBooking('/bookings/delete/flights/<%= data.bookingId %>')">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <% if (data.tripType === 'one-way') { %>
+                            <div class="leg-item">
+                                <div class="leg-info">
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <h3><%= data.origin %> to <%= data.destination %></h3>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <span class="fs-5"><%= formatDate(data.departure) %></span>
+                                            <span class="line flex-grow-1"></span>
+                                            <span class="fs-5"><%= formatDate(data.arrival) %></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col text-center"></div>
+                                        <div class="col text-center">
+                                            <div class="d-flex justify-content-center align-items-center h-100">
+                                                <span><%= convertToHoursAndMinutes(data.duration) %>, <%= data.stop %> Stops</span>
+                                            </div>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h5><%= data.price %></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="leg-item">
+                                <div class="leg-info">
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <h3><%= data.origin1 %> to <%= data.destination1 %></h3>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <span class="fs-5"><%= formatDate(data.departure1) %></span>
+                                            <span class="line flex-grow-1"></span>
+                                            <span class="fs-5"><%= formatDate(data.arrival1) %></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <div>
+                                                <span><%= convertToHoursAndMinutes(data.duration1) %>, <%= data.stop1 %> Stops</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="leg-info">
+                                    <div class="row mt-1">
+                                        <div class="col text-center">
+                                            <h3><%= data.origin2 %> to <%= data.destination2 %></h3>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col text-center">
+                                            <span class="fs-5"><%= formatDate(data.departure2) %></span>
+                                            <span class="line flex-grow-1"></span>
+                                            <span class="fs-5"><%= formatDate(data.arrival2) %></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col text-center"></div>
+                                        <div class="col text-center">
+                                            <div>
+                                                <span><%= convertToHoursAndMinutes(data.duration2) %>, <%= data.stop2 %> Stops</span>
+                                            </div>
+                                        </div>
+                                        <div class="col text-end">
+                                            <h5><%= data.price %></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                </div>
+            <% }) %>
+            <% if (flightBookings.length == 0) { %>
+                <div class="alert alert-warning">
+                    No flight bookings.
+                </div>
+            <% } %>
+        </ul>
+
+    </div>
+
     <%- include ('base/footer'); %>
+
+
+    <% function formatDate(date) {
+        const options = {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false
+        };
+        const formattedDate = new Date(date).toLocaleString('en-US', options);
+        return formattedDate.replace('24:', '00:');
+    } %>
+    
+
+    <% function convertToHoursAndMinutes(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        if (hours === 0) {
+            return `${remainingMinutes}m`;
+        }
+        if (remainingMinutes === 0) {
+            return `${hours}h`;
+        }
+        return `${hours}h ${remainingMinutes}m`;
+    } %>
+
 </body>
 </html>
 <script>
@@ -46,3 +184,14 @@
         });
     }
 </script>
+
+<style>
+    .line {
+        display: inline-block;
+        width: 150px; /* Adjust width as needed */
+        height: 2px;
+        background-color: black;
+        margin: 0 10px;
+        vertical-align: middle;
+    }
+</style>

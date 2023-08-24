@@ -31,7 +31,7 @@
                                     <img src="<%= itinerary.legs[0].carriers.marketing[0].logoUrl %>" alt="<%= itinerary.legs[0].carriers.marketing[0].name %> Logo" width="30" class="me-2">
                                     <h5 class="mb-0"><%= itinerary.legs[0].carriers.marketing[0].name %></h5>
                                 </div>
-                                <button class="btn btn-outline-dark" data-index="<%= index %>" data-itinerary='<%= JSON.stringify(itinerary) %>' onclick="addToDatabase(this)">Add to Itinerary</button>
+                                <button class="btn btn-outline-dark" data-index="<%= index %>" data-itinerary='<%= JSON.stringify(itinerary) %>' onclick="addToDatabase(this)">Add to Bookings</button>
                             </div>
                         </div>
                         <div class="card-body d-flex flex-column justify-content-between">
@@ -160,6 +160,7 @@
         .catch(error => {
             console.error('Error:', error);
         });
+        window.alert("Flight added to bookings")
     }
 
 
