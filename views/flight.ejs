@@ -366,8 +366,20 @@
                     event.preventDefault();
                     return false;
                 }
+
+                // Check date validation for roundTripForm
+                if (formId === "roundTripForm") {
+                    var fromInput = form.elements['from'];
+                    var toInput = form.elements['to'];
+                    
+                    if (fromInput.value >= toInput.value) {
+                        alert('To date must be after From date.');
+                        event.preventDefault(); // Prevent form submission
+                    }
+                }
             });
         }
+        
         checkForm("oneWayForm");
         checkForm("roundTripForm");
     

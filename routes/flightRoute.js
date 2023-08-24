@@ -3,6 +3,8 @@ const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
 const router = express.Router();
+const admin = require('firebase-admin');
+const db = admin.firestore();
 
 
 router.get('', (req, res) => {
@@ -250,6 +252,68 @@ router.post('/roundTrip', (req, res) => {
       });
 
   });
+});
+
+router.post("/addToDatabase", (req, res) => {
+  const data = req.body;
+  if (data.legs.length == 1) {
+    const onewayData = {
+      userid: req.session.user.uid,
+      price: "USD " + data.price.formatted,
+      origin: data.legs[0].origin.name,
+      destination: data.legs[0].destination.name,
+      duration: data.legs[0].durationInMinutes,
+      departure: data.legs[0].departure,
+      arrival: data.legs[0].arrival,
+      stop: data.legs[0].stopCount,
+      carrierName: data.legs[0].carriers.marketing[0].name,
+      carrierLogo: data.legs[0].carriers.marketing[0].logoUrl,
+      tripType: "one-way"
+    }
+    const onewayRef = db.collection("flights");
+    onewayRef.add(onewayData)
+      .then(docRef => {
+        console.log("Document written with ID: ", docRef.id);
+        res.json({ success: true, message: "Data added to Firestore" });
+      })
+      .catch(error => {
+        console.error("Error adding document: ", error);
+        res.json({ success: false, error: "Error adding document" });
+      });
+    // console.log(onewayData);
+  } 
+  else {
+    const roundTripData = {
+      userid: req.session.user.uid,
+      price: "USD " + data.price.formatted,
+      origin1: data.legs[0].origin.name,
+      destination1: data.legs[0].destination.name,
+      duration1:data.legs[0].durationInMinutes,
+      departure1: data.legs[0].departure,
+      arrival1: data.legs[0].arrival,
+      stop1: data.legs[0].stopCount,
+      carrierName: data.legs[0].carriers.marketing[0].name,
+      carrierLogo: data.legs[0].carriers.marketing[0].logoUrl,
+      origin2: data.legs[1].origin.name,
+      destination2: data.legs[1].destination.name,
+      duration2:data.legs[1].durationInMinutes,
+      departure2: data.legs[1].departure,
+      arrival2: data.legs[1].arrival,
+      stop2: data.legs[1].stopCount,
+      tripType: "round-trip"
+    }
+    const roundTripRef = db.collection("flights");
+    roundTripRef.add(roundTripData)
+      .then(docRef => {
+        // console.log("Document written with ID: ", docRef.id);
+        res.json({ success: true, message: "Data added to Firestore" });
+      })
+      .catch(error => {
+        // console.error("Error adding document: ", error);
+        res.json({ success: false, error: "Error adding document" });
+      });
+    // console.log(roundTripData);
+  }
 });
 
 //  =============================================================

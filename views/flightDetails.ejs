@@ -23,7 +23,7 @@
     
         <ul class="list-unstyled">
             <% if (flightData.data.context.totalResults > 0) { %>
-                <% flightData.data.itineraries.forEach(itinerary => { %>
+                <% flightData.data.itineraries.forEach((itinerary, index) => { %>
                     <div class="card mb-3">
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
@@ -31,7 +31,7 @@
                                     <img src="<%= itinerary.legs[0].carriers.marketing[0].logoUrl %>" alt="<%= itinerary.legs[0].carriers.marketing[0].name %> Logo" width="30" class="me-2">
                                     <h5 class="mb-0"><%= itinerary.legs[0].carriers.marketing[0].name %></h5>
                                 </div>
-                                <!-- <button class="btn btn-outline-dark">Add to Itinerary</button> -->
+                                <button class="btn btn-outline-dark" data-index="<%= index %>" data-itinerary='<%= JSON.stringify(itinerary) %>' onclick="addToDatabase(this)">Add to Itinerary</button>
                             </div>
                         </div>
                         <div class="card-body d-flex flex-column justify-content-between">
@@ -88,8 +88,10 @@
             hour: '2-digit', minute: '2-digit', second: '2-digit',
             hour12: false
         };
-        return new Date(date).toLocaleString('en-US', options);
+        const formattedDate = new Date(date).toLocaleString('en-US', options);
+        return formattedDate.replace('24:', '00:');
     } %>
+    
 
     <% function convertToHoursAndMinutes(minutes) {
         const hours = Math.floor(minutes / 60);
@@ -102,6 +104,7 @@
         }
         return `${hours}h ${remainingMinutes}m`;
     } %>
+
 </body>
 
 </html>
@@ -137,6 +140,31 @@
         }
         
     }
+
+    function addToDatabase(buttonElement) {
+        const itineraryIndex = buttonElement.getAttribute('data-index');
+        const itineraryJSON = buttonElement.getAttribute('data-itinerary');
+        const itinerary = JSON.parse(itineraryJSON);
+
+        fetch('/flight/addToDatabase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(itinerary),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+
+</script>
+
 
 </script>
 
