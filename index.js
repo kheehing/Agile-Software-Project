@@ -78,6 +78,7 @@ app.use('/airbnb', requireLogin);
 app.use('/hotel', requireLogin);
 app.use('/itinerary', requireLogin);
 app.use('/home', requireLogin);
+app.use('/bookings', requireLogin);
 
 // Import and mount routers
 const travelPlannerRouter = require('./routes/router');
@@ -88,6 +89,7 @@ const intineraryRouter = require('./routes/itineraryRoute');
 const loginRouter = require('./routes/loginRoute');
 const registerRouter = require('./routes/registerRoute');
 const homeRouter = require('./routes/homeRoute');
+const bookingsRouter = require('./routes/bookingsRoute');
 
 app.use('/flight', flightRouter);
 app.use('/airbnb', airbnbRouter);
@@ -97,6 +99,7 @@ app.use('/itinerary', intineraryRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/home', homeRouter);
+app.use('/bookings', bookingsRouter);
 app.use('/', travelPlannerRouter);
 
 app.listen(port, () => {

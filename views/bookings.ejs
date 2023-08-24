@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include ('base/head'); %>
+    <title>Bookings Page</title>
+    <link rel="stylesheet" href="/stylesheets/bookings-style.css">
+</head>
+<body>
+    <%- include ('base/navbar'); %>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>Airbnb Bookings</h2>
+            </div>
+        </div>
+        <div class="booking-list">
+            <% airbnbBookings.forEach(entry => { %>
+                <div class="booking-item">
+                    <img src="<%= entry.airbnbImage %>" class="booking-image">
+                    <div class="booking-details">
+                        <h3><%= entry.airbnbName %></h3>
+                        <span>Check-in: <%= entry.checkIn %></span><br>
+                        <span>Check-out: <%= entry.checkOut %></span><br>
+                        <div class="button-container">
+                            <form action="/airbnb/<%= entry.airbnbId %>" method="GET">
+                                <button type="submit" class="btn btn-primary">View listing</button>
+                            </form>
+                            <button onclick="deleteBooking('/bookings/delete/airbnb/<%= entry.bookingId %>')" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+            <% if (airbnbBookings.length == 0) { %>
+                <p>No airbnb bookings.</p>
+            <% } %>
+        </div>
+    </div>
+    <%- include ('base/footer'); %>
+</body>
+</html>
+<script>
+    function deleteBooking(route) {
+        fetch(route, {method: "DELETE"})
+        .then(response => {
+            window.location.reload();
+        });
+    }
+</script>

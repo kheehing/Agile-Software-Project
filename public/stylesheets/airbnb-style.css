@@ -63,11 +63,16 @@ h4 {
     padding-right: 30px;
 }
 
-.guests-input:hover {
+.guests-input-airbnbSearch {
+    padding-right: 30px;
+    width: 300px;
+}
+
+.guests-input:hover, .guests-input-airbnbSearch:hover {
     cursor: pointer;
 }
 
-.guests-input:focus, .dropdown-input:focus {
+.guests-input:focus, .guests-input-airbnbSearch:focus {
     box-shadow: none;
     border: 1px solid #ccc;
 }
@@ -140,6 +145,10 @@ h4 {
     border: none;
     font-size: 14px;
     text-align: center;
+}
+
+.dropdown-input:focus {
+    outline: none;
 }
 
 input::-webkit-outer-spin-button,
@@ -255,10 +264,12 @@ input::-webkit-inner-spin-button {
 
 .host-name {
     vertical-align: bottom;
+    padding-left: 10px;
 }
 
 .host-date {
     vertical-align: top;
+    padding-left: 10px;
 }
 
 .info-booking-search-box {
@@ -274,4 +285,8 @@ s {
     font-size: 16px;
     width: 100%;
     margin: 15px 0px;
+}
+
+.total-price {
+    text-align: right;
 }

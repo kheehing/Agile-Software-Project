@@ -1,0 +1,49 @@
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.booking-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    background-color: #fff;
+    display: flex;
+}
+
+.booking-image {
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.booking-details {
+    padding: 15px;
+}
+
+h3 {
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 15px;
+}

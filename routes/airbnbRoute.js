@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const admin = require('firebase-admin');
+const db = admin.firestore();
 
 async function getData(url, params) {
     const options = {
@@ -70,6 +72,21 @@ router.get('/:id', (req, res) => {
         console.log(propertyDetails);
         res.render('airbnbInfo', {user: req.session.user, tripDetails: tripDetails, propertyDetails: propertyDetails});
     });
+});
+
+router.post('/:id/book', async (req, res) => {
+    try {
+        await db.collection('airbnb').add({airbnbId: req.params.id,
+                                           airbnbImage: req.body.airbnbImage,
+                                           airbnbName: req.body.airbnbName,
+                                           checkIn: req.body.checkin,
+                                           checkOut: req.body.checkout,
+                                           userId: req.session.user.uid});
+        res.redirect('/bookings');
+    } 
+    catch {
+        console.error('An error occurred while booking the airbnb.');
+    }
 });
 
 //  =============================================================

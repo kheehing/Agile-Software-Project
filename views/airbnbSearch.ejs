@@ -22,7 +22,7 @@
                 <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkout %>" required /></td>
                 <td>
                     <div class="dropdown">
-                        <input type="text" class="form-control booking-input guests-input" id="guests" name="guests" placeholder="No. of guests" required readonly />
+                        <input type="text" class="form-control booking-input guests-input-airbnbSearch" id="guests" name="guests" placeholder="No. of guests" required readonly />
                         <img src="/images/down-arrow.png" class="dropdown-arrow-airbnbSearch" id="dropdownArrow">
                         <div class="dropdown-content" id="dropdownContent">
                             <table class="dropdown-table">

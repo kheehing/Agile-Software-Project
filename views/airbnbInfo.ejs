@@ -4,6 +4,7 @@
     <%- include ('base/head'); %>
     <title>Airbnb Information Page</title>
     <link rel="stylesheet" href="/stylesheets/airbnb-style.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 <body>
     <%- include ('base/navbar'); %><br>
@@ -69,15 +70,15 @@
                                 </h3>
                             </td>
                         </tr>
-                        <form action="" method="GET">
+                        <form action="/airbnb/<%= tripDetails.propertyId %>/book" method="POST" id="bookingForm">
                             <div class="form-group">
                                 <tr>
                                     <td><label for="checkin" class="booking-label">Check-in</label></td>
                                     <td><label for="checkout" class="booking-label">Check-out</label></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkIn %>" required /></td>
-                                    <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkOut %>" required /></td>
+                                    <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkIn %>" onchange="calculatePrice()" required /></td>
+                                    <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkOut %>" onchange="calculatePrice()" required /></td>
                                 </tr>
                             </div>
                             <div class="form-group">
@@ -134,12 +135,14 @@
                                 </tr>
                             </div>
                             <tr>
-                                <td colspan="2"><button type="submit" class="btn btn-primary info-booking-button">Reserve</button></td>
+                                <td colspan="2"><button type="submit" class="btn btn-primary info-booking-button" id="infoBookingButton">Book</button></td>
                             </tr>
+                            <input type="hidden" name="airbnbImage" value="<%= propertyDetails.images[0] %>" />
+                            <input type="hidden" name="airbnbName" value="<%= propertyDetails.title %>" />
                         </form>
                         <tr>
                             <td id="priceBreakdown"></td>
-                            <td id="totalPrice"></td>
+                            <td class="total-price" id="totalPrice"></td>
                         </tr>
                     </table>
                 </div>
@@ -150,34 +153,28 @@
 </body>
 </html>
 <script>
+    var tripDetailsObject = <%- JSON.stringify(tripDetails) %>;
     var adults = document.getElementById("adults");
     var children = document.getElementById("children");
     var infants = document.getElementById("infants");
     var pets = document.getElementById("pets");
-    adults.value = "<%= tripDetails.adults %>";
-    children.value = "<%= tripDetails.children %>";
-    infants.value = "<%= tripDetails.infants %>";
-    pets.value = "<%= tripDetails.pets %>";
+    if ("adults" in tripDetailsObject) {
+        adults.value = "<%= tripDetails.adults %>";
+    }
+    if ("children" in tripDetailsObject) {
+        children.value = "<%= tripDetails.children %>";
+    }
+    if ("infants" in tripDetailsObject) {
+        infants.value = "<%= tripDetails.infants %>";
+    }
+    if ("pets" in tripDetailsObject) {
+        pets.value = "<%= tripDetails.pets %>";
+    }
     updateGuests("adults", 0);
     updateGuests("children", 0);
     updateGuests("infants", 0);
     updateGuests("pets", 0);
-    var propertyDetailsObject = <%- JSON.stringify(propertyDetails) %>;
-    var pricePerNight;
-    var checkin = document.getElementById("checkin");
-    var checkout = document.getElementById("checkout");
-    var numberOfNights;
-    var priceBreakdown = document.getElementById("priceBreakdown");
-    var totalPrice = document.getElementById("totalPrice");
-    if ("price" in propertyDetailsObject.price.structuredDisplayPrice) {
-        pricePerNight = parseInt(propertyDetailsObject.price.structuredDisplayPrice.price.slice(1, -4));
-    } 
-    else {
-        pricePerNight = parseInt(propertyDetailsObject.price.structuredDisplayPrice.discountedPrice.slice(1, -4));
-    }
-    numberOfNights = parseInt(checkout.value.replaceAll("-", "")) - parseInt(checkin.value.replaceAll("-", "")) - 1;
-    priceBreakdown.innerText = "$" + pricePerNight.toString() + " SGD x " + numberOfNights.toString() + " nights";
-    totalPrice.innerText = "$" + (pricePerNight * numberOfNights).toString() + " SGD";
+    calculatePrice();
     document.onclick = function(e) {
         var guests = document.getElementById("guests");
         var dropdownContent = document.getElementById("dropdownContent");
@@ -273,5 +270,38 @@
             }
         }
         guests.value = guestsValue;
+    }
+    document.getElementById("infoBookingButton").onclick = function(e) {
+        e.preventDefault();
+        var bookingForm = document.getElementById("bookingForm");
+        bookingForm.submit();
+    }
+    function calculatePrice() {
+        var propertyDetailsObject = <%- JSON.stringify(propertyDetails) %>;
+        var pricePerNight;
+        var checkin = document.getElementById("checkin");
+        var checkout = document.getElementById("checkout");
+        var numberOfNights;
+        var priceBreakdown = document.getElementById("priceBreakdown");
+        var totalPrice = document.getElementById("totalPrice");
+        if ("price" in propertyDetailsObject.price.structuredDisplayPrice) {
+            pricePerNight = parseInt(propertyDetailsObject.price.structuredDisplayPrice.price.slice(1, -4));
+        } 
+        else {
+            pricePerNight = parseInt(propertyDetailsObject.price.structuredDisplayPrice.discountedPrice.slice(1, -4));
+        }
+        if (checkin.value == "" || checkout.value == "") {
+            numberOfNights = 0;
+        }
+        else {
+            numberOfNights = ((new Date(checkout.value)).getTime() - (new Date(checkin.value)).getTime()) / (1000 * 60 * 60 * 24);
+        }
+        if (numberOfNights == 1) {
+            priceBreakdown.innerText = "$" + pricePerNight.toString() + " SGD x " + numberOfNights.toString() + " night";
+        }
+        else {
+            priceBreakdown.innerText = "$" + pricePerNight.toString() + " SGD x " + numberOfNights.toString() + " nights";
+        }
+        totalPrice.innerText = "$" + (pricePerNight * numberOfNights).toString() + " SGD";
     }
 </script>
