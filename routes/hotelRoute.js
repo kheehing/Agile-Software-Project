@@ -2,6 +2,54 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
+const MAX_REQUESTS_PER_SECOND = 5;
+let requestsThisSecond = 0;
+const requestQueue = [];
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function handleRateLimit() {
+  if (requestsThisSecond < MAX_REQUESTS_PER_SECOND) {
+    requestsThisSecond++;
+    return true;
+  } else {
+    await delay(1000); // Delay for 1 second
+    requestsThisSecond = 0;
+    return true;
+  }
+}
+
+async function makeApiRequestWithRateLimit(options, initialDelayMs) {
+  let retries = 0;
+  let delayMs = initialDelayMs;
+
+  while (true) {
+    try {
+      const isRateLimited = await handleRateLimit();
+      if (!isRateLimited) {
+        throw new Error("Rate limit exceeded.");
+      }
+
+      const response = await axios.request(options);
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 429) {
+        // If 429 status code, retry with exponential backoff
+        retries++;
+        console.warn(`Rate limit exceeded. Retrying in ${delayMs}ms (Retry ${retries})`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+        // Increase the delay exponentially
+        delayMs *= 2;
+      } else {
+        // If it's not a rate-limiting issue, reject immediately
+        throw error;
+      }
+    }
+  }
+}
+
 router.get('', async (req, res) => {
   try {
     // Fetch hotel data using the Booking.com API
@@ -38,7 +86,9 @@ router.get('', async (req, res) => {
     const images = hotelResults.slice(0, 3).map(result => result.max_photo_url);
 
     // Render the hotel page and pass the images to the EJS template
-    res.render('hotel', { images });
+    res.render('hotel', {
+      images
+    });
   } catch (error) {
     console.error(error);
     router.get("*", (req, res) => {
@@ -119,13 +169,14 @@ router.get('/search', async (req, res) => {
         hotel_city: hotelData.city,
         review_score: hotelData.review_score,
         review_score_word: hotelData.review_score_word,
-        price_currency:
-          hotelData.composite_price_breakdown.gross_amount_per_night.currency,
-        price_per_night:
-          hotelData.composite_price_breakdown.gross_amount_per_night.value.toFixed(2)
+        price_currency: hotelData.composite_price_breakdown.gross_amount_per_night.currency,
+        price_per_night: hotelData.composite_price_breakdown.gross_amount_per_night.value.toFixed(2)
       }));
 
-      return { hotelNames: hotelsData.map(hotel => hotel.hotel_name), hotelsData };
+      return {
+        hotelNames: hotelsData.map(hotel => hotel.hotel_name),
+        hotelsData
+      };
     });
 
     const hotelLists = await Promise.all(hotelPromises);
@@ -185,20 +236,6 @@ router.get('/information', async (req, res) => {
   const pax = req.query.pax;
 
   try {
-    // Fetch hotel information using the Booking.com API based on hotelId
-    const hotelOptions = {
-      method: 'GET',
-      url: 'https://booking-com.p.rapidapi.com/v1/hotels/description',
-      params: {
-        hotel_id: hotelId,
-        descriptiontype_id: '6',
-        locale: 'en-gb'
-      },
-      headers: {
-        'X-RapidAPI-Key': 'e15a5fc2d8msh9914d1f214b4e02p1ea8b4jsndf09beae5d59',
-        'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
-      }
-    };
 
     // Fetch hotel images using the Booking.com API based on hotelId
     const imageOptions = {
@@ -214,20 +251,7 @@ router.get('/information', async (req, res) => {
       }
     };
 
-    // Fetch hotel map data using the Booking.com API based on hotelId
-    const mapOptions = {
-      method: 'GET',
-      url: 'https://booking-com.p.rapidapi.com/v1/hotels/map-markers',
-      params: {
-        hotel_id: hotelId,
-        locale: 'en-gb'
-      },
-      headers: {
-        'X-RapidAPI-Key': 'e15a5fc2d8msh9914d1f214b4e02p1ea8b4jsndf09beae5d59',
-        'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
-      }
-    };
-
+    // Fetch hotel data using the Booking.com API based on hotelId
     const hotelDataOptions = {
       method: 'GET',
       url: 'https://booking-com.p.rapidapi.com/v1/hotels/data',
@@ -241,6 +265,7 @@ router.get('/information', async (req, res) => {
       }
     };
 
+    // Fetch hotel reviews using the Booking.com API based on hotelId
     const reviewOptions = {
       method: 'GET',
       url: 'https://booking-com.p.rapidapi.com/v1/hotels/reviews',
@@ -276,53 +301,68 @@ router.get('/information', async (req, res) => {
     };
 
     // Fetch all necessary data concurrently
-    const [imageResponse, hotelDataResponse, reviewResponse, roomResponse] = await Promise.all([
+    const [imageResponse, hotelDataResponse, reviewResponse] = await Promise.all([
       axios.request(imageOptions),
       axios.request(hotelDataOptions),
       axios.request(reviewOptions),
-      //axios.request(roomOptions),
     ]);
+
+    const roomResponse = await makeApiRequestWithRateLimit(roomOptions, 3000);
 
     console.log("hotel id: " + hotelId);
 
-    const mapResponse = await axios.request(mapOptions);
-    const mapData = mapResponse.data;
-
     const hotelImages = imageResponse.data;
 
-    // Collect the top 8 url_max images
+    // Collect the top 7 url_max images
     const topImages = hotelImages
-      .slice(1, 10)
-      .map(item => (item.url_max) || '');
+      .slice(1, 8)
+      .map(item => (item.url_1440) || '');
 
-    const hotelLocation = hotelDataResponse.data.location;
 
     const hotelReviews = reviewResponse.data.result;
+    const hotelTopReviews = hotelReviews
+      .slice(1, 8);
 
-    //const roomData = roomResponse.data[0];
+    const hotelData = hotelDataResponse.data;
 
-    axios.request(hotelOptions)
-      .then(response => {
-        const hotelDescription = response.data.description; // Hotel information here
+    const roomData = roomResponse;
 
-        // Render the hotel information page and pass the retrieved data to the EJS template
-        res.render('hotelInfo', {
-          hotelDescription,
-          hotelImages: topImages,
-          mapData: mapData,
-          hotelLocation: hotelLocation,
-          hotelReviews: hotelReviews,
-          //roomData: roomData,
-          hotelId: hotelId
-        });
-      })
-      .catch(error => {
-        console.error(error);
-        res.status(404).render('404');
-      });
+    console.log("room data:", roomData);
 
+    //console.log("hotel data:", hotelData);
+
+
+    // Render the hotel information page and pass the retrieved data to the EJS template
+    res.render('hotelInfo', {
+      hotelData: hotelData,
+      hotelImages: topImages,
+      hotelReviews: hotelTopReviews,
+      hotelId: hotelId,
+      roomData: roomData,
+    });
   } catch (error) {
-    console.error(error);
+    const roomOptions = {
+      method: 'GET',
+      url: 'https://booking-com.p.rapidapi.com/v1/hotels/room-list',
+      params: {
+        hotel_id: hotelId,
+        currency: 'SGD',
+        checkout_date: checkoutDate,
+        locale: 'en-gb',
+        checkin_date: checkinDate,
+        adults_number_by_rooms: pax,
+        units: 'metric'
+      },
+      headers: {
+        'X-RapidAPI-Key': 'e15a5fc2d8msh9914d1f214b4e02p1ea8b4jsndf09beae5d59',
+        'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
+      }
+    };
+
+    const roomResponse = await makeApiRequestWithRateLimit(roomOptions, 3000);
+    const roomData = roomResponse;
+    console.log("room data:", roomData);
+    //console.error(error);
     res.status(404).render('404');
   }
 });

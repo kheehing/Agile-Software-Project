@@ -3,205 +3,345 @@
 
 <head>
     <%- include ('base/head'); %>
-        <link rel="stylesheet" href="/stylesheets/hotelInfo-style.css">
-        <title>Hotel Information Page</title>
-        <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
-            async defer>
-            </script>
+    <link rel="stylesheet" href="/stylesheets/hotelInfo-style.css">
+    <title>Hotel Information Page</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
+        async defer>
+    </script>
 </head>
 
 <body>
     <%- include ('base/navbar'); %>
-        <!-- Big Image Stretching from Left to Right -->
-        <img src="/images/image-placeholder.png" class="full-width-image" alt="Big Image">
+    <!-- Big Image Stretching from Left to Right -->
+    <img src="/images/image-placeholder.png" class="full-width-image" alt="Big Image">
 
-        <!-- Secondary Nav Bar -->
-        <div class="secondary-navbar">
-            <a href="#overview">Overview</a>
-            <a href="#rooms">Rooms</a>
-            <a href="#location">Location</a>
-            <a href="#reviews">Reviews</a>
-            <a href="#gallery">Gallery</a>
-        </div>
+    <!-- Secondary Nav Bar -->
+    <div class="secondary-navbar">
+        <a href="#overview">Overview</a>
+        <a href="#rooms">Rooms</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#gallery">Gallery</a>
+    </div>
 
-        <!-- Content Sections -->
-        <div class="content-section" id="overview">
-            <!-- Overview Content -->
-            <h2>Overview</h2>
-            <p>
-                <%= hotelDescription %>
-            </p>
-            <img src="" class="overview-image" alt="Overview Image">
-        </div>
+    <!-- Content Sections -->
+    <div class="content-section" id="overview">
+        <!-- Overview Content -->
+        <h2>Overview</h2>
+        <h1><%= hotelData.name %></h1>
+        <% if (hotelData.description_translations) { %>
+        <h3>Description</h3>
+        <p><%= hotelData.description_translations[0].description %> </p>
+        <% } %>
+        <p>Address: <%= hotelData.address %>, <%= hotelData.city %>, <%= hotelData.country %>, <%= hotelData.zip %></p>
+        <p><% if (hotelData.class == 1) { %>
+            <%= hotelData.class %> Star
+            <% } else { %>
+            <%= hotelData.class %> Stars
+            <% } %>
+        </p>
+        <p>Review Score: <%= hotelData.review_score %> (<%= hotelData.review_score_word %>)</p>
+        <p>Languages Spoken:
+            <% if (hotelData.languages_spoken && hotelData.languages_spoken.languagecode.length > 0) { %>
+            <%= hotelData.languages_spoken.languagecode.join(', ') %>
+            <% } else { %>
+            Not specified
+            <% } %>
+        </p>
+        <p>Check-in
+            <% if (hotelData.checkin) { %>
+            <% if (hotelData.checkin['24_hour_available']) { %>
+            24-hour check-in available
+            <% } else { %>
+            From: <%= hotelData.checkin.from %>
+            <% } %>
+            <% } else { %>
+            Check-in information not available
+            <% } %>
+        </p>
+        <p>Check-out
+            <% if (hotelData.checkout) { %>
+            <% if (hotelData.checkout['24_hour_available']) { %>
+            24-hour check-out available
+            <% } else { %>
+            To: <%= hotelData.checkout.to %>
+            <% } %>
+            <% } else { %>
+            Check-out information not available
+            <% } %>
+        </p>
+        <img src="<%= hotelData.main_photo_url %>" alt="Hotel Image">
+    </div>
 
-        <div class="content-section" id="rooms">
-            <!-- Rooms Content -->
-            <h2>Rooms</h2>
-            
-        </div>
-
-        <div class="content-section" id="location">
-            <!-- Location Content -->
-            <h2>Location</h2>
-            <div id="map" style="height: 400px;"></div>
-            <script>
-                // JavaScript code to initialize the map
-                function initMap() {
-                    const mapData = <% - JSON.stringify(mapData.landmarks[0]) %>; // Get the map data from the template
-                    const hotelLoc = <% - JSON.stringify(hotelLocation) %>;
-
-                    // Create a new Google Map instance
-                    const map = new google.maps.Map(document.getElementById('map'), {
-                        center: { lat: mapData.latitude, lng: mapData.longitude }, // Set the center point of the map
-                        zoom: 15, // Set the initial zoom level
-                    });
-
-                    // Create a marker for the hotel location
-                    const marker = new google.maps.Marker({
-                        position: { lat: hotelLoc.latitude, lng: hotelLoc.longitude }, // Set the marker position
-                        map: map, // Set the map to display the marker
-                        title: 'Hotel Location', // Marker title
-                    });
-
-                    console.log('Marker Position:', marker.position.lat(), marker.position.lng());
-                }
-
-                // Initialize the map when the page is loaded
-                initMap();
-            </script>
-        </div>
-
-        <div class="content-section" id="reviews">
-            <h2>Guest Reviews</h2>
-            <div class="reviews-container">
-                <% hotelReviews.forEach(review=> { %>
-                    <div class="review">
-                        <div class="review-header">
-                            <div class="review-details">
-                                <div class="review-user">
-                                    <h3 class="user-title">
-                                        <%= review.title %>
-                                    </h3>
-                                </div>
-                                <div class="review-date">
-                                    Reviewed on <%= review.date %>
-                                </div>
-                            </div>
-                            <div class="review-score">
-                                <% if (review.average_score>= 4) { %>
-                                    <span class="excellent">Excellent</span>
-                                    <% } else if (review.average_score>= 3) { %>
-                                        <span class="good">Good</span>
-                                        <% } else if (review.average_score>= 2) { %>
-                                            <span class="average">Average</span>
-                                            <% } else { %>
-                                                <span class="poor">Poor</span>
-                                                <% } %>
-                            </div>
+    <div class="content-section" id="reviews">
+        <h2>Guest Reviews</h2>
+        <div class="reviews-container">
+            <% hotelReviews.forEach(review=> { %>
+            <div class="review">
+                <div class="review-header">
+                    <div class="review-details">
+                        <div class="review-user">
+                            <h3 class="user-title">
+                                <%= review.title %>
+                            </h3>
                         </div>
-                        <div class="review-content">
-                            <p class="pros"><strong>Comment:</strong>
-                                <%= review.pros %>
-                            </p>
-                        </div>
-                        <div class="review-room">
-                            Stayed in: <%= review.stayed_room_info.room_name %>
-                        </div>
-                        <div class="review-image">
-                            <% if (review.reviewer_photos.length > 0) { %>
-                                <img src="<%= review.reviewer_photos[0].max500_ao %>" alt="Review Image">
-                                <% } else { %>
-                                    <% } %>
-                        </div>
-                        <div class="review-author">
-                            Reviewed by: <%= review.author.name %>
+                        <div class="review-date">
+                            Reviewed on <%= review.date %>
                         </div>
                     </div>
-                    <% }); %>
-            </div>
-        </div>
-
-        <div class="content-section" id="gallery">
-            <!-- Gallery Content -->
-            <h2>Gallery</h2>
-            <div class="gallery-images">
-                <% if (hotelImages && hotelImages.length> 0) { %>
-                    <% for (let i=0; i < hotelImages.length; i++) { %>
-                        <img src="<%= hotelImages[i] %>" class="gallery-image" alt="Hotel Image">
+                    <div class="review-score">
+                        <% if (review.average_score>= 4) { %>
+                        <span class="excellent">Excellent</span>
+                        <% } else if (review.average_score>= 3) { %>
+                        <span class="good">Good</span>
+                        <% } else if (review.average_score>= 2) { %>
+                        <span class="average">Average</span>
+                        <% } else { %>
+                        <span class="poor">Poor</span>
                         <% } %>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p class="pros"><strong>Comment:</strong>
+                        <%= review.pros %>
+                    </p>
+                </div>
+                <div class="review-room">
+                    Stayed in: <%= review.stayed_room_info.room_name %>
+                </div>
+                <div class="review-image">
+                    <% if (review.reviewer_photos.length > 0) { %>
+                    <img src="<%= review.reviewer_photos[0].max500_ao %>" alt="Review Image">
+                    <% } else { %>
+                    <% } %>
+                </div>
+                <div class="review-author">
+                    Reviewed by: <%= review.author.name %>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <div class="content-section" id="rooms">
+        <h2>Room list</h2>
+        <div class="room-list-container">
+            <% if (roomData && roomData.length > 0) { %>
+            <% const rooms = roomData[0].rooms; %>
+            <% let roomCounter = 1; %>
+            <% Object.keys(rooms).forEach(roomId => { %>
+            <% const room = rooms[roomId]; %>
+            <!-- Container for each room -->
+            <div class="room-container">
+                <!-- Room header -->
+                <h3>Room <%= roomCounter %></h3>
+                <% roomCounter++; %>
+
+                <!-- Room details -->
+                <div class="room-details">
+                    <!-- High Floor Guarantee -->
+                    <p>High Floor Guarantee: <%= room.is_high_floor_guaranteed === 1 ? 'Yes' : 'No' %></p>
+
+                    <!-- Facilities -->
+                    <div class="facility-list">
+                        <h4>Room Facilities</h4>
+                        <ul>
+                            <% if (room.facilities && room.facilities.length > 0) { %>
+                            <% room.facilities.forEach(facility => { %>
+                            <li><%= facility.name %></li>
+                            <% }); %>
                             <% } else { %>
-                                <p>No images available.</p>
-                                <% } %>
+                            <li>No room facilities available for this room.</li>
+                            <% } %>
+                        </ul>
+                    </div>
+
+                    <!-- Private Bathroom Highlights -->
+                    <div class="highlight">
+                        <% if (room.private_bathroom_highlight && room.private_bathroom_highlight.text) { %>
+                        <p><strong>Private Bathroom:</strong> <%= room.private_bathroom_highlight.text %></p>
+                        <% } %>
+                    </div>
+
+                    <!-- Bed Configurations -->
+                    <div class="bed-config">
+                        <% if (room.bed_configurations && room.bed_configurations.length > 0) { %>
+                        <h4>Bed Configurations:</h4>
+                        <ul>
+                            <% room.bed_configurations.forEach((bedConfiguration) => { %>
+                            <li><%= bedConfiguration.name_with_count %></li>
+                            <% }); %>
+                        </ul>
+                        <% } %>
+                    </div>
+
+                    <!-- Children at the Property -->
+                    <div class="child-info">
+                        <% if (room.children_and_beds_text && room.children_and_beds_text.children_at_the_property) { %>
+                        <h4>Children at the Property:</h4>
+                        <ul>
+                            <% room.children_and_beds_text.children_at_the_property.forEach((childInfo) => { %>
+                            <li><%= childInfo.text %></li>
+                            <% }); %>
+                        </ul>
+                        <% } %>
+                    </div>
+
+                    <!-- Cribs and Extra Beds -->
+                    <div class="crib-info">
+                        <% if (room.cribs_and_extra_beds && room.cribs_and_extra_beds.length > 0) { %>
+                        <h4>Cribs and Extra Beds:</h4>
+                        <ul>
+                            <% room.cribs_and_extra_beds.forEach((cribInfo) => { %>
+                            <li><%= cribInfo.text %></li>
+                            <% }); %>
+                        </ul>
+                        <% } %>
+                    </div>
+
+                    <!-- Highlights -->
+                    <div class="room-highlights">
+                        <% if (room.highlights && room.highlights.length > 0) { %>
+                        <h4>Highlights:</h4>
+                        <ul>
+                            <% room.highlights.forEach((highlight) => { %>
+                            <li>
+                                <i class="<%= highlight.icon %>"></i> <%= highlight.translated_name %>
+                            </li>
+                            <% }); %>
+                        </ul>
+                        <% } %>
+                    </div>
+
+                    <!-- Display Room Photos -->
+                    <div class="room-photos">
+                        <h4>Room Photos</h4>
+                        <% if (room.photos && room.photos.length > 0) { %>
+                        <% room.photos.forEach(photo => { %>
+                        <img src="<%= photo.url_max300 %>" alt="Room Photo">
+                        <% }); %>
+                        <% } else { %>
+                        <p>No room photos available for this room.</p>
+                        <% } %>
+                    </div>
+                </div>
+                <!-- Booking Button -->
+                <a href="#" class="book-button" onclick="bookRoom('<%= room.id %>')">Book</a>
             </div>
+            <% }); %>
+            <% } else { %>
+            <p>No room data available.</p>
+            <% } %>
         </div>
-
-        <!-- Book Button -->
-        <div class="book-button-div">
-            <button class="book-button">Book</button>
-        </div>
-
-        <!-- Our Travel Planner Logo and Title, Quick Links, and Contact Us -->
-        <div class="row mt-5">
-            <!-- Our Travel Planner Logo and Title -->
-            <div class="col-md-6">
-                <img src="/images/image-placeholder.png" class="hotel-travel-planner-logo img-fluid"
-                    alt="Travel Planner Logo">
-                <h2 class="hotel-travel-planner-title">Travel Planner</h2>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="col-md-3 hotel-quick-links">
-                <h2>Quick Links</h2>
-                <ul class="list-group">
-                    <li class="list-group-item"><a href="#">Home</a></li>
-                    <li class="list-group-item"><a href="#">Flight</a></li>
-                    <li class="list-group-item"><a href="#">Hotel</a></li>
-                    <li class="list-group-item"><a href="#">Airbnb</a></li>
-                    <li class="list-group-item"><a href="#">Itinerary</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Us -->
-            <div class="col-md-3 hotel-contact-us">
-                <h2>Contact Us</h2>
-                <p>Telephone: +65-1234-5678</p>
-                <p>Email: info@travelplanner.com</p>
-            </div>
-        </div>
-
         <script>
-            // JavaScript to handle content section toggling
-            document.addEventListener("DOMContentLoaded", function () {
-                const sections = document.querySelectorAll(".content-section");
-                const navLinks = document.querySelectorAll(".secondary-navbar a");
+            function bookRoom(roomId) {
+                // Add your logic here to handle the booking action
+                // For example, you can send room details to the database
+                const selectedRoom = document.querySelector(`[data-room-id="${roomId}"]`);
+                if (selectedRoom) {
+                    // Get room details and perform booking actions
+                    const roomDetails = {
+                        roomId: roomId,
+                        // Add other room details as needed
+                    };
+                    // Send roomDetails to the database or perform other actions
+                    console.log("Room booked:", roomDetails);
+                }
+            }
+        </script>
+    </div>
 
-                // Hide all content sections except the "Overview" section
-                sections.forEach((section) => {
-                    if (section.id !== "overview") {
-                        section.style.display = "none";
-                    }
-                });
+    <div class="content-section" id="gallery">
+        <!-- Gallery Content -->
+        <h2>Gallery</h2>
+        <div class="image-slideshow">
+            <div class="current-image-div">
+                <img src="<%= hotelImages[0] %>" id="currentImage">
+            </div>
+            <div class="indicators">
+                <% for (var i = 0; i < hotelImages.length; i++) { %>
+                <% if (i == 0) { %>
+                <img src="<%= hotelImages[i] %>" onclick="showImage('<%= hotelImages[i] %>')" class="indicator-image"
+                    id="<%= hotelImages[i] %>">
+                <% } else { %>
+                <img src="<%= hotelImages[i] %>" onclick="showImage('<%= hotelImages[i] %>')" class="indicator-image"
+                    id="<%= hotelImages[i] %>" style="opacity: 50%;">
+                <% } %>
+                <% } %>
+            </div>
+        </div>
+    </div>
 
-                // Add event listeners to navigation links
-                navLinks.forEach((link) => {
-                    link.addEventListener("click", (event) => {
-                        event.preventDefault();
+    <!-- Our Travel Planner Logo and Title, Quick Links, and Contact Us -->
+    <div class="row mt-5">
+        <!-- Our Travel Planner Logo and Title -->
+        <div class="col-md-6">
+            <img src="/images/image-placeholder.png" class="hotel-travel-planner-logo img-fluid"
+                alt="Travel Planner Logo">
+            <h2 class="hotel-travel-planner-title">Travel Planner</h2>
+        </div>
 
-                        const targetSectionId = link.getAttribute("href");
-                        sections.forEach((section) => {
-                            if (section.id === targetSectionId.substring(1)) {
-                                section.style.display = "block";
-                            } else {
-                                section.style.display = "none";
-                            }
-                        });
+        <!-- Quick Links -->
+        <div class="col-md-3 hotel-quick-links">
+            <h2>Quick Links</h2>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="#">Home</a></li>
+                <li class="list-group-item"><a href="#">Flight</a></li>
+                <li class="list-group-item"><a href="#">Hotel</a></li>
+                <li class="list-group-item"><a href="#">Airbnb</a></li>
+                <li class="list-group-item"><a href="#">Itinerary</a></li>
+            </ul>
+        </div>
+
+        <!-- Contact Us -->
+        <div class="col-md-3 hotel-contact-us">
+            <h2>Contact Us</h2>
+            <p>Telephone: +65-1234-5678</p>
+            <p>Email: info@travelplanner.com</p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to handle content section toggling
+        document.addEventListener("DOMContentLoaded", function () {
+            const sections = document.querySelectorAll(".content-section");
+            const navLinks = document.querySelectorAll(".secondary-navbar a");
+
+            // Hide all content sections except the "Overview" section
+            sections.forEach((section) => {
+                if (section.id !== "overview") {
+                    section.style.display = "none";
+                }
+            });
+
+            // Add event listeners to navigation links
+            navLinks.forEach((link) => {
+                link.addEventListener("click", (event) => {
+                    event.preventDefault();
+
+                    const targetSectionId = link.getAttribute("href");
+                    sections.forEach((section) => {
+                        if (section.id === targetSectionId.substring(1)) {
+                            section.style.display = "block";
+                        } else {
+                            section.style.display = "none";
+                        }
                     });
                 });
             });
-        </script>
+        });
 
-        <%- include ('base/footer'); %>
+        function showImage(newImage) {
+            var currentImage = document.getElementById("currentImage");
+            var oldImage = currentImage.src;
+            currentImage.src = newImage;
+            var oldIndicatorImage = document.getElementById(oldImage);
+            oldIndicatorImage.style.opacity = "50%";
+            var newIndicatorImage = document.getElementById(newImage);
+            newIndicatorImage.style.opacity = "100%";
+        }
+    </script>
+
+    <%- include ('base/footer'); %>
 </body>
 
 </html>

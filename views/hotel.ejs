@@ -3,216 +3,269 @@
 
 <head>
     <%- include ('base/head'); %>
-        <title>Hotel Page</title>
-        <link rel="stylesheet" href="/stylesheets/hotel-style.css">
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-        <script>
-            function validatePax(input) {
-                if (input.value < 0) {
-                    input.value = 0;
-                }
+    <title>Hotel Page</title>
+    <link rel="stylesheet" href="/stylesheets/hotel-style.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script>
+        function validatePax(input) {
+            if (input.value < 0) {
+                input.value = 0;
             }
-        </script>
+        }
+    </script>
 </head>
 
 <body>
     <%- include ('base/navbar'); %>
 
-        <div class="container">
-            <!-- Row 1: Medium Sized Image Placeholder and Right Side Content -->
-            <div class="row mt-5">
-                <!-- Medium Sized Image Placeholder on the Left (50% of the Page) -->
-                <div class="col-md-6">
-                    <img src="/images/image-placeholder.png" class="hotel-medium-image img-fluid"
-                        alt="Medium Image Placeholder">
-                </div>
+    <div class="container">
+        <!-- Row 1: Medium Sized Image Placeholder and Right Side Content -->
+        <div class="row mt-5">
+            <!-- Medium Sized Image Placeholder on the Left (50% of the Page) -->
+            <div class="col-md-6">
+                <img src="/images/image-placeholder.png" class="hotel-medium-image img-fluid"
+                    alt="Medium Image Placeholder">
+            </div>
 
-                <!-- Right Side: Title, Location, No. of Pax, and Location Dropdown Field -->
-                <div class="col-md-6 hotel-right-content">
-                    <div class="booking-search-box">
-                        <h2 class="booking-title">Where do you want to stay?</h2>
-                        <form id="locationForm" action="/hotel/search" method="GET">
-                            <div class="booking-form">
-                                <div class="form-group">
-                                    <label for="location" class="booking-label">Destination</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control booking-input" id="location"
-                                            name="location" placeholder="Enter destination" autocomplete="off">
-                                        <ul id="suggestions"></ul>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="booking-date">
-                                        <label for="checkin" class="booking-label">Check-in</label>
-                                        <input type="date" class="form-control booking-input" id="checkin"
-                                            name="checkin" min="<%= new Date().toISOString().split('T')[0] %>">
-                                    </div>
-                                    <div class="booking-date">
-                                        <label for="checkout" class="booking-label">Check-out</label>
-                                        <input type="date" class="form-control booking-input" id="checkout"
-                                            name="checkout" min="<%= new Date().toISOString().split('T')[0] %>">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="pax" class="booking-label">Guests</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control booking-input" id="pax" name="pax"
-                                            placeholder="No. of guests" oninput="validatePax(this)">
-                                    </div>
-                                </div>
-                                <div class=" booking-button-container">
-                                    <button type="submit" class="btn btn-primary booking-button">Search</button>
+            <!-- Right Side: Title, Location, No. of Pax, and Location Dropdown Field -->
+            <div class="col-md-6 hotel-right-content">
+                <div class="booking-search-box">
+                    <h2 class="booking-title">Where do you want to stay?</h2>
+                    <form id="locationForm" action="/hotel/search" method="GET">
+                        <div class="booking-form">
+                            <div class="form-group">
+                                <label for="location" class="booking-label">Destination</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control booking-input" id="location" name="location"
+                                        placeholder="Enter destination" autocomplete="off" required>
+                                    <ul id="suggestions"></ul>
                                 </div>
                             </div>
-                    </div>
-                    </form>
+                            <div class="form-group">
+                                <div class="booking-date">
+                                    <label for="checkin" class="booking-label">Check-in</label>
+                                    <input type="date" class="form-control booking-input" id="checkin" name="checkin"
+                                        min="<%= new Date().toISOString().split('T')[0] %>" required>
+                                </div>
+                                <div class="booking-date">
+                                    <label for="checkout" class="booking-label">Check-out</label>
+                                    <input type="date" class="form-control booking-input" id="checkout" name="checkout"
+                                        min="<%= new Date().toISOString().split('T')[0] %>" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pax" class="booking-label">Guests</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control booking-input" id="pax" name="pax"
+                                        placeholder="No. of guests" oninput="validatePax(this)" required>
+                                </div>
+                            </div>
+                            <div class=" booking-button-container">
+                                <button type="submit" class="btn btn-primary booking-button">Search</button>
+                            </div>
+                        </div>
                 </div>
+                </form>
             </div>
-            <!-- Row 2: Title "Popular Stays" -->
-            <div class="row mt-5">
-                <div class="col-md-12">
-                    <h2 class="hotel-popular-stays">Popular Stays</h2>
-                </div>
+        </div>
+        <!-- Row 2: Title "Popular Stays" -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2 class="hotel-popular-stays">Popular Stays</h2>
             </div>
+        </div>
 
-            <!-- Row 3: Three Vertically Placed Small Image Holders and Map -->
-            <div class="row">
-                <!-- Three Vertically Placed Small Image Holders -->
-                <div class="col-md-4 mb-3">
-                    <div class="hotel-small-images-container">
-                      <div class="small-image-placeholder">
+        <!-- Row 3: Three Vertically Placed Small Image Holders and Map -->
+        <div class="row">
+            <!-- Three Vertically Placed Small Image Holders -->
+            <div class="col-md-4 mb-3">
+                <div class="hotel-small-images-container">
+                    <div class="small-image-placeholder">
                         <img src="<%= images[0] %>" alt="Hotel Image 1" class="hotel-small-image">
-                      </div>
-                      <div class="small-image-placeholder">
-                        <img src="<%= images[1] %>" alt="Hotel Image 2" class="hotel-small-image">
-                      </div>
-                      <div class="small-image-placeholder">
-                        <img src="<%= images[2] %>" alt="Hotel Image 3" class="hotel-small-image">
-                      </div>
                     </div>
-                  </div>
-                <!-- Map -->
-                <div class="col-xl-8">
-                    <div id="map" class="hotel-map"></div>
+                    <div class="small-image-placeholder">
+                        <img src="<%= images[1] %>" alt="Hotel Image 2" class="hotel-small-image">
+                    </div>
+                    <div class="small-image-placeholder">
+                        <img src="<%= images[2] %>" alt="Hotel Image 3" class="hotel-small-image">
+                    </div>
                 </div>
             </div>
+            <!-- Map -->
+            <div class="col-xl-8">
+                <div id="map" class="hotel-map"></div>
+            </div>
+        </div>
 
-            <!-- Row 5: Our Travel Planner Logo and Title, Quick Links, and Contact Us -->
-            <div class="row mt-5">
-                <!-- Our Travel Planner Logo and Title -->
-                <div class="col-md-6">
-                    <img src="/images/image-placeholder.png" class="hotel-travel-planner-logo img-fluid"
-                        alt="Travel Planner Logo">
-                    <h2 class="hotel-travel-planner-title">Travel Planner</h2>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="col-md-3 hotel-quick-links">
-                    <h2>Quick Links</h2>
-                    <ul class="list-group">
-                        <li class="list-group-item"><a href="#">Home</a></li>
-                        <li class="list-group-item"><a href="#">Flight</a></li>
-                        <li class="list-group-item"><a href="#">Hotel</a></li>
-                        <li class="list-group-item"><a href="#">Airbnb</a></li>
-                        <li class="list-group-item"><a href="#">Itinerary</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contact Us -->
-                <div class="col-md-3 hotel-contact-us">
-                    <h2>Contact Us</h2>
-                    <p>Telephone: +65-1234-5678</p>
-                    <p>Email: info@travelplanner.com</p>
-                </div>
+        <!-- Row 5: Our Travel Planner Logo and Title, Quick Links, and Contact Us -->
+        <div class="row mt-5">
+            <!-- Our Travel Planner Logo and Title -->
+            <div class="col-md-6">
+                <img src="/images/image-placeholder.png" class="hotel-travel-planner-logo img-fluid"
+                    alt="Travel Planner Logo">
+                <h2 class="hotel-travel-planner-title">Travel Planner</h2>
             </div>
 
-            <script>
-                const locationInput = document.getElementById('location');
-                const suggestionsList = document.getElementById('suggestions');
+            <!-- Quick Links -->
+            <div class="col-md-3 hotel-quick-links">
+                <h2>Quick Links</h2>
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="#">Home</a></li>
+                    <li class="list-group-item"><a href="#">Flight</a></li>
+                    <li class="list-group-item"><a href="#">Hotel</a></li>
+                    <li class="list-group-item"><a href="#">Airbnb</a></li>
+                    <li class="list-group-item"><a href="#">Itinerary</a></li>
+                </ul>
+            </div>
 
-                locationInput.addEventListener('input', async (event) => {
-                    const searchText = event.target.value;
-                    if (searchText.length >= 3) {
-                        try {
-                            const response = await fetch(`/hotel/get-suggestions?query=${searchText}`);
-                            const suggestions = await response.json();
-                            suggestionsList.innerHTML = '';
+            <!-- Contact Us -->
+            <div class="col-md-3 hotel-contact-us">
+                <h2>Contact Us</h2>
+                <p>Telephone: +65-1234-5678</p>
+                <p>Email: info@travelplanner.com</p>
+            </div>
+        </div>
 
-                            const topSuggestions = suggestions.slice(0, 5); // Get the top 5 suggestions
+        <script>
+            const locationInput = document.getElementById('location');
+            const suggestionsList = document.getElementById('suggestions');
 
-                            topSuggestions.forEach((suggestion) => {
-                                const li = document.createElement('li');
-                                li.innerHTML = `<span>${suggestion.label}</span><p>${suggestion.country}</p>`;
-                                li.addEventListener('click', () => {
-                                    locationInput.value = suggestion.label;
-                                    suggestionsList.innerHTML = '';
-                                });
-                                suggestionsList.appendChild(li);
-                            });
-
-                            if (topSuggestions.length > 0) {
-                                suggestionsList.style.display = 'block';
-                            } else {
-                                suggestionsList.style.display = 'none';
-                            }
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    } else {
+            locationInput.addEventListener('input', async (event) => {
+                const searchText = event.target.value;
+                if (searchText.length >= 3) {
+                    try {
+                        const response = await fetch(`/hotel/get-suggestions?query=${searchText}`);
+                        const suggestions = await response.json();
                         suggestionsList.innerHTML = '';
-                        suggestionsList.style.display = 'none';
-                    }
-                });
 
-                // Hide suggestions when clicking outside the input field
-                document.addEventListener('click', (event) => {
-                    if (!locationInput.contains(event.target)) {
-                        suggestionsList.style.display = 'none';
-                    }
-                });
+                        const topSuggestions = suggestions.slice(0, 5); // Get the top 5 suggestions
 
-
-                // Load the Google Maps JavaScript API asynchronously
-                function initMap() {
-                    const { Map, Marker } = google.maps;
-
-                    // Retrieve latitude and longitude for multiple locations from your server
-                    const locations = [
-                        { lat: 1.3023900000000594, lng: 103.85813000000007, title: 'Village Hotel Bugis by Far East Hospitality' },
-                        { lat: 1.3201395, lng: 103.8526556, title: 'Holiday Inn Express & Suites Singapore Novena, an IHG Hotel' },
-                        { lat: 1.30007047125904, lng: 103.860569894314, title: 'PARKROYAL on Beach Road, Singapore' }
-                    ];
-
-                    const map = new Map(document.getElementById('map'), {
-                        center: { lat: locations[0].lat, lng: locations[0].lng },
-                        zoom: 15 // Adjust the zoom level as needed
-                    });
-
-                    // Create and add markers for each location
-                    locations.forEach(location => {
-                        const marker = new Marker({
-                            position: { lat: location.lat, lng: location.lng },
-                            map: map,
-                            title: location.title // Tooltip text when hovering over the marker
+                        topSuggestions.forEach((suggestion) => {
+                            const li = document.createElement('li');
+                            li.innerHTML =
+                                `<span>${suggestion.label}</span><p>${suggestion.country}</p>`;
+                            li.addEventListener('click', () => {
+                                locationInput.value = suggestion.label;
+                                suggestionsList.innerHTML = '';
+                            });
+                            suggestionsList.appendChild(li);
                         });
+
+                        if (topSuggestions.length > 0) {
+                            suggestionsList.style.display = 'block';
+                        } else {
+                            suggestionsList.style.display = 'none';
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+                } else {
+                    suggestionsList.innerHTML = '';
+                    suggestionsList.style.display = 'none';
+                }
+            });
+
+            // Hide suggestions when clicking outside the input field
+            document.addEventListener('click', (event) => {
+                if (!locationInput.contains(event.target)) {
+                    suggestionsList.style.display = 'none';
+                }
+            });
+
+            // Get references to the check-in and check-out date input fields
+            const checkinInput = document.getElementById('checkin');
+            const checkoutInput = document.getElementById('checkout');
+
+            // Add an event listener to the checkinInput field
+            checkinInput.addEventListener('change', () => {
+                // Parse the selected dates into JavaScript Date objects
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                // Check if the selected check-out date is earlier than the check-in date
+                if (checkoutDate <= checkinDate) {
+                    // Display an error message or prevent form submission
+                    alert('Check-out date must be after the check-in date.');
+                    checkoutInput.value = ''; // Clears the checkout date field
+                }
+            });
+
+            // Add an event listener to the checkoutInput field
+            checkoutInput.addEventListener('change', () => {
+                // Parse the selected dates into JavaScript Date objects
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                // Check if the selected check-out date is earlier than the check-in date
+                if (checkoutDate <= checkinDate) {
+                    // Display an error message or prevent form submission
+                    alert('Check-out date must be after the check-in date.');
+                    checkoutInput.value = ''; // Clears the checkout date field
+                }
+            });
+
+            // Load the Google Maps JavaScript API asynchronously
+            function initMap() {
+                const {
+                    Map,
+                    Marker
+                } = google.maps;
+
+                // Retrieve latitude and longitude for multiple locations from your server
+                const locations = [{
+                        lat: 1.3023900000000594,
+                        lng: 103.85813000000007,
+                        title: 'Village Hotel Bugis by Far East Hospitality'
+                    },
+                    {
+                        lat: 1.3201395,
+                        lng: 103.8526556,
+                        title: 'Holiday Inn Express & Suites Singapore Novena, an IHG Hotel'
+                    },
+                    {
+                        lat: 1.30007047125904,
+                        lng: 103.860569894314,
+                        title: 'PARKROYAL on Beach Road, Singapore'
+                    }
+                ];
+
+                const map = new Map(document.getElementById('map'), {
+                    center: {
+                        lat: locations[0].lat,
+                        lng: locations[0].lng
+                    },
+                    zoom: 15 // Adjust the zoom level as needed
+                });
+
+                // Create and add markers for each location
+                locations.forEach(location => {
+                    const marker = new Marker({
+                        position: {
+                            lat: location.lat,
+                            lng: location.lng
+                        },
+                        map: map,
+                        title: location.title // Tooltip text when hovering over the marker
                     });
-                }
+                });
+            }
 
-                // Call the initMap function when the API script is loaded
-                function loadScript() {
-                    const script = document.createElement('script');
-                    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap`;
-                    script.defer = true;
-                    script.async = true;
-                    document.head.appendChild(script);
-                }
+            // Call the initMap function when the API script is loaded
+            function loadScript() {
+                const script = document.createElement('script');
+                script.src =
+                    `https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap`;
+                script.defer = true;
+                script.async = true;
+                document.head.appendChild(script);
+            }
 
-                // Load the Google Maps API
-                loadScript();
-            </script>
+            // Load the Google Maps API
+            loadScript();
+        </script>
 
-            <%- include ('base/footer'); %>
+        <%- include ('base/footer'); %>
 </body>
 
 </html>

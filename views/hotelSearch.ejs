@@ -5,10 +5,60 @@
     <%- include ('base/head'); %>
     <title>Hotel Search Results</title>
     <link rel="stylesheet" href="/stylesheets/hotelSearch-style.css">
+    <script>
+        function validatePax(input) {
+            if (input.value < 0) {
+                input.value = 0;
+            }
+        }
+    </script>
 </head>
 
 <body>
     <%- include ('base/navbar'); %>
+
+    <!-- Search box -->
+    <div class="container center-container">
+        <div class="booking-search-box">
+            <h2 class="booking-title">Where do you want to stay?</h2>
+            <form id="locationForm" action="/hotel/search" method="GET">
+                <div class="booking-form">
+                    <div class="form-group">
+                        <label for="location" class="booking-label">Destination</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control booking-input" id="location" name="location"
+                                placeholder="Enter destination" autocomplete="off" value="<%= location %>" required>
+                            <ul id="suggestions"></ul>
+                        </div>
+                    </div>
+                    <div class="date-input-container">
+                        <div class="form-group">
+                            <label for="checkin" class="booking-label">Check-in</label>
+                            <input type="date" class="form-control booking-date" id="checkin" name="checkin"
+                                min="<%= new Date().toISOString().split('T')[0] %>" value="<%= checkinDate %>" required>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="checkout" class="booking-label">Check-out</label>
+                            <input type="date" class="form-control booking-date" id="checkout" name="checkout"
+                                min="<%= new Date().toISOString().split('T')[0] %>" value="<%= checkoutDate %>" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pax" class="booking-label">Guests</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control booking-input" id="pax" name="pax"
+                                placeholder="No. of guests" oninput="validatePax(this)" value="<%= adultsNumber %>"
+                                required>
+                        </div>
+                    </div>
+                    <div class=" booking-button-container">
+                        <button type="submit" class="btn btn-primary booking-button">Search</button>
+                    </div>
+                </div>
+        </div>
+        </form>
+    </div>
 
     <div class="container">
         <div class="row mt-5">
@@ -18,30 +68,111 @@
         </div>
         <div class="hotel-list">
             <% if (hotels && hotels.length > 0) { %>
-                <% for (let i = 0; i < hotels.length; i++) { %>
-                    <% const hotel = hotels[i]; %>
-                    <a href="/hotel/information?hotel_id=<%= hotel.hotel_id %>&checkin=<%= checkinDate %>&checkout=<%= checkoutDate %>&pax=<%= adultsNumber %>" class="hotel-item-link">
-                    <div class="hotel-item">
-                        <img src="<%= hotel.max_photo_url %>" alt="<%= hotel.hotel_name %>" class="hotel-image">
-                        <div class="hotel-details">
-                            <h3><%= hotel.hotel_name %></h3>
-                            <div class="hotel-address">
-                                <span><%= hotel.hotel_address %>, </span>
-                                <span><%= hotel.hotel_city %></span>
-                            </div>
-                            <div class="rating">
-                                <span class="rating-value"><%= hotel.review_score %></span>
-                                <span class="rating-text"><%= hotel.review_score_word %></span>
-                            </div>
-                            <h7 class="price-text">Price per night: <%= hotel.price_currency %>$ <%= hotel.price_per_night %></h7>
+            <% for (let i = 0; i < hotels.length; i++) { %>
+            <% const hotel = hotels[i]; %>
+            <a href="/hotel/information?hotel_id=<%= hotel.hotel_id %>&checkin=<%= checkinDate %>&checkout=<%= checkoutDate %>&pax=<%= adultsNumber %>"
+                class="hotel-item-link" target="_blank">
+                <div class="hotel-item">
+                    <img src="<%= hotel.max_photo_url %>" alt="<%= hotel.hotel_name %>" class="hotel-image">
+                    <div class="hotel-details">
+                        <h3><%= hotel.hotel_name %></h3>
+                        <div class="hotel-address">
+                            <span><%= hotel.hotel_address %>, </span>
+                            <span><%= hotel.hotel_city %></span>
                         </div>
+                        <div class="rating">
+                            <span class="rating-value"><%= hotel.review_score %></span>
+                            <span class="rating-text"><%= hotel.review_score_word %></span>
+                        </div>
+                        <h7 class="price-text">Price per night: <%= hotel.price_currency %>$
+                            <%= hotel.price_per_night %></h7>
                     </div>
+                </div>
                 <% } %>
-            <% } else { %>
+                <% } else { %>
                 <p>No hotels found for your search.</p>
-            <% } %>
+                <% } %>
         </div>
     </div>
+
+    <script>
+        const locationInput = document.getElementById('location');
+        const suggestionsList = document.getElementById('suggestions');
+
+        locationInput.addEventListener('input', async (event) => {
+            const searchText = event.target.value;
+            if (searchText.length >= 3) {
+                try {
+                    const response = await fetch(`/hotel/get-suggestions?query=${searchText}`);
+                    const suggestions = await response.json();
+                    suggestionsList.innerHTML = '';
+
+                    const topSuggestions = suggestions.slice(0, 5); // Get the top 5 suggestions
+
+                    topSuggestions.forEach((suggestion) => {
+                        const li = document.createElement('li');
+                        li.innerHTML =
+                            `<span>${suggestion.label}</span><p>${suggestion.country}</p>`;
+                        li.addEventListener('click', () => {
+                            locationInput.value = suggestion.label;
+                            suggestionsList.innerHTML = '';
+                        });
+                        suggestionsList.appendChild(li);
+                    });
+
+                    if (topSuggestions.length > 0) {
+                        suggestionsList.style.display = 'block';
+                    } else {
+                        suggestionsList.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                suggestionsList.innerHTML = '';
+                suggestionsList.style.display = 'none';
+            }
+        });
+
+        // Hide suggestions when clicking outside the input field
+        document.addEventListener('click', (event) => {
+            if (!locationInput.contains(event.target)) {
+                suggestionsList.style.display = 'none';
+            }
+        });
+
+        // Get references to the check-in and check-out date input fields
+        const checkinInput = document.getElementById('checkin');
+        const checkoutInput = document.getElementById('checkout');
+
+        // Add an event listener to the checkinInput field
+        checkinInput.addEventListener('change', () => {
+            // Parse the selected dates into JavaScript Date objects
+            const checkinDate = new Date(checkinInput.value);
+            const checkoutDate = new Date(checkoutInput.value);
+
+            // Check if the selected check-out date is earlier than the check-in date
+            if (checkoutDate <= checkinDate) {
+                // Display an error message or prevent form submission
+                alert('Check-out date must be after the check-in date.');
+                checkoutInput.value = ''; // Clears the checkout date field
+            }
+        });
+
+        // Add an event listener to the checkoutInput field
+        checkoutInput.addEventListener('change', () => {
+            // Parse the selected dates into JavaScript Date objects
+            const checkinDate = new Date(checkinInput.value);
+            const checkoutDate = new Date(checkoutInput.value);
+
+            // Check if the selected check-out date is earlier than the check-in date
+            if (checkoutDate <= checkinDate) {
+                // Display an error message or prevent form submission
+                alert('Check-out date must be after the check-in date.');
+                checkoutInput.value = ''; // Clears the checkout date field
+            }
+        });
+    </script>
 
     <%- include ('base/footer'); %>
 </body>
