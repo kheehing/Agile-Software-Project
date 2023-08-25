@@ -70,7 +70,7 @@
                                 </h3>
                             </td>
                         </tr>
-                        <form action="/airbnb/<%= tripDetails.propertyId %>/book" method="POST" id="bookingForm">
+                        <form action="/airbnb/<%= tripDetails.propertyId %>/book" method="POST">
                             <div class="form-group">
                                 <tr>
                                     <td><label for="checkin" class="booking-label">Check-in</label></td>
@@ -135,7 +135,7 @@
                                 </tr>
                             </div>
                             <tr>
-                                <td colspan="2"><button type="submit" class="btn btn-primary info-booking-button" id="infoBookingButton">Book</button></td>
+                                <td colspan="2"><button type="submit" class="btn btn-primary info-booking-button">Book</button></td>
                             </tr>
                             <input type="hidden" name="airbnbImage" value="<%= propertyDetails.images[0] %>" />
                             <input type="hidden" name="airbnbName" value="<%= propertyDetails.title %>" />
@@ -153,6 +153,7 @@
 </body>
 </html>
 <script>
+    // Update guests and price when page is loaded
     var tripDetailsObject = <%- JSON.stringify(tripDetails) %>;
     var adults = document.getElementById("adults");
     var children = document.getElementById("children");
@@ -175,6 +176,8 @@
     updateGuests("infants", 0);
     updateGuests("pets", 0);
     calculatePrice();
+
+    // Show/hide guest dropdown
     document.onclick = function(e) {
         var guests = document.getElementById("guests");
         var dropdownContent = document.getElementById("dropdownContent");
@@ -194,6 +197,8 @@
             dropdownArrow.src = "/images/down-arrow.png";
         }
     }
+
+    // Show airbnb image when clicked
     function showImage(newImage) {
         var currentImage = document.getElementById("currentImage");
         var oldImage = currentImage.src;
@@ -203,11 +208,14 @@
         var newIndicatorImage = document.getElementById(newImage);
         newIndicatorImage.style.opacity = "100%";
     }
+
+    // Update guest input value
     function updateGuests(guestType, number) {
-        // minus/plus value depending on button clicked
+        // Minus/plus value based on button clicked
         var guestTypeInput = document.getElementById(guestType);
         guestTypeInput.value = (parseInt(guestTypeInput.value) + number).toString();
-        // set disabled to true/false depending on value
+        
+        // Disable minus button based on value
         var guestTypeMinusButton = document.getElementById(guestType + "MinusButton");
         var guestTypeMinusImage = document.getElementById(guestType + "MinusIcon");
         if (parseInt(guestTypeInput.value) > 0) {
@@ -220,13 +228,13 @@
             guestTypeMinusButton.className = "minus-button-disabled";
             guestTypeMinusImage.src = "/images/minus-disabled.png";
         }
-        // get values
+
+        // Have minimum 1 adult if there is at least 1 child/infant/pet
         var adults = document.getElementById("adults");
         var children = document.getElementById("children");
         var infants = document.getElementById("infants");
         var pets = document.getElementById("pets");
         var guests = document.getElementById("guests");
-        // have minimum 1 adult
         var adultsMinusButton = document.getElementById("adultsMinusButton");
         var adultsMinusImage = document.getElementById("adultsMinusIcon");
         if ((adults.value == "0" || adults.value == "1") && (children.value != "0" || infants.value != "0" || pets.value != "0")) {
@@ -240,7 +248,8 @@
             adultsMinusButton.className = "minus-button";
             adultsMinusImage.src = "/images/minus.png";
         }
-        // calculate number of guests
+
+        // Update guest input value
         var adultsAndChildrenValue = parseInt(adults.value) + parseInt(children.value);
         var infantsValue = parseInt(infants.value);
         var petsValue = parseInt(pets.value);
@@ -271,11 +280,8 @@
         }
         guests.value = guestsValue;
     }
-    document.getElementById("infoBookingButton").onclick = function(e) {
-        e.preventDefault();
-        var bookingForm = document.getElementById("bookingForm");
-        bookingForm.submit();
-    }
+
+    // Calculate total price based on number of nights
     function calculatePrice() {
         var propertyDetailsObject = <%- JSON.stringify(propertyDetails) %>;
         var pricePerNight;

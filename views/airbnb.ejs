@@ -87,6 +87,7 @@
 </body>
 </html>
 <script>
+    // Show/hide guest dropdown
     document.onclick = function(e) {
         var guests = document.getElementById("guests");
         var dropdownContent = document.getElementById("dropdownContent");
@@ -106,11 +107,14 @@
             dropdownArrow.src = "/images/down-arrow.png";
         }
     }
+
+    // Update guest input value
     function updateGuests(guestType, number) {
-        // minus/plus value depending on button clicked
+        // Minus/plus value based on button clicked
         var guestTypeInput = document.getElementById(guestType);
         guestTypeInput.value = (parseInt(guestTypeInput.value) + number).toString();
-        // set disabled to true/false depending on value
+
+        // Disable minus button based on value
         var guestTypeMinusButton = document.getElementById(guestType + "MinusButton");
         var guestTypeMinusImage = document.getElementById(guestType + "MinusIcon");
         if (parseInt(guestTypeInput.value) > 0) {
@@ -123,13 +127,13 @@
             guestTypeMinusButton.className = "minus-button-disabled";
             guestTypeMinusImage.src = "/images/minus-disabled.png";
         }
-        // get values
+
+        // Have minimum 1 adult if there is at least 1 child/infant/pet
         var adults = document.getElementById("adults");
         var children = document.getElementById("children");
         var infants = document.getElementById("infants");
         var pets = document.getElementById("pets");
         var guests = document.getElementById("guests");
-        // have minimum 1 adult
         var adultsMinusButton = document.getElementById("adultsMinusButton");
         var adultsMinusImage = document.getElementById("adultsMinusIcon");
         if ((adults.value == "0" || adults.value == "1") && (children.value != "0" || infants.value != "0" || pets.value != "0")) {
@@ -143,7 +147,8 @@
             adultsMinusButton.className = "minus-button";
             adultsMinusImage.src = "/images/minus.png";
         }
-        // calculate number of guests
+
+        // Update guest input value
         var adultsAndChildrenValue = parseInt(adults.value) + parseInt(children.value);
         var infantsValue = parseInt(infants.value);
         var petsValue = parseInt(pets.value);
