@@ -3,44 +3,139 @@
 <head>
     <%- include ('base/head'); %>
     <title>Planning</title>
+    <style>
+        .planning-dropdown {
+            top: 100%;
+            left: 0;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        .planning-dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .planning-dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+        .readjust-margin {
+            margin-bottom: 0.5rem !important;
+        }
+    </style>
 </head>
 <body>
     <%- include ('base/navbar'); %>
     <div class="container mt-4">
-        <div class="row align-items-center">
-            <div class="col">
-                <div class="row">
-                    <h2 class="col-3 user-select-none edit-element" style="display: none;" id="trip-name-label">Trip Name:</h2>
-                    <h1 class="col user-select-none display-element" id="trip-name-display"><%= trip.tripName %></h1>
-                    <input type="text" id="trip-name-input" class="form-control edit-element col" value="<%= trip.tripName %>" style="display: none;">
+        <form id="trip-form">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="row">
+                        <h2 class="col-3 user-select-none edit-element" style="display: none;" id="trip-name-label">Trip Name:</h2>
+                        <h1 class="col user-select-none display-element" id="trip-name-display"><%= trip.tripName %></h1>
+                        <input type="text" name="trip-name" id="trip-name-input" class="form-control edit-element col" value="<%= trip.tripName %>" style="display: none;">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary display-element" id="share-trip-button">Share Trip</button>
+                    <button type="button" class="btn btn-primary display-element" id="edit-trip-button">Edit Trip</button>
+                    <button type="button" class="btn btn-success edit-element" id="update-trip-button" style="display: none;">Update</button>
+                    <button type="button" class="btn btn-secondary edit-element" id="cancel-edit-button" style="display: none;">Cancel</button>
                 </div>
             </div>
-            <div class="col-auto">
-                <button type="button" class="btn btn-primary display-element" id="edit-trip-button">Edit Trip</button>
-                <button type="button" class="btn btn-success edit-element" id="update-trip-button" style="display: none;">Update</button>
-                <button type="button" class="btn btn-secondary edit-element" id="cancel-edit-button" style="display: none;">Cancel</button>
-            </div>
-        </div>
-        <div class="card mt-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title">Destinations:</h5>
-                    <button type="button" class="btn btn-success edit-element col-auto" id="add-destination-button" style="display: none;">Add Destination</button>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title">Destinations:</h5>
+                        <button type="button" class="btn btn-success edit-element col-auto" id="add-destination-button" style="display: none;">Add Destination</button>
+                    </div>
+                    <div id="destinations-input-group" class="edit-element" style="display: none;padding-top:10px;">
+                    <% trip.destinations.forEach((destination, index) => { %>
+                        <div class="input-group mb-2 destination-input-group position-relative">
+                            <input type="text" class="form-control destination-input" value="<%= destination %>">
+                            <button type="button" class="btn btn-danger remove-destination-button rounded-end">Remove</button>
+                            <div class="dropdown-menu planning-dropdown position-absolute w-100" style="display: none;"></div>
+                        </div>
+                        <% }); %>
+                    </div>
+                    <p class="card-text display-element" id="destinations-display" style="padding-top:10px;"><%= trip.destinations.join(' | ') %></p>
+                    <!-- Other fields go here -->
+                    <div class="date-section row align-items-center">
+                        <div class="col-3 d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Trip Length:</h5>
+                            <p class="card-text" id="trip-length-display"></p>
+                        </div>
+                        <div class="col date-display d-flex justify-content-center align-items-center">
+                            <h5 class="card-title date-display" style="padding-right: 10px;">From: </h5>
+                            <p class="card-text display-element date-display readjust-margin" id="from-date-display"></p>
+                            <input type="date" class="form-control edit-element" id="from-date-input" style="display: none;">
+                        </div>
+                        <div class="col date-display d-flex justify-content-center align-items-center">
+                            <h5 class="card-title date-display" style="padding-right: 10px;">To: </h5>
+                            <p class="card-text display-element date-display readjust-margin" id="to-date-display"></p>
+                            <input type="date" class="form-control edit-element" id="to-date-input" style="display: none;">
+                        </div>
+                    </div>
                 </div>
-                <div id="destinations-input-group" class="edit-element" style="display: none;">
-                   <% trip.destinations.forEach((destination, index) => { %>
-                        <input type="text" class="form-control mb-2 destination-input" value="<%= destination %>">
-                    <% }); %>
-                </div>
-                <p class="card-text display-element" id="destinations-display"><%= trip.destinations.join(', ') %></p>
-                <!-- Other fields go here -->
             </div>
-        </div>
+            <br>
+            <ul class="nav nav-pills mb-3" id="itineraryTabs" role="tablist">
+                <!-- Tabs will be added here dynamically -->
+            </ul>
+            <div class="tab-content" id="itineraryTabContent">
+                <!-- Tab panes will be added here dynamically -->
+            </div>
+            <% for (let i = 1; i <= tripLengthInDays; i++) { %>
+                <div class="modal fade" id="addPlaceModal<%= i %>" tabindex="-1" aria-labelledby="addPlaceModalLabel<%= i %>" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addPlaceModalLabel<%= i %>">Add Place of Interest for Day <%= i %></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addPlaceForm<%= i %>">
+                                    <div class="mb-3">
+                                        <label for="startTime<%= i %>" class="form-label">Start Time:</label>
+                                        <input type="time" class="form-control" id="startTime<%= i %>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="endTime<%= i %>" class="form-label">End Time:</label>
+                                        <input type="time" class="form-control" id="endTime<%= i %>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="placeOfInterest<%= i %>" class="form-label">Place of Interest:</label>
+                                        <input type="text" class="form-control" id="placeOfInterest<%= i %>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="placeLocation<%= i %>" class="form-label">Location:</label>
+                                        <input type="text" class="form-control" id="placeLocation<%= i %>" placeholder="e.g., Street address, city">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="placeNotes<%= i %>" class="form-label">Notes:</label>
+                                        <textarea class="form-control" id="placeNotes<%= i %>" rows="3"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="savePlaceButton<%= i %>">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </form>
     </div>
     <%- include ('base/footer'); %>
     <script>
         $(document).ready(function() {
             var citiesAndCountries;
+            var tripLengthInDays = 0;
+            const fromDate = new Date('<%= trip.fromDate %>');
+            const toDate = new Date('<%= trip.toDate %>');
+            if (fromDate != "Invalid Date" && toDate != "Invalid Date") {
+                tripLengthInDays = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+            }
             $.getJSON('/data/airports.json', function(data) {
                 citiesAndCountries = data.map(item => ({
                     city: item.City,
@@ -49,39 +144,179 @@
                 // filter the same text out
                 citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country)));
             });
+            // ===== update =====
+            $('#update-trip-button').on('click', function() {
+                var formData = $('#trip-form').serializeArray();
+                var tripData = {};
+                formData.forEach(function(item) {
+                  tripData[item.name] = item.value;
+                  tripData["lastEdited"] = new Date().toISOString();
+                });
+              
+                // Assuming you have the user ID and trip ID available
+                var userId = '<%= user.uid %>';
+                var tripId = '<%= tripId %>';
+                $.ajax({
+                  url: `/itinerary/trip/${userId}/destinations/${tripId}`,
+                  type: 'PUT',
+                  data: JSON.stringify(tripData),
+                  contentType: 'application/json',
+                  success: function(response) {
+                    alert('Trip updated successfully!');
+                  },
+                  error: function(error) {
+                    alert('An error occurred while updating the trip.');
+                    console.error(error);
+                  }
+                });
+              });
 
+            // ===== Edit | View buttons =====
             $('#edit-trip-button').on('click', function() {
                 $('.display-element').hide();
                 $('.edit-element').show();
             });
-
             $('#cancel-edit-button').on('click', function() {
                 $('.display-element').show();
                 $('.edit-element').hide();
             });
-
             $('#update-trip-button').on('click', function() {
                 // Handle the update here
                 // You can use AJAX to send the updated data to the server
             });
 
-            $('#add-destination-button').on('click', function() {
-                const numberOfDestinations = $('#destinations-input-group .destination-input-group').length;
-                if (numberOfDestinations < 5) {
-                    const destinationInputGroup = $('<div>').addClass('input-group mb-2');
-                    const destinationInput = $('<input>').attr('type', 'text').addClass('form-control destination-input');
-                    const removeButtonDiv = $('<div>').addClass('input-group-append');
-                    const removeButton = $('<button>').text('Remove').addClass('btn btn-danger').on('click', function() {
-                        $(this).closest('.destination-input-group').remove();
+            // ===== Destination input =====
+            $('#destinations-input-group').on('input', '.destination-input', function() {
+                const query = $(this).val().toLowerCase();
+                const filteredOptions = citiesAndCountries.filter(item => item.city.toLowerCase().includes(query) || item.country.toLowerCase().includes(query));
+                const $dropdown = $(this).siblings('.planning-dropdown');
+                updateDropdown($dropdown, filteredOptions.slice(0,5));
+            });
+
+            // Hide the dropdown when the user clicks else where
+            $(document).on('click', function() {
+                $('.planning-dropdown').hide();
+            });
+
+            // Prevent the click event when the user clicks input
+            $('#destinations-input-group').on('click', '.destination-input', function(e) {
+                e.stopPropagation();
+            });
+
+            function updateDropdown($dropdown, options) {
+                $dropdown.empty();
+
+                if (options.length > 0) {
+                    $dropdown.show();
+                } else {
+                    $dropdown.hide();
+                }
+            
+                options.forEach(item => {
+                    const optionDiv = $('<div>').addClass('dropdown-item').text(`${item.city}, ${item.country}`);
+                    optionDiv.on('click', function() {
+                        $dropdown.siblings('.destination-input').val(`${item.city}, ${item.country}`);
+                        $dropdown.hide();
                     });
-                    removeButtonDiv.append(removeButton);
-                    destinationInputGroup.append(destinationInput, removeButtonDiv);
-                    $('#destinations-input-group').append(destinationInputGroup);
+                    $dropdown.append(optionDiv);
+                });
+            }
+
+            $('#add-destination-button').on('click', function() {
+                const numberOfDestinations = $('.destination-input-group').length; // Change the selector to class
+                if (numberOfDestinations < 5) {
+                    const destinationInputGroup = $('<div>').addClass('input-group mb-2 destination-input-group position-relative');
+                        const destinationInput = $('<input>').attr('type', 'text').addClass('form-control destination-input');
+                        const removeButton = $('<button>').text('Remove').addClass('btn btn-danger remove-destination-button rounded-end').attr('type', 'button');
+                        const dropdownDiv = $('<div>').addClass('dropdown-menu planning-dropdown position-absolute w-100').css('display', 'none');
+                        destinationInputGroup.append(destinationInput, removeButton, dropdownDiv);
+                        $('#destinations-input-group').append(destinationInputGroup);
                 } else {
                     alert('You can add a maximum of 5 destinations.');
                 }
             });
-        });
+
+            $('#destinations-input-group').on('click', '.remove-destination-button', function() {
+                $(this).closest('.destination-input-group').remove();
+            });
+
+            // ===== Trip duration =====
+            if (fromDate != "Invalid Date" && toDate != "Invalid Date") {
+                var options = { day: 'numeric', month: 'short', year: 'numeric' };
+                var formattedFromDate = fromDate.toLocaleDateString('en-GB', options);
+                var formattedToDate = toDate.toLocaleDateString('en-GB', options);
+                $('.date-display').show();
+                // Set the input type date values
+                $('#from-date-input').val(fromDate.toISOString().split('T')[0]);
+                $('#to-date-input').val(toDate.toISOString().split('T')[0]);
+                $('#from-date-display').text(formattedFromDate);
+                $('#to-date-display').text(formattedToDate);
+            } else {
+                // Hide the "From" and "To" sections if there are no dates
+                $('.date-display').hide();
+            }
+
+            // Display the results
+            $('#trip-length-display').text(tripLengthInDays+' days');
+
+            // carousel
+            for (let i = 1; i <= tripLengthInDays; i++) {
+                const date = new Date(fromDate);
+                date.setDate(date.getDate() + (i - 1));
+                const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                const formattedDate = date.toLocaleDateString('en-GB', options);
+            
+                $('#itineraryTabs').append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${i === 1 ? 'active' : ''}" id="day${i}-tab" data-bs-toggle="tab" href="#day${i}" role="tab" aria-controls="day${i}" aria-selected="${i === 1 ? 'true' : 'false'}">Day ${i} (${formattedDate})</a>
+                    </li>
+                `);
+                $('#itineraryTabContent').append(`
+                    <div class="tab-pane fade ${i === 1 ? 'show active' : ''}" id="day${i}" role="tabpanel" aria-labelledby="day${i}-tab">
+                        <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addPlaceModal${i}">Add Place</button>
+                    </div>
+                `);
+            }
+            // Handle the save action for each modal
+            $('[id^=savePlaceButton]').on('click', function() {
+                const dayNumber = $(this).attr('id').replace('savePlaceButton', '');
+                
+                // Get the values from the modal's form for the specific day
+                const startTime = $(`#startTime${dayNumber}`).val();
+                const endTime = $(`#endTime${dayNumber}`).val();
+                const placeOfInterest = $(`#placeOfInterest${dayNumber}`).val();
+                const location = $(`#placeLocation${dayNumber}`).val();
+                const notes = $(`#placeNotes${dayNumber}`).val();
+
+                // Create a data object to send to the server
+                const data = {
+                    dayNumber,
+                    startTime,
+                    endTime,
+                    placeOfInterest,
+                    location,
+                    notes
+                };
+
+                // Make an AJAX request to update Firestore
+                $.ajax({
+                    url: `/itinerary/trip/${userId}/destinations/${tripId}/day/${dayNumber}`,
+                    type: 'PUT',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        alert('Place added successfully!');
+                    },
+                    error: function(error) {
+                        alert('An error occurred while adding the place.');
+                        console.error(error);
+                    }
+                });
+
+                // Close the modal for the specific day
+                $(`#addPlaceModal${dayNumber}`).modal('hide');
+            });
+    });
     </script>
 </body>
 </html>

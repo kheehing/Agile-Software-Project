@@ -147,16 +147,15 @@
                 city: item.City,
                 country: item.Country
             }));
-            // filter the same text out
             citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country)));
         });
 
-        // Hide the dropdown when the user clicks outside the input
+        // Hide the dropdown when the user clicks else where
         $(document).on('click', function() {
             $('#dropdown').hide();
         });
 
-        // Prevent the click event when the user clicks inside the input
+        // Prevent the click event when the user clicks input
         $('#trip-destination').on('click', function(e) {
             e.stopPropagation();
         });
@@ -219,7 +218,7 @@
 
         $('#add-trip-form').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (addedDestinations.length === 0) {
                 alert('Please add at least one destination.');
                 return;

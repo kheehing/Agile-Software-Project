@@ -9,8 +9,8 @@ router.get('', (req, res) => {
 
 router.get('/p', async (req, res) => {
   const tripId = req.query.tripId;
+  let tripLengthInDays = 0;
   let tripData = null;
-
   if (tripId) {
     try {
       const tripRef = db.collection('itinerary').doc(tripId);
@@ -26,16 +26,22 @@ router.get('/p', async (req, res) => {
     } catch (error) {
       console.error('An error occurred while retrieving the trip:', error);
     }
+    // Calculate tripLengthInDays
+    const fromDate = new Date(tripData.fromDate);
+    const toDate = new Date(tripData.toDate);
+    
+    if (fromDate != "Invalid Date" && toDate != "Invalid Date") {
+      tripLengthInDays = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+    }
   }
 
-  res.render('planning', { user: req.session.user, trip: tripData });
+  res.render('planning', { user: req.session.user, trip: tripData, tripId: tripId, tripLengthInDays: tripLengthInDays });
 });
 
 // Create (Add) a Trip
 router.post('/trip/:userid/destinations', async (req, res) => {
   const userId = req.params.userid;
   const { destinations = [], fromDate, toDate, tripName, sharedWith = [] } = req.body;
-
   const timeCreated = new Date().toISOString();
   const lastEdited = timeCreated;
 
@@ -82,6 +88,26 @@ router.get('/trip/destinations', async (req, res) => {
   }
 });
 
+// Update (Edit) a Trip
+router.put('/trip/:userId/destinations/:tripId', async (req, res) => {
+  const userId = req.params.userId;
+  const tripId = req.params.tripId;
+  const updatedTripData = req.body;
+
+  try {
+    const tripRef = db.collection('itinerary').doc(tripId);
+    const tripSnapshot = await tripRef.get();
+    if (tripSnapshot.exists && tripSnapshot.data().userId === userId) {
+      await tripRef.update(updatedTripData);
+      res.status(200).json({ message: 'Trip updated successfully!' });
+    } else {
+      res.status(404).json({ error: 'Trip not found or unauthorized.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while updating the trip.' });
+  }
+});
+
 // Delete (Remove) a Trip
 router.delete('/trip/:userId/destinations/:tripId', async (req, res) => {
   const userId = req.params.userId;
@@ -98,6 +124,37 @@ router.delete('/trip/:userId/destinations/:tripId', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while deleting the trip.' });
+  }
+});
+
+// Update (Add) a Place for a specific day in a Trip
+router.put('/trip/:userId/destinations/:tripId/day/:dayNumber', async (req, res) => {
+  const userId = req.params.userId;
+  const tripId = req.params.tripId;
+  const dayNumber = req.params.dayNumber;
+  const { startTime, endTime, placeOfInterest, location, notes } = req.body;
+
+  try {
+      const tripRef = db.collection('itinerary').doc(tripId);
+      const tripSnapshot = await tripRef.get();
+      if (tripSnapshot.exists && tripSnapshot.data().userId === userId) {
+          // Assuming the trip data has a 'days' field which is an array of days
+          const days = tripSnapshot.data().days || [];
+          days[dayNumber - 1] = {
+            startTime,
+            endTime,
+            placeOfInterest,
+            location,
+            notes
+          };
+
+          await tripRef.update({ days });
+          res.status(200).json({ message: 'Place added successfully!' });
+      } else {
+          res.status(404).json({ error: 'Trip not found or unauthorized.' });
+      }
+  } catch (error) {
+      res.status(500).json({ error: 'An error occurred while adding the place.' });
   }
 });
 
