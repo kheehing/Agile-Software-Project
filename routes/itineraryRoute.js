@@ -135,28 +135,119 @@ router.put('/trip/:userId/destinations/:tripId/day/:dayNumber', async (req, res)
   const { startTime, endTime, placeOfInterest, location, notes } = req.body;
 
   try {
-      const tripRef = db.collection('itinerary').doc(tripId);
-      const tripSnapshot = await tripRef.get();
-      if (tripSnapshot.exists && tripSnapshot.data().userId === userId) {
-          // Assuming the trip data has a 'days' field which is an array of days
-          const days = tripSnapshot.data().days || [];
-          days[dayNumber - 1] = {
+    const tripRef = db.collection('itinerary').doc(tripId);
+    const tripSnapshot = await tripRef.get();
+    const daysCollection = tripRef.collection('days');
+    const dayPlacesSnapshot = await daysCollection.where('day', '==', dayNumber).get();
+    const newStartTime = convertTimeToNumber(startTime);
+    const newEndTime = convertTimeToNumber(endTime);
+    let hasTimeClash = false;
+    dayPlacesSnapshot.forEach(placeDoc => {
+      const placeData = placeDoc.data();
+      console.log(placeData);
+      const existingStartTime = convertTimeToNumber(placeData.startTime);
+      const existingEndTime = convertTimeToNumber(placeData.endTime);
+      console.log(`Comparing New: ${newStartTime}-${newEndTime} with Existing: ${existingStartTime}-${existingEndTime}`);
+      if ((newStartTime < existingEndTime && newEndTime > existingStartTime) ||
+        (newStartTime > existingEndTime && newEndTime < existingStartTime) ||
+        (newStartTime >= existingStartTime && newStartTime < existingEndTime) ||
+        (newEndTime > existingStartTime && newEndTime <= existingEndTime)) {
+        console.log("hasTimeClash");
+        hasTimeClash = true;
+      }
+    });
+
+    if (hasTimeClash) {
+        return res.status(400).json({ error: 'Time clash detected with an existing itinerary.' });
+    }
+
+    if (tripSnapshot.exists && tripSnapshot.data().userId === userId) {
+        const daysCollection = tripRef.collection('days');
+        const lastEdited = new Date().toISOString();
+        await daysCollection.add({
             startTime,
+            lastEdited,
             endTime,
             placeOfInterest,
             location,
-            notes
-          };
-
-          await tripRef.update({ days });
-          res.status(200).json({ message: 'Place added successfully!' });
-      } else {
-          res.status(404).json({ error: 'Trip not found or unauthorized.' });
-      }
+            notes,
+            day: parseInt(dayNumber)
+        });
+        res.status(200).json({ message: 'Place added successfully!' });
+    } else if (!tripSnapshot.exists) {
+      const timeCreated = new Date().toISOString();
+      const lastEdited = timeCreated;
+      await tripRef.set({
+          userId,
+          lastEdited,
+          startTime,
+          endTime,
+          placeOfInterest,
+          location,
+          notes,
+          day: parseInt(dayNumber)
+      });
+      const dayRef = tripRef.collection('days');
+      await dayRef.set({
+          startTime,
+          endTime,
+          placeOfInterest,
+          location,
+          notes,
+          day: parseInt(dayNumber)
+      });
+      res.status(201).json({ message: 'New trip and place added successfully!' });
+    } else {
+      res.status(403).json({ error: 'Unauthorized to update this trip.' });
+    }
   } catch (error) {
-      res.status(500).json({ error: 'An error occurred while adding the place.' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'An error occurred while processing the request.' });
   }
 });
+
+router.get('/trip/places/:tripId/day/:dayNumber', async (req, res) => {
+  const tripId = req.params.tripId;
+  const dayNumber = parseInt(req.params.dayNumber);
+
+  try {
+    const placesRef = db.collection('itinerary').doc(tripId).collection('days');
+    const placesSnapshot = await placesRef.get();
+
+    if (!placesSnapshot.empty) {
+      const placesArray = [];
+      placesSnapshot.forEach(placeDoc => {
+        const placeData = placeDoc.data();
+        if (placeData.day === dayNumber) {
+          placesArray.push({
+            id: placeDoc.id,
+            ...placeData
+          });
+        }
+      });
+
+      placesArray.sort((a, b) => {
+          return convertTimeToNumber(a.startTime) - convertTimeToNumber(b.startTime);
+      });
+
+      if (placesArray.length > 0) {
+          res.status(200).json(placesArray);
+      } else {
+          res.status(406).json({ error: 'No places found for the specified day.' });
+      }
+    } else {
+        res.status(404).json({ error: 'No places found for the specified day.' });
+    }
+      
+  } catch (error) {
+      console.error('Error fetching places:', error);
+      res.status(500).json({ error: 'An error occurred while fetching the places.' });
+  }
+});
+
+const convertTimeToNumber = (time) => {
+  return parseInt(time.replace(":", ""));
+};
 
 //  =============================================================
 //  ========== Redirect nonexistent MUST BE LAST ROUTE ==========

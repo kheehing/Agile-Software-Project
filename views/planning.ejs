@@ -58,7 +58,6 @@
                         <% }); %>
                     </div>
                     <p class="card-text display-element" id="destinations-display" style="padding-top:10px;"><%= trip.destinations.join(' | ') %></p>
-                    <!-- Other fields go here -->
                     <div class="date-section row align-items-center">
                         <div class="col-3 d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Trip Length:</h5>
@@ -78,12 +77,46 @@
                 </div>
             </div>
             <br>
-            <ul class="nav nav-pills mb-3" id="itineraryTabs" role="tablist">
-                <!-- Tabs will be added here dynamically -->
-            </ul>
-            <div class="tab-content" id="itineraryTabContent">
-                <!-- Tab panes will be added here dynamically -->
+            
+            <div class="container py-9 py-lg-11 position-relative z-index-1">
+                <div class="row">
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <h5 class="mb-4 text-info">Trip's Schedule and Agenda</h5>
+                        <div class="nav nav-pills flex-column" id="myTab" role="tablist">
+                            <% for (let i = 1; i <= tripLengthInDays; i++) { %>
+                                <button class="nav-link px-4 text-start mb-3 <%= i === 1 ? 'active' : '' %>" id="d<%= i %>-tab" data-bs-toggle="tab" data-bs-target="#day<%= i %>" type="button" role="tab" aria-controls="day<%= i %>" aria-selected="<%= i === 1 ? 'true' : 'false' %>">
+                                    <span class="d-block fs-5 fw-bold">Day <%= i %></span>
+                                    <% const date = new Date(trip.fromDate); date.setDate(date.getDate() + (i - 1)); %>
+                                    <span class="small"><%= date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-content" id="myTabContent">
+                                <% for (let i = 1; i <= tripLengthInDays; i++) { %>
+                                    <div class="tab-pane fade <%= i === 1 ? 'show active' : '' %>" id="day<%= i %>" role="tabpanel" aria-labelledby="d<%= i %>-tab">
+                                        <div class="d-flex justify-content-center align-items-center mb-3">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlaceModal<%= i %>">Add itinerary to Day <%= i %></button>
+                                        </div>
+                                        <ul class="pt-4 list-unstyled mb-0" id="placesListDay<%= i %>">
+                                            <!-- JavaScript -->
+                                            <div id="loading-bar" style="display: none;">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </div>
+                                        </ul>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
             </div>
+
             <% for (let i = 1; i <= tripLengthInDays; i++) { %>
                 <div class="modal fade" id="addPlaceModal<%= i %>" tabindex="-1" aria-labelledby="addPlaceModalLabel<%= i %>" aria-hidden="true">
                     <div class="modal-dialog">
@@ -103,15 +136,15 @@
                                         <input type="time" class="form-control" id="endTime<%= i %>">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="placeOfInterest<%= i %>" class="form-label">Place of Interest:</label>
-                                        <input type="text" class="form-control" id="placeOfInterest<%= i %>">
+                                        <label for="placeOfInterest<%= i %>" class="form-label">Itinerary:</label>
+                                        <input type="text" class="form-control" id="placeOfInterest<%= i %>" placeholder="e.g.  Hiking / Visiting Louvre / Skydiving">
                                     </div>
                                     <div class="mb-3">
                                         <label for="placeLocation<%= i %>" class="form-label">Location:</label>
-                                        <input type="text" class="form-control" id="placeLocation<%= i %>" placeholder="e.g., Street address, city">
+                                        <input type="text" class="form-control" id="placeLocation<%= i %>" placeholder="e.g.  Street address, city">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="placeNotes<%= i %>" class="form-label">Notes:</label>
+                                        <label for="placeNotes<%= i %>" class="form-label">Descriptions:</label>
                                         <textarea class="form-control" id="placeNotes<%= i %>" rows="3"></textarea>
                                     </div>
                                 </form>
@@ -133,17 +166,19 @@
             var tripLengthInDays = 0;
             const fromDate = new Date('<%= trip.fromDate %>');
             const toDate = new Date('<%= trip.toDate %>');
+            fetchAndDisplayPlacesForDay('<%= tripId %>', 1);
             if (fromDate != "Invalid Date" && toDate != "Invalid Date") {
                 tripLengthInDays = Math.floor((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
             }
+
             $.getJSON('/data/airports.json', function(data) {
                 citiesAndCountries = data.map(item => ({
                     city: item.City,
                     country: item.Country
                 }));
-                // filter the same text out
                 citiesAndCountries = citiesAndCountries.filter((value, index, self) => index === self.findIndex((v) => (v.city === value.city && v.country === value.country)));
             });
+
             // ===== update =====
             $('#update-trip-button').on('click', function() {
                 var formData = $('#trip-form').serializeArray();
@@ -154,10 +189,8 @@
                 });
               
                 // Assuming you have the user ID and trip ID available
-                var userId = '<%= user.uid %>';
-                var tripId = '<%= tripId %>';
                 $.ajax({
-                  url: `/itinerary/trip/${userId}/destinations/${tripId}`,
+                  url: `/itinerary/trip/<%= user.uid %>/destinations/<%= tripId %>`,
                   type: 'PUT',
                   data: JSON.stringify(tripData),
                   contentType: 'application/json',
@@ -246,49 +279,26 @@
                 var formattedFromDate = fromDate.toLocaleDateString('en-GB', options);
                 var formattedToDate = toDate.toLocaleDateString('en-GB', options);
                 $('.date-display').show();
-                // Set the input type date values
                 $('#from-date-input').val(fromDate.toISOString().split('T')[0]);
                 $('#to-date-input').val(toDate.toISOString().split('T')[0]);
                 $('#from-date-display').text(formattedFromDate);
                 $('#to-date-display').text(formattedToDate);
             } else {
-                // Hide the "From" and "To" sections if there are no dates
                 $('.date-display').hide();
             }
 
-            // Display the results
             $('#trip-length-display').text(tripLengthInDays+' days');
 
-            // carousel
-            for (let i = 1; i <= tripLengthInDays; i++) {
-                const date = new Date(fromDate);
-                date.setDate(date.getDate() + (i - 1));
-                const options = { day: 'numeric', month: 'short', year: 'numeric' };
-                const formattedDate = date.toLocaleDateString('en-GB', options);
-            
-                $('#itineraryTabs').append(`
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link ${i === 1 ? 'active' : ''}" id="day${i}-tab" data-bs-toggle="tab" href="#day${i}" role="tab" aria-controls="day${i}" aria-selected="${i === 1 ? 'true' : 'false'}">Day ${i} (${formattedDate})</a>
-                    </li>
-                `);
-                $('#itineraryTabContent').append(`
-                    <div class="tab-pane fade ${i === 1 ? 'show active' : ''}" id="day${i}" role="tabpanel" aria-labelledby="day${i}-tab">
-                        <button type="button" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addPlaceModal${i}">Add Place</button>
-                    </div>
-                `);
-            }
-            // Handle the save action for each modal
+            // save button for each modal
             $('[id^=savePlaceButton]').on('click', function() {
+                console.log("saveButtonInModal");
                 const dayNumber = $(this).attr('id').replace('savePlaceButton', '');
-                
-                // Get the values from the modal's form for the specific day
                 const startTime = $(`#startTime${dayNumber}`).val();
                 const endTime = $(`#endTime${dayNumber}`).val();
                 const placeOfInterest = $(`#placeOfInterest${dayNumber}`).val();
                 const location = $(`#placeLocation${dayNumber}`).val();
                 const notes = $(`#placeNotes${dayNumber}`).val();
 
-                // Create a data object to send to the server
                 const data = {
                     dayNumber,
                     startTime,
@@ -298,9 +308,8 @@
                     notes
                 };
 
-                // Make an AJAX request to update Firestore
                 $.ajax({
-                    url: `/itinerary/trip/${userId}/destinations/${tripId}/day/${dayNumber}`,
+                    url: `/itinerary/trip/<%= user.uid %>/destinations/<%= tripId %>/day/${dayNumber}`,
                     type: 'PUT',
                     data: JSON.stringify(data),
                     contentType: 'application/json',
@@ -312,9 +321,52 @@
                         console.error(error);
                     }
                 });
-
-                // Close the modal for the specific day
                 $(`#addPlaceModal${dayNumber}`).modal('hide');
+            });
+
+            // update the itinerary for each day
+            function fetchAndDisplayPlacesForDay(tripId, dayNumber) {
+                $('#loading-bar').show();
+                $.ajax({
+                    url: `/itinerary/trip/places/${tripId}/day/${dayNumber}`,
+                    type: 'GET',
+                    success: function(places) {
+                        $('#loading-bar').hide();
+                        const $placesList = $(`#placesListDay${dayNumber}`);
+                        $placesList.empty();
+                        if (Array.isArray(places)) {
+                            places.forEach(place => {
+                                const placeItem = `
+                                    <li class="d-flex flex-column flex-md-row py-4">
+                                        <span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">${place.startTime} - ${place.endTime}</span>
+                                        <div class="flex-grow-1 ps-4 border-start border-3">
+                                            <h4>${place.placeOfInterest}</h4>
+                                            <p class="mb-0">${place.notes}</p>
+                                        </div>
+                                    </li>
+                                `;
+                                $placesList.append(placeItem);
+                            });
+                        };
+                    },
+                    error: function(error) {
+                        $('#loading-bar').hide();
+                        const $placesList = $(`#placesListDay${dayNumber}`);
+                        $placesList.empty();
+                        const placeItem = `<li class="d-flex flex-column flex-md-row py-4 text-center"> Nothing added.. </li>`
+                        $placesList.append(placeItem);
+                        if (error.status = 400){
+                            console.error(`Day ${ dayNumber }, not found`);
+                        } else {
+                            console.error('Error fetching places:', error);
+                        }
+                    }
+                });
+            }
+
+            $('.nav-link').on('click', function() {
+                const dayNumber = $(this).attr('id').replace('d', '').replace('-tab', '');
+                fetchAndDisplayPlacesForDay('<%= tripId %>', dayNumber);
             });
     });
     </script>
