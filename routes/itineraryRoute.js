@@ -138,29 +138,25 @@ router.put('/trip/:userId/destinations/:tripId/day/:dayNumber', async (req, res)
     const tripRef = db.collection('itinerary').doc(tripId);
     const tripSnapshot = await tripRef.get();
     const daysCollection = tripRef.collection('days');
-    const dayPlacesSnapshot = await daysCollection.where('day', '==', dayNumber).get();
+    const allDaysSnapshot = await daysCollection.get();
+    const dayPlacesSnapshot = await daysCollection.where('day', '==', parseInt(dayNumber)).get();
     const newStartTime = convertTimeToNumber(startTime);
     const newEndTime = convertTimeToNumber(endTime);
     let hasTimeClash = false;
     dayPlacesSnapshot.forEach(placeDoc => {
       const placeData = placeDoc.data();
-      console.log(placeData);
       const existingStartTime = convertTimeToNumber(placeData.startTime);
       const existingEndTime = convertTimeToNumber(placeData.endTime);
-      console.log(`Comparing New: ${newStartTime}-${newEndTime} with Existing: ${existingStartTime}-${existingEndTime}`);
       if ((newStartTime < existingEndTime && newEndTime > existingStartTime) ||
-        (newStartTime > existingEndTime && newEndTime < existingStartTime) ||
-        (newStartTime >= existingStartTime && newStartTime < existingEndTime) ||
-        (newEndTime > existingStartTime && newEndTime <= existingEndTime)) {
+      (newStartTime >= existingStartTime && newStartTime < existingEndTime) ||
+      (newEndTime > existingStartTime && newEndTime <= existingEndTime)) {
         console.log("hasTimeClash");
         hasTimeClash = true;
       }
     });
-
     if (hasTimeClash) {
-        return res.status(400).json({ error: 'Time clash detected with an existing itinerary.' });
+        return res.status(452).json({ error: 'Time clash detected with an existing itinerary.' });
     }
-
     if (tripSnapshot.exists && tripSnapshot.data().userId === userId) {
         const daysCollection = tripRef.collection('days');
         const lastEdited = new Date().toISOString();

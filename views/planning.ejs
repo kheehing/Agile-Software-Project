@@ -317,8 +317,12 @@
                         alert('Place added successfully!');
                     },
                     error: function(error) {
-                        alert('An error occurred while adding the place.');
-                        console.error(error);
+                        if (error.status = '452'){
+                            alert("The time you've selected clashes with an existing time slot. Please choose a different time.");
+                        } else {
+                            alert('An error occurred while adding the itinerary.');
+                            console.error(error);
+                        }
                     }
                 });
                 $(`#addPlaceModal${dayNumber}`).modal('hide');
@@ -355,7 +359,7 @@
                         $placesList.empty();
                         const placeItem = `<li class="d-flex flex-column flex-md-row py-4 text-center"> Nothing added.. </li>`
                         $placesList.append(placeItem);
-                        if (error.status = 400){
+                        if (error.status == 400){
                             console.error(`Day ${ dayNumber }, not found`);
                         } else {
                             console.error('Error fetching places:', error);
