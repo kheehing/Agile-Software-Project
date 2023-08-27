@@ -73,12 +73,20 @@
                         <form action="/airbnb/<%= tripDetails.propertyId %>/book" method="POST">
                             <div class="form-group">
                                 <tr>
-                                    <td><label for="checkin" class="booking-label">Check-in</label></td>
+                                    <td width="50%"><label for="checkin" class="booking-label">Check-in</label></td>
                                     <td><label for="checkout" class="booking-label">Check-out</label></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkIn %>" onchange="calculatePrice()" required /></td>
-                                    <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkOut %>" onchange="calculatePrice()" required /></td>
+                                    <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkIn %>" onchange="checkDate(); calculatePrice()" required /></td>
+                                    <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= tripDetails.checkOut %>" onchange="checkDate(); calculatePrice()" required /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="error-message" id="errorMessage">
+                                            <img src="/images/error-icon.png" class="error-icon">
+                                            Check-out date must be later than check-in date
+                                        </div>
+                                    </td>
                                 </tr>
                             </div>
                             <div class="form-group">
@@ -135,7 +143,7 @@
                                 </tr>
                             </div>
                             <tr>
-                                <td colspan="2"><button type="submit" class="btn btn-primary info-booking-button">Book</button></td>
+                                <td colspan="2" id="bookButtonContainer"><button type="submit" class="btn btn-primary info-booking-button" id="bookButton">Book</button></td>
                             </tr>
                             <input type="hidden" name="airbnbImage" value="<%= propertyDetails.images[0] %>" />
                             <input type="hidden" name="airbnbName" value="<%= propertyDetails.title %>" />
@@ -176,6 +184,29 @@
     updateGuests("infants", 0);
     updateGuests("pets", 0);
     calculatePrice();
+
+    // Check that check-out date is later than check-in date
+    function checkDate() {
+        var checkin = document.getElementById("checkin");
+        var checkout = document.getElementById("checkout");
+        var errorMessage = document.getElementById("errorMessage");
+        var bookButtonContainer = document.getElementById("bookButtonContainer");
+        var bookButton = document.getElementById("bookButton");
+        if (checkin.value != "" && checkout.value != "" && checkout.value <= checkin.value) {
+            checkin.style.border = "1px solid #d9534f";
+            checkout.style.border = "1px solid #d9534f";
+            errorMessage.style.display = "block";
+            bookButtonContainer.className = "info-booking-button-container-disabled";
+            bookButton.disabled = true;
+        }
+        else {
+            checkin.style.border = "1px solid #ccc";
+            checkout.style.border = "1px solid #ccc";
+            errorMessage.style.display = "none";
+            bookButtonContainer.className = "";
+            bookButton.disabled = false;
+        }
+    }
 
     // Show/hide guest dropdown
     document.onclick = function(e) {

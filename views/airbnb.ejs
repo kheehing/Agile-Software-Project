@@ -23,11 +23,15 @@
                         <div class="form-group">
                             <div class="booking-date">
                                 <label for="checkin" class="booking-label">Check-in</label>
-                                <input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" required />
+                                <input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" onchange="checkDate()" required />
                             </div>
                             <div class="booking-date">
                                 <label for="checkout" class="booking-label">Check-out</label>
-                                <input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" required />
+                                <input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" onchange="checkDate()" required />
+                            </div>
+                            <div class="error-message" id="errorMessage">
+                                <img src="/images/error-icon.png" class="error-icon">
+                                Check-out date must be later than check-in date
                             </div>
                         </div>
                         <div class="form-group dropdown">
@@ -75,8 +79,8 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="booking-button-container">
-                            <button type="submit" class="btn btn-primary booking-button">Search</button>
+                        <div class="booking-button-container" id="searchButtonContainer">
+                            <button type="submit" class="btn btn-primary booking-button" id="searchButton">Search</button>
                         </div>
                     </form>
                 </div>
@@ -87,6 +91,29 @@
 </body>
 </html>
 <script>
+    // Check that check-out date is later than check-in date
+    function checkDate() {
+        var checkin = document.getElementById("checkin");
+        var checkout = document.getElementById("checkout");
+        var errorMessage = document.getElementById("errorMessage");
+        var searchButtonContainer = document.getElementById("searchButtonContainer");
+        var searchButton = document.getElementById("searchButton");
+        if (checkin.value != "" && checkout.value != "" && checkout.value <= checkin.value) {
+            checkin.style.border = "1px solid #d9534f";
+            checkout.style.border = "1px solid #d9534f";
+            errorMessage.style.display = "block";
+            searchButtonContainer.className = "booking-button-container-disabled";
+            searchButton.disabled = true;
+        }
+        else {
+            checkin.style.border = "1px solid #ccc";
+            checkout.style.border = "1px solid #ccc";
+            errorMessage.style.display = "none";
+            searchButtonContainer.className = "booking-button-container";
+            searchButton.disabled = false;
+        }
+    }
+
     // Show/hide guest dropdown
     document.onclick = function(e) {
         var guests = document.getElementById("guests");

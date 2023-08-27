@@ -59,6 +59,17 @@ h4 {
     margin-right: 4%;
 }
 
+.error-message {
+    display: none;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #d9534f;
+}
+
+.error-icon {
+    width: 20px;
+}
+
 .guests-input {
     padding-right: 30px;
 }
@@ -157,9 +168,13 @@ input::-webkit-inner-spin-button {
     margin: 0px;
 }
 
-.booking-button-container {
+.booking-button-container, .booking-button-container-disabled {
     text-align: right;
     margin-top: 15px;
+}
+
+.booking-button-container-disabled:hover, .info-booking-button-container-disabled:hover {
+    cursor: not-allowed;
 }
 
 .booking-button {

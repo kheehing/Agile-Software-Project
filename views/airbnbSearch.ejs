@@ -10,16 +10,16 @@
     <form method="GET" id="formId">
         <table class="search-bar">
             <tr>
-                <td><label for="destination" class="booking-label">Destination</label></td>
-                <td><label for="checkin" class="booking-label">Check-in</label></td>
-                <td><label for="checkout" class="booking-label">Check-out</label></td>
+                <td width="200px"><label for="destination" class="booking-label">Destination</label></td>
+                <td width="200px"><label for="checkin" class="booking-label">Check-in</label></td>
+                <td width="200px"><label for="checkout" class="booking-label">Check-out</label></td>
                 <td><label for="guests" class="booking-label">Guests</label></td>
-                <td rowspan="2"><button onclick="submitForm('searchResults')" class="btn btn-primary booking-button">Search</button></td>
+                <td rowspan="2" id="searchButtonContainer"><button onclick="submitForm('searchResults')" class="btn btn-primary booking-button" id="searchButton">Search</button></td>
             </tr>
             <tr>
                 <td><input type="text" class="form-control booking-input" id="destination" name="destination" placeholder="Enter destination" value="<%= searchInputs.destination %>" required /></td>
-                <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkin %>" required /></td>
-                <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkout %>" required /></td>
+                <td><input type="date" class="form-control booking-input" id="checkin" name="checkin" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkin %>" onchange="checkDate()" required /></td>
+                <td><input type="date" class="form-control booking-input" id="checkout" name="checkout" min="<%= new Date().toISOString().split('T')[0] %>" value="<%= searchInputs.checkout %>" onchange="checkDate()" required /></td>
                 <td>
                     <div class="dropdown">
                         <input type="text" class="form-control booking-input guests-input-airbnbSearch" id="guests" name="guests" placeholder="No. of guests" required readonly />
@@ -67,9 +67,20 @@
                     </div>
                 </td>
             </tr>
-        </table>
+            <tr>
+                <td>&nbsp;</td>
+                <td colspan="2">
+                    <div class="error-message" id="errorMessage">
+                        <img src="/images/error-icon.png" class="error-icon">
+                        Check-out date must be later than check-in date
+                    </div>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table><br>
         <div class="container">
-            <div class="row mt-5">
+            <div class="row">
                 <div class="col-md-12">
                     <h2>Search Results for Airbnbs in <%= searchInputs.destination %></h2>
                 </div>
@@ -119,6 +130,29 @@
     updateGuests("infants", 0);
     updateGuests("pets", 0);
 
+    // Check that check-out date is later than check-in date
+    function checkDate() {
+        var checkin = document.getElementById("checkin");
+        var checkout = document.getElementById("checkout");
+        var errorMessage = document.getElementById("errorMessage");
+        var searchButtonContainer = document.getElementById("searchButtonContainer");
+        var searchButton = document.getElementById("searchButton");
+        if (checkin.value != "" && checkout.value != "" && checkout.value <= checkin.value) {
+            checkin.style.border = "1px solid #d9534f";
+            checkout.style.border = "1px solid #d9534f";
+            errorMessage.style.display = "block";
+            searchButtonContainer.className = "booking-button-container-disabled";
+            searchButton.disabled = true;
+        }
+        else {
+            checkin.style.border = "1px solid #ccc";
+            checkout.style.border = "1px solid #ccc";
+            errorMessage.style.display = "none";
+            searchButtonContainer.className = "";
+            searchButton.disabled = false;
+        }
+    }
+
     // Show/hide guest dropdown
     document.onclick = function(e) {
         var guests = document.getElementById("guests");
@@ -146,6 +180,15 @@
         form.action = "/airbnb/" + action;
         if (action != "searchResults") {
             form.target = "_blank";
+            var checkin = document.getElementById("checkin");
+            var checkout = document.getElementById("checkout");
+            var params = new URL(window.location.href).searchParams;
+            checkin.value = params.get("checkin");
+            checkout.value = params.get("checkout");
+            checkDate();
+        }
+        else {
+            form.target = "";
         }
         form.submit();
     }
