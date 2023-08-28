@@ -93,7 +93,7 @@ router.post('/:id/book', async (req, res) => {
                                            checkIn: req.body.checkin,
                                            checkOut: req.body.checkout,
                                            userId: req.session.user.uid});
-        res.redirect('/bookings');
+        res.status(201).json({message: 'Booking successful!'});
     } 
     catch (error) {
         res.status(500).json({error: 'An error occurred while booking the airbnb.'});

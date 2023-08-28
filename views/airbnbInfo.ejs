@@ -70,7 +70,7 @@
                                 </h3>
                             </td>
                         </tr>
-                        <form action="/airbnb/<%= tripDetails.propertyId %>/book" method="POST">
+                        <form id="bookAirbnbForm">
                             <div class="form-group">
                                 <tr>
                                     <td width="50%"><label for="checkin" class="booking-label">Check-in</label></td>
@@ -145,8 +145,8 @@
                             <tr>
                                 <td colspan="2" id="bookButtonContainer"><button type="submit" class="btn btn-primary info-booking-button" id="bookButton">Book</button></td>
                             </tr>
-                            <input type="hidden" name="airbnbImage" value="<%= propertyDetails.images[0] %>" />
-                            <input type="hidden" name="airbnbName" value="<%= propertyDetails.title %>" />
+                            <input type="hidden" id="airbnbImage" name="airbnbImage" value="<%= propertyDetails.images[0] %>" />
+                            <input type="hidden" id="airbnbName" name="airbnbName" value="<%= propertyDetails.title %>" />
                         </form>
                         <tr>
                             <td id="priceBreakdown"></td>
@@ -154,6 +154,48 @@
                         </tr>
                     </table>
                 </div>
+            </div>
+        </div>
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <form id="addToItineraryForm">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Booking successful!</h3>
+                        <button type="button" class="btn-close" onclick="closeModal()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h4 class="h4-black">Would you like to add your booking into an itinerary?</h4>
+                        <select id="itineraryDropdown" onchange="createItineraryFormVisible()"></select>
+                        <div class="create-itinerary-form" id="createItineraryForm"><br>
+                            <div class="d-flex align-items-center">
+                                <h4 class="h4-black">Trip Name</h4>
+                            </div>
+                            <input type="text" id="trip-name" class="form-control" placeholder="e.g. Trip to Bali" required /><br>
+                            <div class="d-flex align-items-center">
+                                <h4 class="h4-black">Destination</h4>
+                            </div>
+                            <div class="input-group position-relative">
+                                <input type="text" id="trip-destination" class="form-control" placeholder="Where to?" />
+                                <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end" onclick="addDestination()">Add destination</button>
+                                <div id="dropdown" class="dropdown-menu position-absolute w-100"></div>
+                            </div>
+                            <div id="selected-destinations" class="d-flex flex-wrap"></div><br>
+                            <div class="d-flex align-items-center">
+                                <h4 class="h4-black">Dates</h4>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">From:</span>
+                                <input type="date" id="trip-from-date" class="form-control" required />
+                                <span class="input-group-text">To:</span>
+                                <input type="date" id="trip-to-date" class="form-control" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Skip</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -341,4 +383,74 @@
         }
         totalPrice.innerText = "$" + (pricePerNight * numberOfNights).toString() + " SGD";
     }
+
+    // Book airbnb
+    $("#bookAirbnbForm").on("submit", function(e) {
+        e.preventDefault();
+        $.post(`/airbnb/${"<%= tripDetails.propertyId %>"}/book`, {airbnbImage: $("#airbnbImage").val(), 
+                                                                   airbnbName: $("#airbnbName").val(), 
+                                                                   checkin: $("#checkin").val(), 
+                                                                   checkout: $("#checkout").val()}, function(response) {
+            var modal = document.getElementById("modal");
+            modal.style.display = "flex";
+            fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
+                var itineraryDropdownOptions = "";
+                trips.forEach(trip => {
+                    itineraryDropdownOptions += `<option value="${trip.id}">${trip.tripName}</option>`;
+                });
+                itineraryDropdownOptions += "<option>Create new itinerary</option>";
+                var itineraryDropdown = document.getElementById("itineraryDropdown");
+                itineraryDropdown.innerHTML = itineraryDropdownOptions;
+            });
+        });
+    });
+
+    // Close modal
+    function closeModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "none";
+    }
+
+    // Show/hide create itinerary form in modal based on dropdown selection
+    function createItineraryFormVisible() {
+        var itineraryDropdown = document.getElementById("itineraryDropdown");
+        var createItineraryForm = document.getElementById("createItineraryForm");
+        if (itineraryDropdown.options[itineraryDropdown.selectedIndex].innerText == "Create new itinerary") {
+            createItineraryForm.style.display = "block";
+        }
+        else {
+            createItineraryForm.style.display = "none";
+        }
+    }
+
+    var addedDestinations = [];
+
+    // Add destination
+    if (addedDestinations.length >= 5) {
+        alert("You can only add up to 5 destinations at one time.");
+        return;
+    }
+    var selectedDestination = $("#trip-destination").val();
+    if (selectedDestination && !addedDestinations.includes(selectedDestination)) {
+        addedDestinations.push(selectedDestination);
+        var destinationInput = $("<input>").attr("type", "text").attr("readonly", true).addClass("form-control").val(selectedDestination);
+        var deleteButton = $("<button>").text("Delete").addClass("btn btn-danger rounded-end").on("click", function() {
+            var index = addedDestinations.indexOf(selectedDestination);
+            addedDestinations.splice(index, 1);
+            $(this).closest(".input-group").remove();
+        });
+        var hiddenInput = $("<input>").attr("type", "hidden").attr("name", "destinations").val(selectedDestination);
+        var inputGroup = $("<div>").addClass("input-group mb-3").css({"width": "auto", "margin-right": "10px", "margin-top": "10px"}).append(destinationInput, deleteButton, hiddenInput);
+        $("#selected-destinations").append(inputGroup);
+        $("#trip-destination").val(""); 
+    }
+
+    // Add booking to itinerary
+    $("#addToItineraryForm").on("submit", function(e) {
+        e.preventDefault();
+        if (addedDestinations.length == 0) {
+            alert("Please add at least one destination.");
+            return;
+        }
+    });
 </script>
