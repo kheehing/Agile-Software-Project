@@ -41,7 +41,7 @@ router.get('/p', async (req, res) => {
 // Create (Add) a Trip
 router.post('/trip/:userid/destinations', async (req, res) => {
   const userId = req.params.userid;
-  const { destinations = [], fromDate, toDate, tripName, sharedWith = [] } = req.body;
+  const { destinations = [], fromDate, toDate, tripName, sharedWith = [], bookings = {flights: [], hotel: [], airbnb: []} } = req.body;
   const timeCreated = new Date().toISOString();
   const lastEdited = timeCreated;
 
@@ -52,14 +52,17 @@ router.post('/trip/:userid/destinations', async (req, res) => {
     fromDate,
     toDate,
     tripName,
+    bookings,
     timeCreated,
     lastEdited
   };
 
   try {
-    await db.collection('itinerary').add(tripData);
-    res.status(201).json({ message: 'Trip added successfully!' });
-    console.log(`${tripName} is added to db.`);
+    await db.collection('itinerary').add(tripData)
+    .then((docRef) => {
+      res.status(201).json({ message: 'Trip added successfully!', itineraryId: docRef.id });
+      console.log(`${tripName} is added to db.`);
+    });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while adding the trip.' });
   }
@@ -93,7 +96,7 @@ router.put('/trip/:userId/destinations/:tripId', async (req, res) => {
   const userId = req.params.userId;
   const tripId = req.params.tripId;
   const updatedTripData = req.body;
-
+  
   try {
     const tripRef = db.collection('itinerary').doc(tripId);
     const tripSnapshot = await tripRef.get();

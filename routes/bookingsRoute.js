@@ -18,6 +18,17 @@ router.get('', async (req, res) => {
     }
 });
 
+// Update booking
+router.put('/update/:bookingType/:bookingId', async (req, res) => {
+    try {
+        await db.collection(req.params.bookingType).doc(req.params.bookingId).update(req.body);
+        res.status(200).json({message: 'Update successful!'});
+    }
+    catch (error) {
+        res.status(500).json({error: 'An error occurred while updating the booking.'});
+    }
+});
+
 // Delete booking
 router.delete('/delete/:bookingType/:bookingId', async (req, res) => {
     try {
