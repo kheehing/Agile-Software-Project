@@ -6,8 +6,17 @@ const db = admin.firestore();
 // Retrieve bookings
 router.get('', async (req, res) => {
     try {
+        const itinerariesSnapshot = await db.collection('itinerary').where('userId', '==', req.session.user.uid).get();
+        const itineraries = itinerariesSnapshot.docs.map(doc => ({itineraryId: doc.id, ...doc.data()}));
         const airbnbBookingsSnapshot = await db.collection('airbnb').where('userId', '==', req.session.user.uid).get();
-        const airbnbBookings = airbnbBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
+        var airbnbBookings = airbnbBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
+        airbnbBookings.forEach(booking => {
+            itineraries.forEach(itinerary => {
+                if (booking.itineraryId && booking.itineraryId == itinerary.itineraryId) {
+                    booking.itineraryName = itinerary.tripName;
+                }
+            });
+        });
         const flightBookingsSnapshot = await db.collection('flights').where('userid', '==', req.session.user.uid).get();
         const flightBookings = flightBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
         res.render('bookings', {user: req.session.user, airbnbBookings: airbnbBookings, flightBookings: flightBookings});

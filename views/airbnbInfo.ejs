@@ -166,8 +166,7 @@
                     <div class="modal-body">
                         <h4 class="h4-black">Would you like to add your booking into an itinerary?</h4>
                         <div class="dropdown">
-                            <select class="itinerary-dropdown" id="itineraryDropdown" onchange="createItineraryFormVisible()"></select>
-                            <img src="/images/down-arrow.png" class="itinerary-dropdown-arrow" id="itineraryDropdownArrow">
+                            <select class="itinerary-dropdown" id="itineraryDropdown"></select>
                         </div>
                         <div class="create-itinerary-form" id="createItineraryForm"><br>
                             <div class="d-flex align-items-center">
@@ -415,6 +414,19 @@
     function closeModal() {
         var modal = document.getElementById("modal");
         modal.style.display = "none";
+    }
+
+    // Toggle dropdown arrow based on whether options are displayed
+    var itineraryDropdown = document.getElementById("itineraryDropdown");
+    itineraryDropdown.onchange = function(e) {
+        itineraryDropdown.blur();
+        createItineraryFormVisible();
+    }
+    itineraryDropdown.onfocus = function(e) {
+        itineraryDropdown.style.backgroundImage = "url('/images/up-arrow.png')";
+    }
+    itineraryDropdown.onblur = function(e) {
+        itineraryDropdown.style.backgroundImage = "url('/images/down-arrow.png')";
     }
 
     // Show/hide create itinerary form in modal based on dropdown selection
