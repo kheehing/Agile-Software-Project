@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include ('base/head'); %>
     <title>Bookings Page</title>
     <link rel="stylesheet" href="/stylesheets/bookings-style.css">
 </head>
+
 <body>
     <%- include ('base/navbar'); %>
 
@@ -16,102 +18,107 @@
         </div>
         <ul class="list-unstyled">
             <% flightBookings.forEach(data => { %>
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <img src="<%= data.carrierLogo %>" alt="<%= data.carrierName %> Logo" width="30" class="me-2">
-                                <h5 class="mb-0"><%= data.carrierName %></h5>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <img src="<%= data.carrierLogo %>" alt="<%= data.carrierName %> Logo" width="30"
+                                class="me-2">
+                            <h5 class="mb-0"><%= data.carrierName %></h5>
+                        </div>
+                        <button class="btn btn-danger flight-booking-button"
+                            onclick="deleteBooking('flights', '<%= data.bookingId %>')">Delete</button>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <% if (data.tripType === 'one-way') { %>
+                    <div class="leg-item">
+                        <div class="leg-info">
+                            <div class="row">
+                                <div class="col text-center">
+                                    <h3><%= data.origin %> to <%= data.destination %></h3>
+                                </div>
                             </div>
-                            <button class="btn btn-danger flight-booking-button" onclick="deleteBooking('flights', '<%= data.bookingId %>')">Delete</button>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span class="fs-5"><%= formatDate(data.departure) %></span>
+                                    <span class="line flex-grow-1"></span>
+                                    <span class="fs-5"><%= formatDate(data.arrival) %></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center"></div>
+                                <div class="col text-center">
+                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                        <span><%= convertToHoursAndMinutes(data.duration) %>, <%= data.stop %>
+                                            Stops</span>
+                                    </div>
+                                </div>
+                                <div class="col text-end">
+                                    <h5><%= data.price %></h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <% if (data.tripType === 'one-way') { %>
-                            <div class="leg-item">
-                                <div class="leg-info">
-                                    <div class="row">
-                                        <div class="col text-center">
-                                            <h3><%= data.origin %> to <%= data.destination %></h3>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col text-center">
-                                            <span class="fs-5"><%= formatDate(data.departure) %></span>
-                                            <span class="line flex-grow-1"></span>
-                                            <span class="fs-5"><%= formatDate(data.arrival) %></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col text-center"></div>
-                                        <div class="col text-center">
-                                            <div class="d-flex justify-content-center align-items-center h-100">
-                                                <span><%= convertToHoursAndMinutes(data.duration) %>, <%= data.stop %> Stops</span>
-                                            </div>
-                                        </div>
-                                        <div class="col text-end">
-                                            <h5><%= data.price %></h5>
-                                        </div>
+                    <% } else { %>
+                    <div class="leg-item">
+                        <div class="leg-info">
+                            <div class="row">
+                                <div class="col text-center">
+                                    <h3><%= data.origin1 %> to <%= data.destination1 %></h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span class="fs-5"><%= formatDate(data.departure1) %></span>
+                                    <span class="line flex-grow-1"></span>
+                                    <span class="fs-5"><%= formatDate(data.arrival1) %></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <div>
+                                        <span><%= convertToHoursAndMinutes(data.duration1) %>, <%= data.stop1 %>
+                                            Stops</span>
                                     </div>
                                 </div>
                             </div>
-                        <% } else { %>
-                            <div class="leg-item">
-                                <div class="leg-info">
-                                    <div class="row">
-                                        <div class="col text-center">
-                                            <h3><%= data.origin1 %> to <%= data.destination1 %></h3>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col text-center">
-                                            <span class="fs-5"><%= formatDate(data.departure1) %></span>
-                                            <span class="line flex-grow-1"></span>
-                                            <span class="fs-5"><%= formatDate(data.arrival1) %></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col text-center">
-                                            <div>
-                                                <span><%= convertToHoursAndMinutes(data.duration1) %>, <%= data.stop1 %> Stops</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="leg-info">
-                                    <div class="row mt-1">
-                                        <div class="col text-center">
-                                            <h3><%= data.origin2 %> to <%= data.destination2 %></h3>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-1">
-                                        <div class="col text-center">
-                                            <span class="fs-5"><%= formatDate(data.departure2) %></span>
-                                            <span class="line flex-grow-1"></span>
-                                            <span class="fs-5"><%= formatDate(data.arrival2) %></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col text-center"></div>
-                                        <div class="col text-center">
-                                            <div>
-                                                <span><%= convertToHoursAndMinutes(data.duration2) %>, <%= data.stop2 %> Stops</span>
-                                            </div>
-                                        </div>
-                                        <div class="col text-end">
-                                            <h5><%= data.price %></h5>
-                                        </div>
-                                    </div>
+                        </div>
+                        <div class="leg-info">
+                            <div class="row mt-1">
+                                <div class="col text-center">
+                                    <h3><%= data.origin2 %> to <%= data.destination2 %></h3>
                                 </div>
                             </div>
-                        <% } %>
+                            <div class="row mt-1">
+                                <div class="col text-center">
+                                    <span class="fs-5"><%= formatDate(data.departure2) %></span>
+                                    <span class="line flex-grow-1"></span>
+                                    <span class="fs-5"><%= formatDate(data.arrival2) %></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center"></div>
+                                <div class="col text-center">
+                                    <div>
+                                        <span><%= convertToHoursAndMinutes(data.duration2) %>, <%= data.stop2 %>
+                                            Stops</span>
+                                    </div>
+                                </div>
+                                <div class="col text-end">
+                                    <h5><%= data.price %></h5>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <% } %>
                 </div>
+            </div>
             <% }) %>
             <% if (flightBookings.length == 0) { %>
-                <div class="alert alert-warning">
-                    No flight bookings.
-                </div>
+            <div class="alert alert-warning">
+                No flight bookings.
+            </div>
             <% } %>
         </ul>
     </div>
@@ -124,28 +131,75 @@
         </div>
         <div class="booking-list">
             <% airbnbBookings.forEach(entry => { %>
-                <div class="booking-item">
-                    <img src="<%= entry.airbnbImage %>" class="booking-image">
-                    <div class="booking-details">
-                        <h3><%= entry.airbnbName %></h3>
-                        <span>Check-in: <%= entry.checkIn %></span><br>
-                        <span>Check-out: <%= entry.checkOut %></span><br>
-                        <% if (entry.itineraryId && entry.itineraryId != "") { %>
-                            <span>Itinerary: <%= entry.itineraryName %> <a onclick="displayModal('<%= entry.bookingId %>', '<%= entry.itineraryId %>')" class="link">Change</a></span><br>
-                        <% } else { %>
-                            <span>Itinerary: <a onclick="displayModal('<%= entry.bookingId %>', '')" class="link">Add</a></span><br>
-                        <% } %>
-                        <div class="booking-button-container">
-                            <form action="/airbnb/<%= entry.airbnbId %>" method="GET">
-                                <button type="submit" class="btn btn-primary booking-button">View listing</button>
-                            </form>
-                            <button onclick="deleteBooking('airbnb', '<%= entry.bookingId %>')" class="btn btn-danger booking-button">Delete</button>
-                        </div>
+            <div class="booking-item">
+                <img src="<%= entry.airbnbImage %>" class="booking-image">
+                <div class="booking-details">
+                    <h3><%= entry.airbnbName %></h3>
+                    <span>Check-in: <%= entry.checkIn %></span><br>
+                    <span>Check-out: <%= entry.checkOut %></span><br>
+                    <% if (entry.itineraryId && entry.itineraryId != "") { %>
+                    <span>Itinerary: <%= entry.itineraryName %> <a
+                            onclick="displayModal('<%= entry.bookingId %>', '<%= entry.itineraryId %>')"
+                            class="link">Change</a></span><br>
+                    <% } else { %>
+                    <span>Itinerary: <a onclick="displayModal('<%= entry.bookingId %>', '')"
+                            class="link">Add</a></span><br>
+                    <% } %>
+                    <div class="booking-button-container">
+                        <form action="/airbnb/<%= entry.airbnbId %>" method="GET">
+                            <button type="submit" class="btn btn-primary booking-button">View listing</button>
+                        </form>
+                        <button onclick="deleteBooking('airbnb', '<%= entry.bookingId %>')"
+                            class="btn btn-danger booking-button">Delete</button>
                     </div>
                 </div>
+            </div>
             <% }) %>
             <% if (airbnbBookings.length == 0) { %>
-                <p>No airbnb bookings.</p>
+            <p>No airbnb bookings.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Container for Hotel bookings -->
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>Hotel Bookings</h2>
+            </div>
+        </div>
+        <div class="booking-list">
+            <% hotelBookings.forEach(entry => { %>
+            <div class="booking-item">
+                <img src="<%= entry.hotelImage %>" class="booking-image">
+                <div class="booking-details">
+                    <h3><%= entry.hotelName %></h3>
+                    <span>Check-in: <%= entry.checkIn %></span><br>
+                    <span>Check-out: <%= entry.checkOut %></span><br>
+                    <% if (entry.itineraryId && entry.itineraryId != "") { %>
+                    <span>Itinerary: <%= entry.itineraryName %> <a
+                            onclick="displayModal('<%= entry.bookingId %>', '<%= entry.itineraryId %>')"
+                            class="link">Change</a></span><br>
+                    <% } else { %>
+                    <span>Itinerary: <a onclick="displayModal('<%= entry.bookingId %>', '')"
+                            class="link">Add</a></span><br>
+                    <% } %>
+                    <div class="booking-button-container">
+                        <form action="/hotel/information" method="GET">
+                            <input type="hidden" name="hotel_id" value="<%= entry.hotelId %>">
+                            <input type="hidden" name="checkin" value="<%= entry.checkInDate %>">
+                            <input type="hidden" name="checkout" value="<%= entry.checkOutDate %>">
+                            <input type="hidden" name="pax" value="<%= entry.pax %>">
+                            <button type="submit" class="btn btn-primary booking-button">View listing</button>
+                        </form>
+                        <button onclick="deleteBooking('hotel', '<%= entry.bookingId %>')"
+                            class="btn btn-danger booking-button">Delete</button>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+            <% if (hotelBookings.length == 0) { %>
+            <p>No hotel bookings.</p>
             <% } %>
         </div>
     </div>
@@ -159,7 +213,8 @@
                 <div class="modal-body">
                     <h4 class="h4-black">Which itinerary would you like to add your booking to?</h4>
                     <div class="itinerary-dropdown-div">
-                        <input type="text" class="itinerary-dropdown" id="itineraryDropdown" placeholder="Select itinerary..." required readonly />
+                        <input type="text" class="itinerary-dropdown" id="itineraryDropdown"
+                            placeholder="Select itinerary..." required readonly />
                         <img src="/images/down-arrow.png" class="itinerary-dropdown-arrow" id="itineraryDropdownArrow">
                         <div class="dropdown-menu position-absolute w-100" id="itineraryDropdownOptions"></div>
                     </div>
@@ -173,7 +228,8 @@
                         </div>
                         <div class="input-group position-relative">
                             <input type="text" id="trip-destination" class="form-control" placeholder="Where to?" />
-                            <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end" onclick="addDestination()">Add destination</button>
+                            <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end"
+                                onclick="addDestination()">Add destination</button>
                             <div id="dropdown" class="dropdown-menu position-absolute w-100"></div>
                         </div>
                         <div id="selected-destinations" class="d-flex flex-wrap"></div><br>
@@ -182,9 +238,11 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-text">From:</span>
-                            <input type="date" id="trip-from-date" class="form-control" min="<%= new Date().toISOString().split('T')[0] %>" onchange="checkDate()" />
+                            <input type="date" id="trip-from-date" class="form-control"
+                                min="<%= new Date().toISOString().split('T')[0] %>" onchange="checkDate()" />
                             <span class="input-group-text">To:</span>
-                            <input type="date" id="trip-to-date" class="form-control" min="<%= new Date().toISOString().split('T')[0] %>" onchange="checkDate()" />
+                            <input type="date" id="trip-to-date" class="form-control"
+                                min="<%= new Date().toISOString().split('T')[0] %>" onchange="checkDate()" />
                         </div>
                         <div class="error-message" id="errorMessage">
                             <img src="/images/error-icon.png" class="error-icon">
@@ -216,7 +274,7 @@
         const formattedDate = new Date(date).toLocaleString('en-US', options);
         return formattedDate.replace('24:', '00:');
     } %>
-    
+
     <% function convertToHoursAndMinutes(minutes) {
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
@@ -229,34 +287,40 @@
         return `${hours}h ${remainingMinutes}m`;
     } %>
 </body>
+
 </html>
 <script>
     // Delete booking
     function deleteBooking(bookingType, bookingId) {
         if (confirm("Are you sure you want to delete this booking?")) {
-            fetch(`/bookings/delete/${bookingType}/${bookingId}`, {method: "DELETE"})
-            .then(response => {
-                fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
-                    trips.forEach(trip => {
-                        if (trip.bookings[bookingType].indexOf(bookingId) != -1) {
-                            trip.bookings[bookingType].splice(trip.bookings[bookingType].indexOf(bookingId), 1);
-                            $.ajax({
-                                url: `/itinerary/trip/<%= user.uid %>/destinations/${trip.id}`,
-                                type: "PUT",
-                                data: JSON.stringify(trip),
-                                contentType: "application/json",
-                                success: function(response) {
+            fetch(`/bookings/delete/${bookingType}/${bookingId}`, {
+                    method: "DELETE"
+                })
+                .then(response => {
+                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
+                        trips.forEach(trip => {
+                            if (trip.bookings[bookingType].indexOf(bookingId) != -1) {
+                                trip.bookings[bookingType].splice(trip.bookings[bookingType]
+                                    .indexOf(bookingId), 1);
+                                $.ajax({
+                                    url: `/itinerary/trip/<%= user.uid %>/destinations/${trip.id}`,
+                                    type: "PUT",
+                                    data: JSON.stringify(trip),
+                                    contentType: "application/json",
+                                    success: function (response) {
 
-                                },
-                                error: function(error) {
-                                    console.error(`An error occurred while deleting ${bookingId} from ${trip.id}.`);
-                                }
-                            });
-                        }
+                                    },
+                                    error: function (error) {
+                                        console.error(
+                                            `An error occurred while deleting ${bookingId} from ${trip.id}.`
+                                            );
+                                    }
+                                });
+                            }
+                        });
+                        window.location.reload();
                     });
-                    window.location.reload();
                 });
-            });
         }
     }
 
@@ -278,7 +342,7 @@
                     var optionDiv = document.createElement("div");
                     optionDiv.className = "dropdown-item";
                     optionDiv.innerText = trip.tripName;
-                    optionDiv.onclick = function(e) {
+                    optionDiv.onclick = function (e) {
                         selectedItineraryId.value = trip.id;
                         itineraryDropdown.value = trip.tripName;
                         itineraryDropdownOptions.style.display = "none";
@@ -290,7 +354,7 @@
             var createOptionDiv = document.createElement("div");
             createOptionDiv.className = "dropdown-item";
             createOptionDiv.innerText = "Create new itinerary";
-            createOptionDiv.onclick = function(e) {
+            createOptionDiv.onclick = function (e) {
                 selectedItineraryId.value = "";
                 itineraryDropdown.value = createOptionDiv.innerText;
                 itineraryDropdownOptions.style.display = "none";
@@ -301,7 +365,7 @@
                 var removeOptionDiv = document.createElement("div");
                 removeOptionDiv.className = "dropdown-item";
                 removeOptionDiv.innerText = "Remove from itinerary";
-                removeOptionDiv.onclick = function(e) {
+                removeOptionDiv.onclick = function (e) {
                     selectedItineraryId.value = "";
                     itineraryDropdown.value = removeOptionDiv.innerText;
                     itineraryDropdownOptions.style.display = "none";
@@ -319,7 +383,7 @@
     }
 
     // Show/hide itinerary dropdown
-    document.onclick = function(e) {
+    document.onclick = function (e) {
         var itineraryDropdown = document.getElementById("itineraryDropdown");
         var itineraryDropdownArrow = document.getElementById("itineraryDropdownArrow");
         var itineraryDropdownOptions = document.getElementById("itineraryDropdownOptions");
@@ -327,13 +391,11 @@
             if (itineraryDropdownOptions.style.display == "" || itineraryDropdownOptions.style.display == "none") {
                 itineraryDropdownOptions.style.display = "block";
                 itineraryDropdownArrow.src = "/images/up-arrow.png";
-            }
-            else {
+            } else {
                 itineraryDropdownOptions.style.display = "none";
                 itineraryDropdownArrow.src = "/images/down-arrow.png";
             }
-        }
-        else {
+        } else {
             itineraryDropdownOptions.style.display = "none";
             itineraryDropdownArrow.src = "/images/down-arrow.png";
         }
@@ -351,8 +413,7 @@
             tripName.required = true;
             tripFromDate.required = true;
             tripToDate.required = true;
-        }
-        else {
+        } else {
             createItineraryForm.style.display = "none";
             tripName.required = false;
             tripFromDate.required = false;
@@ -364,30 +425,32 @@
     var addedDestinations = [];
 
     // Destination suggestions
-    $.getJSON("/data/airports.json", function(data) {
+    $.getJSON("/data/airports.json", function (data) {
         citiesAndCountries = data.map(item => ({
             city: item.City,
             country: item.Country
         }));
-        citiesAndCountries = citiesAndCountries.filter((value, index, self) => index == self.findIndex((v) => (v.city == value.city && v.country == value.country)));
+        citiesAndCountries = citiesAndCountries.filter((value, index, self) => index == self.findIndex((v) => (v
+            .city == value.city && v.country == value.country)));
     });
-    $("#trip-destination").on("input", function() {
+    $("#trip-destination").on("input", function () {
         const query = $(this).val().toLowerCase();
-        const filteredOptions = citiesAndCountries.filter(item => item.city.toLowerCase().includes(query) || item.country.toLowerCase().includes(query));
+        const filteredOptions = citiesAndCountries.filter(item => item.city.toLowerCase().includes(query) ||
+            item.country.toLowerCase().includes(query));
         updateDropdown(filteredOptions.slice(0, 5));
     });
+
     function updateDropdown(options) {
         var $dropdown = $("#dropdown");
         $dropdown.empty();
         if (options.length > 0) {
             $dropdown.show();
-        } 
-        else {
+        } else {
             $dropdown.hide();
         }
         options.forEach(item => {
             var optionDiv = $("<div>").addClass("dropdown-item").text(`${item.city}, ${item.country}`);
-            optionDiv.on("click", function() {
+            optionDiv.on("click", function () {
                 $("#trip-destination").val(`${item.city}, ${item.country}`);
                 addDestination();
                 $dropdown.hide();
@@ -395,7 +458,7 @@
             $dropdown.append(optionDiv);
         });
     }
-    $(document).on("click", function() {
+    $(document).on("click", function () {
         $("#dropdown").hide();
     });
 
@@ -407,21 +470,27 @@
         var selectedDestination = $("#trip-destination").val();
         if (selectedDestination && !addedDestinations.includes(selectedDestination)) {
             addedDestinations.push(selectedDestination);
-            var destinationInput = $("<input>").attr("type", "text").attr("readonly", true).addClass("form-control").val(selectedDestination);
-            var deleteButton = $("<button>").text("Delete").addClass("btn btn-danger rounded-end").on("click", function() {
-                var index = addedDestinations.indexOf(selectedDestination);
-                addedDestinations.splice(index, 1);
-                $(this).closest(".input-group").remove();
-            });
+            var destinationInput = $("<input>").attr("type", "text").attr("readonly", true).addClass("form-control")
+                .val(selectedDestination);
+            var deleteButton = $("<button>").text("Delete").addClass("btn btn-danger rounded-end").on("click",
+                function () {
+                    var index = addedDestinations.indexOf(selectedDestination);
+                    addedDestinations.splice(index, 1);
+                    $(this).closest(".input-group").remove();
+                });
             var hiddenInput = $("<input>").attr("type", "hidden").attr("name", "destinations").val(selectedDestination);
-            var inputGroup = $("<div>").addClass("input-group").css({"width": "auto", "margin-right": "10px", "margin-top": "10px"}).append(destinationInput, deleteButton, hiddenInput);
+            var inputGroup = $("<div>").addClass("input-group").css({
+                "width": "auto",
+                "margin-right": "10px",
+                "margin-top": "10px"
+            }).append(destinationInput, deleteButton, hiddenInput);
             $("#selected-destinations").append(inputGroup);
-            $("#trip-destination").val(""); 
+            $("#trip-destination").val("");
         }
     }
 
     // Prevent unwanted deletion of destination when enter key is pressed
-    document.onkeydown = function(e) {
+    document.onkeydown = function (e) {
         if (e.key == "Enter" || e.keyCode == 13) {
             e.preventDefault();
         }
@@ -440,8 +509,7 @@
             errorMessage.style.display = "block";
             confirmButtonContainer.className = "button-container-disabled";
             confirmButton.disabled = true;
-        }
-        else {
+        } else {
             fromDate.style.border = "1px solid #ccc";
             toDate.style.border = "1px solid #ccc";
             errorMessage.style.display = "none";
@@ -451,44 +519,50 @@
     }
 
     // Add booking to itinerary
-    $("#addToItineraryForm").on("submit", function(e) {
+    $("#addToItineraryForm").on("submit", function (e) {
         e.preventDefault();
         var itineraryDropdown = document.getElementById("itineraryDropdown");
         var selectedItineraryId = document.getElementById("selectedItineraryId");
         var bookingIdInput = document.getElementById("bookingId");
         var itineraryIdInput = document.getElementById("itineraryId");
         // If adding to existing itinerary
-        if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value != "Remove from itinerary") {
+        if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
+            "Remove from itinerary") {
             // Add itinerary ID to booking
             $.ajax({
                 url: `/bookings/update/airbnb/${bookingIdInput.value}`,
                 type: "PUT",
-                data: JSON.stringify({itineraryId: selectedItineraryId.value}),
+                data: JSON.stringify({
+                    itineraryId: selectedItineraryId.value
+                }),
                 contentType: "application/json",
-                success: function(response) {
+                success: function (response) {
                     // Add booking ID to itinerary
-                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
-                        trips.forEach(trip => {
-                            if (trip.id == selectedItineraryId.value) {
-                                trip.bookings.airbnb.push(bookingIdInput.value);
-                                $.ajax({
-                                    url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
-                                    type: "PUT",
-                                    data: JSON.stringify(trip),
-                                    contentType: "application/json",
-                                    success: function(response) {
-                                        alert("Booking added to itinerary!");
-                                        window.location.reload();
-                                    },
-                                    error: function(error) {
-                                        alert("An error occurred while adding booking ID to itinerary.");
-                                    }
-                                });
-                            }
+                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                        trips => {
+                            trips.forEach(trip => {
+                                if (trip.id == selectedItineraryId.value) {
+                                    trip.bookings.airbnb.push(bookingIdInput.value);
+                                    $.ajax({
+                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
+                                        type: "PUT",
+                                        data: JSON.stringify(trip),
+                                        contentType: "application/json",
+                                        success: function (response) {
+                                            alert(
+                                                "Booking added to itinerary!");
+                                            window.location.reload();
+                                        },
+                                        error: function (error) {
+                                            alert(
+                                                "An error occurred while adding booking ID to itinerary.");
+                                        }
+                                    });
+                                }
+                            });
                         });
-                    });
                 },
-                error: function(error) {
+                error: function (error) {
                     alert("An error occurred while adding itinerary ID to booking.");
                 }
             });
@@ -497,25 +571,32 @@
         else if (itineraryDropdown.value == "Create new itinerary") {
             if (addedDestinations.length == 0) {
                 alert("Please add at least one destination.");
-            }
-            else {
+            } else {
                 // Create new itinerary and add booking ID to itinerary
-                $.post("/itinerary/trip/<%= user.uid %>/destinations", {destinations: addedDestinations,
-                                                                            tripName: $("#trip-name").val(),
-                                                                            fromDate: $("#trip-from-date").val(),
-                                                                            toDate: $("#trip-to-date").val(),
-                                                                            bookings: {flights: [], hotel: [], airbnb: [bookingIdInput.value]}}, function(response) {
+                $.post("/itinerary/trip/<%= user.uid %>/destinations", {
+                    destinations: addedDestinations,
+                    tripName: $("#trip-name").val(),
+                    fromDate: $("#trip-from-date").val(),
+                    toDate: $("#trip-to-date").val(),
+                    bookings: {
+                        flights: [],
+                        hotel: [],
+                        airbnb: [bookingIdInput.value]
+                    }
+                }, function (response) {
                     // Add itinerary ID to booking
                     $.ajax({
                         url: `/bookings/update/airbnb/${bookingIdInput.value}`,
                         type: "PUT",
-                        data: JSON.stringify({itineraryId: response.itineraryId}),
+                        data: JSON.stringify({
+                            itineraryId: response.itineraryId
+                        }),
                         contentType: "application/json",
-                        success: function(response) {
+                        success: function (response) {
                             alert("Booking added to itinerary!");
                             window.location.reload();
                         },
-                        error: function(error) {
+                        error: function (error) {
                             alert("An error occurred while adding to itinerary.");
                         }
                     });
@@ -528,32 +609,167 @@
             $.ajax({
                 url: `/bookings/update/airbnb/${bookingIdInput.value}`,
                 type: "PUT",
-                data: JSON.stringify({itineraryId: ""}),
+                data: JSON.stringify({
+                    itineraryId: ""
+                }),
                 contentType: "application/json",
-                success: function(response) {
+                success: function (response) {
                     // Remove booking ID from itinerary
-                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
-                        trips.forEach(trip => {
-                            if (trip.id == itineraryIdInput.value) {
-                                trip.bookings.airbnb.filter(item => item != bookingIdInput.value);
-                                $.ajax({
-                                    url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
-                                    type: "PUT",
-                                    data: JSON.stringify(trip),
-                                    contentType: "application/json",
-                                    success: function(response) {
-                                        alert("Booking removed from itinerary!");
-                                        window.location.reload();
-                                    },
-                                    error: function(error) {
-                                        alert("An error occurred while removing booking ID from itinerary.");
-                                    }
-                                });
-                            }
+                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                        trips => {
+                            trips.forEach(trip => {
+                                if (trip.id == itineraryIdInput.value) {
+                                    trip.bookings.airbnb.filter(item => item !=
+                                        bookingIdInput.value);
+                                    $.ajax({
+                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
+                                        type: "PUT",
+                                        data: JSON.stringify(trip),
+                                        contentType: "application/json",
+                                        success: function (response) {
+                                            alert(
+                                                "Booking removed from itinerary!");
+                                            window.location.reload();
+                                        },
+                                        error: function (error) {
+                                            alert(
+                                                "An error occurred while removing booking ID from itinerary.");
+                                        }
+                                    });
+                                }
+                            });
                         });
-                    });
                 },
-                error: function(error) {
+                error: function (error) {
+                    alert("An error occurred while removing itinerary ID from booking.");
+                }
+            });
+        }
+    });
+
+    // Add booking to itinerary for hotel
+    $("#addToItineraryForm").on("submit", function (e) {
+        e.preventDefault();
+        var itineraryDropdown = document.getElementById("itineraryDropdown");
+        var selectedItineraryId = document.getElementById("selectedItineraryId");
+        var bookingIdInput = document.getElementById("bookingId");
+        var itineraryIdInput = document.getElementById("itineraryId");
+        // If adding to existing itinerary
+        if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
+            "Remove from itinerary") {
+            // Add itinerary ID to booking
+            $.ajax({
+                url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                type: "PUT",
+                data: JSON.stringify({
+                    itineraryId: selectedItineraryId.value
+                }),
+                contentType: "application/json",
+                success: function (response) {
+                    // Add booking ID to itinerary
+                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                        trips => {
+                            trips.forEach(trip => {
+                                if (trip.id == selectedItineraryId.value) {
+                                    trip.bookings.hotel.push(bookingIdInput.value);
+                                    $.ajax({
+                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
+                                        type: "PUT",
+                                        data: JSON.stringify(trip),
+                                        contentType: "application/json",
+                                        success: function (response) {
+                                            alert(
+                                                "Booking added to itinerary!");
+                                            window.location.reload();
+                                        },
+                                        error: function (error) {
+                                            alert(
+                                                "An error occurred while adding booking ID to itinerary.");
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                },
+                error: function (error) {
+                    alert("An error occurred while adding itinerary ID to booking.");
+                }
+            });
+        }
+        // If adding to new itinerary
+        else if (itineraryDropdown.value == "Create new itinerary") {
+            if (addedDestinations.length == 0) {
+                alert("Please add at least one destination.");
+            } else {
+                // Create new itinerary and add booking ID to itinerary
+                $.post("/itinerary/trip/<%= user.uid %>/destinations", {
+                    destinations: addedDestinations,
+                    tripName: $("#trip-name").val(),
+                    fromDate: $("#trip-from-date").val(),
+                    toDate: $("#trip-to-date").val(),
+                    bookings: {
+                        flights: [],
+                        hotel: [bookingIdInput.value],
+                        airbnb: []
+                    }
+                }, function (response) {
+                    // Add itinerary ID to booking
+                    $.ajax({
+                        url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                        type: "PUT",
+                        data: JSON.stringify({
+                            itineraryId: response.itineraryId
+                        }),
+                        contentType: "application/json",
+                        success: function (response) {
+                            alert("Booking added to itinerary!");
+                            window.location.reload();
+                        },
+                        error: function (error) {
+                            alert("An error occurred while adding to itinerary.");
+                        }
+                    });
+                });
+            }
+        }
+        // If removing from itinerary
+        else {
+            // Remove itinerary ID from booking
+            $.ajax({
+                url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                type: "PUT",
+                data: JSON.stringify({
+                    itineraryId: ""
+                }),
+                contentType: "application/json",
+                success: function (response) {
+                    // Remove booking ID from itinerary
+                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                        trips => {
+                            trips.forEach(trip => {
+                                if (trip.id == itineraryIdInput.value) {
+                                    trip.bookings.hotel.filter(item => item !=
+                                        bookingIdInput.value);
+                                    $.ajax({
+                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
+                                        type: "PUT",
+                                        data: JSON.stringify(trip),
+                                        contentType: "application/json",
+                                        success: function (response) {
+                                            alert(
+                                                "Booking removed from itinerary!");
+                                            window.location.reload();
+                                        },
+                                        error: function (error) {
+                                            alert(
+                                                "An error occurred while removing booking ID from itinerary.");
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                },
+                error: function (error) {
                     alert("An error occurred while removing itinerary ID from booking.");
                 }
             });

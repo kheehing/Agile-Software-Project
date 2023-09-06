@@ -9,8 +9,11 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script>
         function validatePax(input) {
-            if (input.value < 0) {
-                input.value = 0;
+            if (input.value < 1) {
+                input.value = 1;
+            }
+            if (input.value > 6) {
+                input.value = 6
             }
         }
     </script>

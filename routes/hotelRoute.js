@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const admin = require('firebase-admin');
+const db = admin.firestore();
 
 const MAX_REQUESTS_PER_SECOND = 5;
 let requestsThisSecond = 0;
@@ -50,6 +52,23 @@ async function makeApiRequestWithRateLimit(options, initialDelayMs) {
   }
 }
 
+// Call hotel API
+async function getHotelData(url, params) {
+  const options = {
+    method: 'GET',
+    url: 'https://booking-com.p.rapidapi.com/v1/hotels/search' + url,
+    params: params,
+    headers: {
+      'X-RapidAPI-Key': 'e15a5fc2d8msh9914d1f214b4e02p1ea8b4jsndf09beae5d59',
+        'X-RapidAPI-Host': 'booking-com.p.rapidapi.com',
+    }
+  };
+
+  await delay(3000);
+  return await axios.request(options);
+}
+
+
 router.get('', async (req, res) => {
   try {
     // Fetch hotel data using the Booking.com API
@@ -87,7 +106,8 @@ router.get('', async (req, res) => {
 
     // Render the hotel page and pass the images to the EJS template
     res.render('hotel', {
-      images
+      images,
+      user: req.session.user
     });
   } catch (error) {
     console.error(error);
@@ -190,7 +210,8 @@ router.get('/search', async (req, res) => {
       hotels: flattendHotels,
       checkinDate: checkinDate,
       checkoutDate: checkoutDate,
-      adultsNumber: adultsNumber
+      adultsNumber: adultsNumber,
+      user: req.session.user
     });
   } catch (error) {
     console.error(error);
@@ -327,7 +348,7 @@ router.get('/information', async (req, res) => {
 
     const roomData = roomResponse;
 
-    console.log("room data:", roomData);
+    //console.log("room data:", roomData);
 
     //console.log("hotel data:", hotelData);
 
@@ -339,6 +360,7 @@ router.get('/information', async (req, res) => {
       hotelReviews: hotelTopReviews,
       hotelId: hotelId,
       roomData: roomData,
+      user: req.session.user
     });
   } catch (error) {
     const roomOptions = {
@@ -361,14 +383,55 @@ router.get('/information', async (req, res) => {
 
     const roomResponse = await makeApiRequestWithRateLimit(roomOptions, 3000);
     const roomData = roomResponse;
-    console.log("room data:", roomData);
+    //console.log("room data:", roomData);
     //console.error(error);
     res.status(404).render('404');
   }
 });
 
-//  =============================================================
-//  ========== Redirect nonexistent MUST BE LAST ROUTE ==========
-//  =============================================================
+// Hotel information page
+router.get('/:id', (req, res) => {
+  const tripDetails = {
+      hotelId: req.params.id,
+      currency: 'SGD',
+      checkIn: req.query.checkin,
+      checkOut: req.query.checkout,
+      adults: req.query.adults
+  };
+
+  getHotelData('getPropertyDetails', tripDetails)
+  .then(propertyResponse => {
+    const propertyDetails = propertyResponse.data.data;
+    console.log(propertyDetails);
+    res.render('hotelInfo', {user: req.session.user, tripDetails: tripDetails, propertyDetails: propertyDetails});
+  });
+});
+
+// Book hotel
+router.post('/:id/book', async (req, res) => {
+  try {
+      const bookingData = {
+          hotelId: req.params.id,
+          hotelImage: req.body.hotelImage,
+          hotelName: req.body.hotelName,
+          checkIn: req.body.checkin,
+          checkOut: req.body.checkout,
+          pax: req.body.adults,
+          checkOutDate: req.body.checkOutDate,
+          checkInDate: req.body.checkInDate,
+          hotelAddress: req.body.hotelAddress,
+          userId: req.session.user.uid
+      };
+
+      // Add the booking data to the database
+      const bookingRef = await db.collection('hotel').add(bookingData);
+
+      // Respond with the booking ID
+      res.status(201).json({ bookingId: bookingRef.id });
+  } catch (error) {
+      console.error('Error booking hotel:', error);
+      res.status(500).json({ error: 'An error occurred while booking the hotel.' });
+  }
+});
 
 module.exports = router;

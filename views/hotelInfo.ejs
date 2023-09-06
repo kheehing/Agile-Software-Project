@@ -4,10 +4,9 @@
 <head>
     <%- include ('base/head'); %>
     <link rel="stylesheet" href="/stylesheets/hotelInfo-style.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Hotel Information Page</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
-        async defer>
-    </script>
 </head>
 
 <body>
@@ -124,130 +123,130 @@
 
     <div class="content-section" id="rooms">
         <h2>Room list</h2>
-        <div class="room-list-container">
-            <% if (roomData && roomData.length > 0) { %>
-            <% const rooms = roomData[0].rooms; %>
-            <% let roomCounter = 1; %>
-            <% Object.keys(rooms).forEach(roomId => { %>
-            <% const room = rooms[roomId]; %>
-            <!-- Container for each room -->
-            <div class="room-container">
-                <!-- Room header -->
-                <h3>Room <%= roomCounter %></h3>
-                <% roomCounter++; %>
+        <form id="bookHotelForm">
+            <div class="form-group">
+                <div class="room-list-container">
+                    <% if (roomData && roomData.length > 0) { %>
+                    <% const rooms = roomData[0].rooms; %>
+                    <% let roomCounter = 1; %>
+                    <% Object.keys(rooms).forEach(roomId => { %>
+                    <% const room = rooms[roomId]; %>
+                    <!-- Container for each room -->
+                    <div class="room-container">
+                        <!-- Room header -->
+                        <h3>Room <%= roomCounter %></h3>
+                        <% roomCounter++; %>
 
-                <!-- Room details -->
-                <div class="room-details">
-                    <!-- High Floor Guarantee -->
-                    <p>High Floor Guarantee: <%= room.is_high_floor_guaranteed === 1 ? 'Yes' : 'No' %></p>
+                        <!-- Room details -->
+                        <div class="room-details">
+                            <!-- High Floor Guarantee -->
+                            <p>High Floor Guarantee: <%= room.is_high_floor_guaranteed === 1 ? 'Yes' : 'No' %></p>
 
-                    <!-- Facilities -->
-                    <div class="facility-list">
-                        <h4>Room Facilities</h4>
-                        <ul>
-                            <% if (room.facilities && room.facilities.length > 0) { %>
-                            <% room.facilities.forEach(facility => { %>
-                            <li><%= facility.name %></li>
-                            <% }); %>
-                            <% } else { %>
-                            <li>No room facilities available for this room.</li>
-                            <% } %>
-                        </ul>
+                            <!-- Facilities -->
+                            <div class="facility-list">
+                                <h4>Room Facilities</h4>
+                                <ul>
+                                    <% if (room.facilities && room.facilities.length > 0) { %>
+                                    <% room.facilities.forEach(facility => { %>
+                                    <li><%= facility.name %></li>
+                                    <% }); %>
+                                    <% } else { %>
+                                    <li>No room facilities available for this room.</li>
+                                    <% } %>
+                                </ul>
+                            </div>
+
+                            <!-- Private Bathroom Highlights -->
+                            <div class="highlight">
+                                <% if (room.private_bathroom_highlight && room.private_bathroom_highlight.text) { %>
+                                <p><strong>Private Bathroom:</strong> <%= room.private_bathroom_highlight.text %>
+                                </p>
+                                <% } %>
+                            </div>
+
+                            <!-- Bed Configurations -->
+                            <div class="bed-config">
+                                <% if (room.bed_configurations && room.bed_configurations.length > 0) { %>
+                                <h4>Bed Configurations:</h4>
+                                <ul>
+                                    <% room.bed_configurations.forEach((bedConfiguration) => { %>
+                                    <li><%= bedConfiguration.name_with_count %></li>
+                                    <% }); %>
+                                </ul>
+                                <% } %>
+                            </div>
+
+                            <!-- Children at the Property -->
+                            <div class="child-info">
+                                <% if (room.children_and_beds_text && room.children_and_beds_text.children_at_the_property) { %>
+                                <h4>Children at the Property:</h4>
+                                <ul>
+                                    <% room.children_and_beds_text.children_at_the_property.forEach((childInfo) => { %>
+                                    <li><%= childInfo.text %></li>
+                                    <% }); %>
+                                </ul>
+                                <% } %>
+                            </div>
+
+                            <!-- Cribs and Extra Beds -->
+                            <div class="crib-info">
+                                <% if (room.cribs_and_extra_beds && room.cribs_and_extra_beds.length > 0) { %>
+                                <h4>Cribs and Extra Beds:</h4>
+                                <ul>
+                                    <% room.cribs_and_extra_beds.forEach((cribInfo) => { %>
+                                    <li><%= cribInfo.text %></li>
+                                    <% }); %>
+                                </ul>
+                                <% } %>
+                            </div>
+
+                            <!-- Highlights -->
+                            <div class="room-highlights">
+                                <% if (room.highlights && room.highlights.length > 0) { %>
+                                <h4>Highlights:</h4>
+                                <ul>
+                                    <% room.highlights.forEach((highlight) => { %>
+                                    <li>
+                                        <i class="<%= highlight.icon %>"></i> <%= highlight.translated_name %>
+                                    </li>
+                                    <% }); %>
+                                </ul>
+                                <% } %>
+                            </div>
+
+                            <!-- Display Room Photos -->
+                            <div class="room-photos">
+                                <h4>Room Photos</h4>
+                                <% if (room.photos && room.photos.length > 0) { %>
+                                <% room.photos.forEach(photo => { %>
+                                <img src="<%= photo.url_max300 %>" alt="Room Photo">
+                                <% }); %>
+                                <% } else { %>
+                                <p>No room photos available for this room.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                        <!-- Booking Button -->
+                        <div id="bookButtonContainer">
+                            <button type="submit" class="btn btn-primary info-booking-button"
+                                id="bookButton">Book</button>
+                        </div>
+                        <input type="hidden" id="hotelImage" name="hotelImage" value="<%= hotelImages[0] %>" />
+                        <input type="hidden" id="hotelName" name="hotelName" value="<%= hotelData.name %>" />
+                        <input type="hidden" id="checkin" name="checkin" value="<%= hotelData.checkin.from %>" />
+                        <input type="hidden" id="checkout" name="checkout" value="<%= hotelData.checkout.to %>" />
+                        <input type="hidden" id="checkInDate" name="checkInDate" value="" />
+                        <input type="hidden" id="checkOutDate" name="checkOutDate" value="" />
+                        <input type="hidden" id="adults" name="adults" value="" />
+                        <input type="hidden" id="hotelAddress" name="hotelAddress" value="<%= hotelData.address %>" />
                     </div>
-
-                    <!-- Private Bathroom Highlights -->
-                    <div class="highlight">
-                        <% if (room.private_bathroom_highlight && room.private_bathroom_highlight.text) { %>
-                        <p><strong>Private Bathroom:</strong> <%= room.private_bathroom_highlight.text %></p>
-                        <% } %>
-                    </div>
-
-                    <!-- Bed Configurations -->
-                    <div class="bed-config">
-                        <% if (room.bed_configurations && room.bed_configurations.length > 0) { %>
-                        <h4>Bed Configurations:</h4>
-                        <ul>
-                            <% room.bed_configurations.forEach((bedConfiguration) => { %>
-                            <li><%= bedConfiguration.name_with_count %></li>
-                            <% }); %>
-                        </ul>
-                        <% } %>
-                    </div>
-
-                    <!-- Children at the Property -->
-                    <div class="child-info">
-                        <% if (room.children_and_beds_text && room.children_and_beds_text.children_at_the_property) { %>
-                        <h4>Children at the Property:</h4>
-                        <ul>
-                            <% room.children_and_beds_text.children_at_the_property.forEach((childInfo) => { %>
-                            <li><%= childInfo.text %></li>
-                            <% }); %>
-                        </ul>
-                        <% } %>
-                    </div>
-
-                    <!-- Cribs and Extra Beds -->
-                    <div class="crib-info">
-                        <% if (room.cribs_and_extra_beds && room.cribs_and_extra_beds.length > 0) { %>
-                        <h4>Cribs and Extra Beds:</h4>
-                        <ul>
-                            <% room.cribs_and_extra_beds.forEach((cribInfo) => { %>
-                            <li><%= cribInfo.text %></li>
-                            <% }); %>
-                        </ul>
-                        <% } %>
-                    </div>
-
-                    <!-- Highlights -->
-                    <div class="room-highlights">
-                        <% if (room.highlights && room.highlights.length > 0) { %>
-                        <h4>Highlights:</h4>
-                        <ul>
-                            <% room.highlights.forEach((highlight) => { %>
-                            <li>
-                                <i class="<%= highlight.icon %>"></i> <%= highlight.translated_name %>
-                            </li>
-                            <% }); %>
-                        </ul>
-                        <% } %>
-                    </div>
-
-                    <!-- Display Room Photos -->
-                    <div class="room-photos">
-                        <h4>Room Photos</h4>
-                        <% if (room.photos && room.photos.length > 0) { %>
-                        <% room.photos.forEach(photo => { %>
-                        <img src="<%= photo.url_max300 %>" alt="Room Photo">
-                        <% }); %>
-                        <% } else { %>
-                        <p>No room photos available for this room.</p>
-                        <% } %>
-                    </div>
+                    <% }); %>
+                    <% } else { %>
+                    <p>No room data available.</p>
+                    <% } %>
                 </div>
-                <!-- Booking Button -->
-                <a href="#" class="book-button" onclick="bookRoom('<%= room.id %>')">Book</a>
             </div>
-            <% }); %>
-            <% } else { %>
-            <p>No room data available.</p>
-            <% } %>
-        </div>
-        <script>
-            function bookRoom(roomId) {
-                // Add your logic here to handle the booking action
-                // For example, you can send room details to the database
-                const selectedRoom = document.querySelector(`[data-room-id="${roomId}"]`);
-                if (selectedRoom) {
-                    // Get room details and perform booking actions
-                    const roomDetails = {
-                        roomId: roomId,
-                        // Add other room details as needed
-                    };
-                    // Send roomDetails to the database or perform other actions
-                    console.log("Room booked:", roomDetails);
-                }
-            }
-        </script>
+        </form>
     </div>
 
     <div class="content-section" id="gallery">
@@ -300,48 +299,328 @@
         </div>
     </div>
 
-    <script>
-        // JavaScript to handle content section toggling
-        document.addEventListener("DOMContentLoaded", function () {
-            const sections = document.querySelectorAll(".content-section");
-            const navLinks = document.querySelectorAll(".secondary-navbar a");
-
-            // Hide all content sections except the "Overview" section
-            sections.forEach((section) => {
-                if (section.id !== "overview") {
-                    section.style.display = "none";
-                }
-            });
-
-            // Add event listeners to navigation links
-            navLinks.forEach((link) => {
-                link.addEventListener("click", (event) => {
-                    event.preventDefault();
-
-                    const targetSectionId = link.getAttribute("href");
-                    sections.forEach((section) => {
-                        if (section.id === targetSectionId.substring(1)) {
-                            section.style.display = "block";
-                        } else {
-                            section.style.display = "none";
-                        }
-                    });
-                });
-            });
-        });
-
-        function showImage(newImage) {
-            var currentImage = document.getElementById("currentImage");
-            var oldImage = currentImage.src;
-            currentImage.src = newImage;
-            var oldIndicatorImage = document.getElementById(oldImage);
-            oldIndicatorImage.style.opacity = "50%";
-            var newIndicatorImage = document.getElementById(newImage);
-            newIndicatorImage.style.opacity = "100%";
-        }
-    </script>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <form id="addToItineraryForm">
+                <div class="modal-header">
+                    <h3 class="modal-title">Booking successful!</h3>
+                    <button type="button" class="btn-close" onclick="closeModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="h4-black">Would you like to add your booking into an itinerary?</h4>
+                    <div class="dropdown">
+                        <select class="itinerary-dropdown" id="itineraryDropdown"></select>
+                    </div>
+                    <div class="create-itinerary-form" id="createItineraryForm"><br>
+                        <div class="d-flex align-items-center">
+                            <h4 class="h4-black">Trip Name</h4>
+                        </div>
+                        <input type="text" id="trip-name" class="form-control" placeholder="e.g. Trip to Bali" /><br>
+                        <div class="d-flex align-items-center">
+                            <h4 class="h4-black">Destination</h4>
+                        </div>
+                        <div class="input-group position-relative">
+                            <input type="text" id="trip-destination" class="form-control" placeholder="Where to?" />
+                            <button type="button" id="add-destination-button" class="btn btn-secondary rounded-end"
+                                onclick="addDestination()">Add destination</button>
+                            <div id="dropdown" class="dropdown-menu position-absolute w-100"></div>
+                        </div>
+                        <div id="selected-destinations" class="d-flex flex-wrap"></div><br>
+                        <div class="d-flex align-items-center">
+                            <h4 class="h4-black">Dates</h4>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text">From:</span>
+                            <input type="date" id="trip-from-date" class="form-control" />
+                            <span class="input-group-text">To:</span>
+                            <input type="date" id="trip-to-date" class="form-control" />
+                        </div>
+                    </div>
+                    <input type="hidden" id="bookingId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Skip</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <%- include ('base/footer'); %>
 </body>
 
 </html>
+
+<script>
+    // Function to extract query parameter from URL
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    const pax = getQueryParam("pax");
+    const checkInDate = getQueryParam("checkin");
+    const checkOutDate = getQueryParam("checkout");
+
+    document.getElementById("adults").value = pax;
+    document.getElementById("checkInDate").value = checkInDate;
+    document.getElementById("checkOutDate").value = checkOutDate;
+
+    console.log(checkInDate);
+    console.log(checkOutDate);
+
+    // JavaScript to handle content section toggling
+    document.addEventListener("DOMContentLoaded", function () {
+        const sections = document.querySelectorAll(".content-section");
+        const navLinks = document.querySelectorAll(".secondary-navbar a");
+
+        // Hide all content sections except the "Overview" section
+        sections.forEach((section) => {
+            if (section.id !== "overview") {
+                section.style.display = "none";
+            }
+        });
+
+        // Add event listeners to navigation links
+        navLinks.forEach((link) => {
+            link.addEventListener("click", (event) => {
+                event.preventDefault();
+
+                const targetSectionId = link.getAttribute("href");
+                sections.forEach((section) => {
+                    if (section.id === targetSectionId.substring(1)) {
+                        section.style.display = "block";
+                    } else {
+                        section.style.display = "none";
+                    }
+                });
+            });
+        });
+    });
+
+    function showImage(newImage) {
+        var currentImage = document.getElementById("currentImage");
+        var oldImage = currentImage.src;
+        currentImage.src = newImage;
+        var oldIndicatorImage = document.getElementById(oldImage);
+        oldIndicatorImage.style.opacity = "50%";
+        var newIndicatorImage = document.getElementById(newImage);
+        newIndicatorImage.style.opacity = "100%";
+    }
+
+    // Book airbnb
+    $("#bookHotelForm").on("submit", function (e) {
+        e.preventDefault();
+        $.post(`/hotel/${"<%= hotelData.hotel_id %>"}/book`, {
+            hotelImage: $("#hotelImage").val(),
+            hotelName: $("#hotelName").val(),
+            checkin: $("#checkin").val(),
+            checkout: $("#checkout").val(),
+            adults: $("#adults").val(),
+            checkInDate: $("#checkInDate").val(),
+            checkOutDate: $("#checkOutDate").val(),
+            hotelAddress: $("#hotelAddress").val()
+        }, function (response) {
+            var modal = document.getElementById("modal");
+            modal.style.display = "block";
+            var bookingIdInput = document.getElementById("bookingId");
+            bookingIdInput.value = response.bookingId;
+            fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
+                var itineraryDropdownOptions = "";
+                trips.forEach(trip => {
+                    itineraryDropdownOptions +=
+                        `<option value="${trip.id}">${trip.tripName}</option>`;
+                });
+                itineraryDropdownOptions += "<option>Create new itinerary</option>";
+                var itineraryDropdown = document.getElementById("itineraryDropdown");
+                itineraryDropdown.innerHTML = itineraryDropdownOptions;
+            });
+        });
+    });
+
+    // Close modal
+    function closeModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "none";
+    }
+
+    // Show/hide create itinerary form in modal based on dropdown selection
+    function createItineraryFormVisible() {
+        var itineraryDropdown = document.getElementById("itineraryDropdown");
+        var createItineraryForm = document.getElementById("createItineraryForm");
+        var tripName = document.getElementById("trip-name");
+        var tripFromDate = document.getElementById("trip-from-date");
+        var tripToDate = document.getElementById("trip-to-date");
+        if (itineraryDropdown.options[itineraryDropdown.selectedIndex].innerText == "Create new itinerary") {
+            createItineraryForm.style.display = "block";
+            tripName.required = true;
+            tripFromDate.required = true;
+            tripToDate.required = true;
+        } else {
+            createItineraryForm.style.display = "none";
+            tripName.required = false;
+            tripFromDate.required = false;
+            tripToDate.required = false;
+        }
+    }
+
+    var citiesAndCountries;
+    var addedDestinations = [];
+
+    // Destination suggestions
+    $.getJSON("/data/airports.json", function (data) {
+        citiesAndCountries = data.map(item => ({
+            city: item.City,
+            country: item.Country
+        }));
+        citiesAndCountries = citiesAndCountries.filter((value, index, self) => index == self.findIndex((
+            v) => (v
+            .city == value.city && v.country == value.country)));
+    });
+    $("#trip-destination").on("input", function () {
+        const query = $(this).val().toLowerCase();
+        const filteredOptions = citiesAndCountries.filter(item => item.city.toLowerCase().includes(query) ||
+            item.country.toLowerCase().includes(query));
+        updateDropdown(filteredOptions.slice(0, 5));
+    });
+
+    function updateDropdown(options) {
+        var $dropdown = $("#dropdown");
+        $dropdown.empty();
+        if (options.length > 0) {
+            $dropdown.show();
+        } else {
+            $dropdown.hide();
+        }
+        options.forEach(item => {
+            var optionDiv = $("<div>").addClass("dropdown-item").text(`${item.city}, ${item.country}`);
+            optionDiv.on("click", function () {
+                $("#trip-destination").val(`${item.city}, ${item.country}`);
+                $dropdown.hide();
+            });
+            $dropdown.append(optionDiv);
+        });
+    }
+    $(document).on("click", function () {
+        $("#dropdown").hide();
+    });
+
+    // Add destination
+    function addDestination() {
+        if (addedDestinations.length >= 5) {
+            alert("You can only add up to 5 destinations at one time.");
+        }
+        var selectedDestination = $("#trip-destination").val();
+        if (selectedDestination && !addedDestinations.includes(selectedDestination)) {
+            addedDestinations.push(selectedDestination);
+            var destinationInput = $("<input>").attr("type", "text").attr("readonly", true).addClass("form-control")
+                .val(selectedDestination);
+            var deleteButton = $("<button>").text("Delete").addClass("btn btn-danger rounded-end").on("click",
+                function () {
+                    var index = addedDestinations.indexOf(selectedDestination);
+                    addedDestinations.splice(index, 1);
+                    $(this).closest(".input-group").remove();
+                });
+            var hiddenInput = $("<input>").attr("type", "hidden").attr("name", "destinations").val(
+                selectedDestination);
+            var inputGroup = $("<div>").addClass("input-group mb-3").css({
+                "width": "auto",
+                "margin-right": "10px",
+                "margin-top": "10px"
+            }).append(destinationInput, deleteButton, hiddenInput);
+            $("#selected-destinations").append(inputGroup);
+            $("#trip-destination").val("");
+        }
+    }
+
+    // Add booking to itinerary
+    $("#addToItineraryForm").on("submit", function (e) {
+        e.preventDefault();
+        var itineraryDropdown = document.getElementById("itineraryDropdown");
+        var bookingIdInput = document.getElementById("bookingId");
+        // If adding to existing itinerary
+        if (itineraryDropdown.options[itineraryDropdown.selectedIndex].innerText !=
+            "Create new itinerary") {
+            // Add itinerary ID to booking
+            var itineraryId = itineraryDropdown.options[itineraryDropdown.selectedIndex].value;
+            $.ajax({
+                url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                type: "PUT",
+                data: JSON.stringify({
+                    itineraryId: itineraryId
+                }),
+                contentType: "application/json",
+                success: function (response) {
+                    // Add booking ID to itinerary
+                    fetch("/itinerary/trip/destinations").then(response => response.json())
+                        .then(
+                            trips => {
+                                trips.forEach(trip => {
+                                    if (trip.id == itineraryId) {
+                                        trip.bookings.hotel.push(bookingIdInput.value);
+                                        $.ajax({
+                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryId}`,
+                                            type: "PUT",
+                                            data: JSON.stringify(trip),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                alert(
+                                                    "Booking added to itinerary!"
+                                                );
+                                                window.location.href =
+                                                    `/itinerary/p?tripId=${itineraryId}`;
+                                            },
+                                            error: function (error) {
+                                                alert(
+                                                    "An error occurred while adding booking ID to itinerary."
+                                                );
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                },
+                error: function (error) {
+                    alert("An error occurred while adding itinerary ID to booking.");
+                }
+            });
+        }
+        // If adding to new itinerary
+        else {
+            if (addedDestinations.length == 0) {
+                alert("Please add at least one destination.");
+            } else {
+                // Create new itinerary and add booking ID to itinerary
+                $.post("/itinerary/trip/<%= user.uid %>/destinations", {
+                    destinations: addedDestinations,
+                    tripName: $("#trip-name").val(),
+                    fromDate: $("#trip-from-date").val(),
+                    toDate: $("#trip-to-date").val(),
+                    bookings: {
+                        flights: [],
+                        hotel: [bookingIdInput.value],
+                        airbnb: []
+                    }
+                }, function (response) {
+                    // Add itinerary ID to booking
+                    var itineraryId = response.itineraryId;
+                    $.ajax({
+                        url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                        type: "PUT",
+                        data: JSON.stringify({
+                            itineraryId: itineraryId
+                        }),
+                        contentType: "application/json",
+                        success: function (response) {
+                            alert("Booking added to itinerary!");
+                            window.location.href = `/itinerary/p?tripId=${itineraryId}`;
+                        },
+                        error: function (error) {
+                            alert("An error occurred while adding to itinerary.");
+                        }
+                    });
+                });
+            }
+        }
+    });
+</script>

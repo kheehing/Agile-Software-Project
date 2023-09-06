@@ -10,7 +10,16 @@ router.get('', async (req, res) => {
         const itineraries = itinerariesSnapshot.docs.map(doc => ({itineraryId: doc.id, ...doc.data()}));
         const airbnbBookingsSnapshot = await db.collection('airbnb').where('userId', '==', req.session.user.uid).get();
         var airbnbBookings = airbnbBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
+        const hotelBookingsSnapshot = await db.collection('hotel').where('userId', '==', req.session.user.uid).get();
+        var hotelBookings = hotelBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
         airbnbBookings.forEach(booking => {
+            itineraries.forEach(itinerary => {
+                if (booking.itineraryId && booking.itineraryId == itinerary.itineraryId) {
+                    booking.itineraryName = itinerary.tripName;
+                }
+            });
+        });
+        hotelBookings.forEach(booking => {
             itineraries.forEach(itinerary => {
                 if (booking.itineraryId && booking.itineraryId == itinerary.itineraryId) {
                     booking.itineraryName = itinerary.tripName;
@@ -19,11 +28,11 @@ router.get('', async (req, res) => {
         });
         const flightBookingsSnapshot = await db.collection('flights').where('userid', '==', req.session.user.uid).get();
         const flightBookings = flightBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
-        res.render('bookings', {user: req.session.user, airbnbBookings: airbnbBookings, flightBookings: flightBookings});
+        res.render('bookings', {user: req.session.user, airbnbBookings: airbnbBookings, flightBookings: flightBookings, hotelBookings: hotelBookings});
     }
     catch (error) {
         res.status(500).json({error: 'An error occurred while retrieving the bookings.'});
-        res.render('bookings', {user: req.session.user, airbnbBookings: [], flightBookings: []});
+        res.render('bookings', {user: req.session.user, airbnbBookings: [], flightBookings: [], hotelBookings: []});
     }
 });
 
