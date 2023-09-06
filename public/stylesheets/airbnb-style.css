@@ -16,6 +16,11 @@ h4 {
     color: #858786;
 }
 
+.airbnb-left-content {
+    display: flex;
+    align-items: center;
+}
+
 .airbnb-medium-image {
     width: 100%;
 }
@@ -291,6 +296,16 @@ input::-webkit-inner-spin-button {
     padding-left: 10px;
 }
 
+.amenities-list {
+    column-count: 2;
+}
+
+.amenities-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid black;
+}
+
 .info-booking-search-box {
     width: 100%;
 }
@@ -312,6 +327,50 @@ s {
 
 .total-price {
     text-align: right;
+}
+
+.no-padding-left {
+    padding-left: 0px;
+}
+
+.rating-container {
+    width: 100px;
+    height: 5px;
+    background-color: #eee;
+    border-radius: 2px;
+}
+
+.rating-bar {
+    height: 100%;
+    background-color: #000;
+    border-radius: 2px;
+}
+
+.reviewer-profile-photo {
+    width: 100%;
+    border-radius: 50%;
+}
+
+.reviewer-name {
+    vertical-align: bottom;
+    padding-left: 10px;
+}
+
+.h3-small {
+    font-size: 16px;
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.h4-small {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #858786;
+}
+
+.reviewer-date {
+    vertical-align: top;
+    padding-left: 10px;
 }
 
 .modal {

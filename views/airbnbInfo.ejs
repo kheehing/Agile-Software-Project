@@ -45,16 +45,15 @@
                 </table><br>
                 <% propertyDetails.details.forEach(detail => { %>
                     <% if ("amenities" in detail) { %>
-                        <% detail.amenities.forEach(amenityType => { %>
-                            <h3><%= amenityType.title %></h3>
-                            <ul>
-                                <% amenityType.amenities.forEach(amenity => { %>
-                                    <li><%= amenity.title %></li>
-                                <% }) %>
-                            </ul>
-                        <% }) %>
+                        <h3><%= detail.title %></h3>
+                        <ul class="amenities-list">
+                            <% detail.amenities.forEach(amenityType => { %>
+                                <li><%= amenityType.amenities[0].title %></li>
+                            <% }) %>
+                        </ul>
                     <% } %>
                 <% }) %>
+                <button type="button" class="btn amenities-button" onclick="showAmenitiesModal()">Show all amenities</button>
             </div>
             <div class="col-md-6">
                 <div class="booking-search-box">
@@ -156,6 +155,100 @@
                 </div>
             </div>
         </div>
+        <div class="row mt-5">
+            <% if (propertyReviews.length == 0) { %>
+                <h3 class="no-padding-left">No reviews (yet)</h3>
+            <% } else { %>
+                <h3 class="no-padding-left">&#9733; <%= propertyDetails.reviewsRating %> &bull; <%= propertyDetails.reviewsCount %> reviews</h3>
+                <table>
+                    <tr>
+                        <td width="90px">Cleanliness</td>
+                        <td width="110px">
+                            <div class="rating-container">
+                                <div class="rating-bar" id="cleanlinessRatingBar"></div>
+                            </div>
+                        </td>
+                        <td width="100px" id="cleanlinessRating"><%= propertyDetails.cleanlinessRating %></td>
+                        <td width="90px">Accuracy</td>
+                        <td width="110px">
+                            <div class="rating-container">
+                                <div class="rating-bar" id="accuracyRatingBar"></div>
+                            </div>
+                        </td>
+                        <td width="100px" id="accuracyRating"><%= propertyDetails.accuracyRating %></td>
+                    </tr>
+                    <tr>
+                        <td>Communication</td>
+                        <td>
+                            <div class="rating-container">
+                                <div class="rating-bar" id="communicationRatingBar"></div>
+                            </div>
+                        </td>
+                        <td id="communicationRating"><%= propertyDetails.communicationRating %></td>
+                        <td>Location</td>
+                        <td>
+                            <div class="rating-container">
+                                <div class="rating-bar" id="locationRatingBar"></div>
+                            </div>
+                        </td>
+                        <td id="locationRating"><%= propertyDetails.locationRating %></td>
+                    </tr>
+                    <tr>
+                        <td>Check-in</td>
+                        <td>
+                            <div class="rating-container">
+                                <div class="rating-bar" id="checkinRatingBar"></div>
+                            </div>
+                        </td>
+                        <td id="checkinRating"><%= propertyDetails.checkinRating %></td>
+                        <td>Value</td>
+                        <td>
+                            <div class="rating-container">
+                                <div class="rating-bar" id="valueRatingBar"></div>
+                            </div>
+                        </td>
+                        <td id="valueRating"><%= propertyDetails.valueRating %></td>
+                    </tr>
+                </table><br>
+                <% propertyReviews.forEach(review => { %>
+                    <br>
+                    <table>
+                        <tr>
+                            <td rowspan="2" width="50px">
+                                <img src="<%= review.reviewer.userProfilePicture.baseUrl %>" class="reviewer-profile-photo">
+                            </td>
+                            <td class="reviewer-name"><h3 class="h3-small"><%= review.reviewer.firstName %></h3></td>
+                        </tr>
+                        <tr>
+                            <td class="reviewer-date"><h4 class="h4-small"><%= review.localizedDate %></h4></td>
+                        </tr>
+                    </table>
+                    <p class="no-padding-left"><%= review.comments %></p><br>
+                <% }) %>
+            <% } %>
+        </div>
+        <div class="modal" id="amenitiesModal">
+            <div class="modal-content">
+                <% propertyDetails.details.forEach(detail => { %>
+                    <% if ("amenities" in detail) { %>
+                        <div class="modal-header">
+                            <h3 class="modal-title"><%= detail.title %></h3>
+                            <button type="button" class="btn-close" onclick="closeAmenitiesModal()"></button>
+                        </div>
+                        <div class="modal-body">
+                            <% detail.amenities.forEach(amenityType => { %>
+                                <h4 class="h4-black"><%= amenityType.title %></h4>
+                                <ul>
+                                    <% amenityType.amenities.forEach(amenity => { %>
+                                        <li><%= amenity.title %></li>
+                                    <% }) %>
+                                </ul>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                <% }) %>
+            </div>
+        </div>
         <div class="modal" id="modal">
             <div class="modal-content">
                 <form id="addToItineraryForm">
@@ -215,7 +308,7 @@
 </body>
 </html>
 <script>
-    // Update guests and price when page is loaded
+    // Update information when page is loaded
     var tripDetailsObject = <%- JSON.stringify(tripDetails) %>;
     var adults = document.getElementById("adults");
     var children = document.getElementById("children");
@@ -238,6 +331,30 @@
     updateGuests("infants", 0);
     updateGuests("pets", 0);
     calculatePrice();
+    var cleanlinessRating = document.getElementById("cleanlinessRating");
+    var accuracyRating = document.getElementById("accuracyRating");
+    var communicationRating = document.getElementById("communicationRating");
+    var locationRating = document.getElementById("locationRating");
+    var checkinRating = document.getElementById("checkinRating");
+    var valueRating = document.getElementById("valueRating");
+    var cleanlinessRatingBar = document.getElementById("cleanlinessRatingBar");
+    var accuracyRatingBar = document.getElementById("accuracyRatingBar");
+    var communicationRatingBar = document.getElementById("communicationRatingBar");
+    var locationRatingBar = document.getElementById("locationRatingBar");
+    var checkinRatingBar = document.getElementById("checkinRatingBar");
+    var valueRatingBar = document.getElementById("valueRatingBar");
+    var cleanlinessRatingPercentage = parseFloat(cleanlinessRating.innerText) / 5 * 100;
+    var accuracyRatingPercentage = parseFloat(accuracyRating.innerText) / 5 * 100;
+    var communicationRatingPercentage = parseFloat(communicationRating.innerText) / 5 * 100;
+    var locationRatingPercentage = parseFloat(locationRating.innerText) / 5 * 100;
+    var checkinRatingPercentage = parseFloat(checkinRating.innerText) / 5 * 100;
+    var valueRatingPercentage = parseFloat(valueRating.innerText) / 5 * 100;
+    cleanlinessRatingBar.style.width = `${cleanlinessRatingPercentage}%`;
+    accuracyRatingBar.style.width = `${accuracyRatingPercentage}%`;
+    communicationRatingBar.style.width = `${communicationRatingPercentage}%`;
+    locationRatingBar.style.width = `${locationRatingPercentage}%`;
+    checkinRatingBar.style.width = `${checkinRatingPercentage}%`;
+    valueRatingBar.style.width = `${valueRatingPercentage}%`;
 
     // Check that check-out date is later than check-in date
     function checkDate() {
@@ -310,6 +427,18 @@
         oldIndicatorImage.style.opacity = "50%";
         var newIndicatorImage = document.getElementById(newImage);
         newIndicatorImage.style.opacity = "100%";
+    }
+
+    // Show amenities modal
+    function showAmenitiesModal() {
+        var amenitiesModal = document.getElementById("amenitiesModal");
+        amenitiesModal.style.display = "block";
+    }
+
+    // Close amenities modal
+    function closeAmenitiesModal() {
+        var amenitiesModal = document.getElementById("amenitiesModal");
+        amenitiesModal.style.display = "none";
     }
 
     // Update guest input value

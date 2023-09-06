@@ -80,7 +80,12 @@ router.get('/:id', (req, res) => {
     .then(propertyResponse => {
         const propertyDetails = propertyResponse.data.data;
         console.log(propertyDetails);
-        res.render('airbnbInfo', {user: req.session.user, tripDetails: tripDetails, propertyDetails: propertyDetails});
+        getData('getPropertyReviews', {propertyId: req.params.id, totalRecords: '40'})
+        .then(reviewsResponse => {
+            const propertyReviews = reviewsResponse.data.data;
+            console.log(propertyReviews);
+            res.render('airbnbInfo', {user: req.session.user, tripDetails: tripDetails, propertyDetails: propertyDetails, propertyReviews: propertyReviews});
+        });
     });
 });
 
