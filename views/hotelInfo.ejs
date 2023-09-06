@@ -308,8 +308,11 @@
                 </div>
                 <div class="modal-body">
                     <h4 class="h4-black">Would you like to add your booking into an itinerary?</h4>
-                    <div class="dropdown">
-                        <select class="itinerary-dropdown" id="itineraryDropdown"></select>
+                    <div class="itinerary-dropdown-div">
+                        <input type="text" class="itinerary-dropdown" id="itineraryDropdown"
+                            placeholder="Select itinerary..." required readonly />
+                        <img src="/images/down-arrow.png" class="itinerary-dropdown-arrow" id="itineraryDropdownArrow">
+                        <div class="dropdown-menu position-absolute w-100" id="itineraryDropdownOptions"></div>
                     </div>
                     <div class="create-itinerary-form" id="createItineraryForm"><br>
                         <div class="d-flex align-items-center">
@@ -331,16 +334,25 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-text">From:</span>
-                            <input type="date" id="trip-from-date" class="form-control" />
+                            <input type="date" id="trip-from-date" class="form-control"
+                                min="<%= new Date().toISOString().split('T')[0] %>" onchange="modalCheckDate()" />
                             <span class="input-group-text">To:</span>
-                            <input type="date" id="trip-to-date" class="form-control" />
+                            <input type="date" id="trip-to-date" class="form-control"
+                                min="<%= new Date().toISOString().split('T')[0] %>" onchange="modalCheckDate()" />
+                        </div>
+                        <div class="error-message" id="modalErrorMessage">
+                            <img src="/images/error-icon.png" class="error-icon">
+                            To date cannot be earlier than from date
                         </div>
                     </div>
                     <input type="hidden" id="bookingId" />
+                    <input type="hidden" id="selectedItineraryId" />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Skip</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
+                    <div id="addButtonContainer">
+                        <button type="submit" class="btn btn-primary" id="addButton">Add</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -365,9 +377,6 @@
     document.getElementById("adults").value = pax;
     document.getElementById("checkInDate").value = checkInDate;
     document.getElementById("checkOutDate").value = checkOutDate;
-
-    console.log(checkInDate);
-    console.log(checkOutDate);
 
     // JavaScript to handle content section toggling
     document.addEventListener("DOMContentLoaded", function () {
@@ -408,7 +417,7 @@
         newIndicatorImage.style.opacity = "100%";
     }
 
-    // Book airbnb
+    // Book Hotel
     $("#bookHotelForm").on("submit", function (e) {
         e.preventDefault();
         $.post(`/hotel/${"<%= hotelData.hotel_id %>"}/book`, {
@@ -426,17 +435,55 @@
             var bookingIdInput = document.getElementById("bookingId");
             bookingIdInput.value = response.bookingId;
             fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
-                var itineraryDropdownOptions = "";
-                trips.forEach(trip => {
-                    itineraryDropdownOptions +=
-                        `<option value="${trip.id}">${trip.tripName}</option>`;
-                });
-                itineraryDropdownOptions += "<option>Create new itinerary</option>";
+                var selectedItineraryId = document.getElementById("selectedItineraryId");
                 var itineraryDropdown = document.getElementById("itineraryDropdown");
-                itineraryDropdown.innerHTML = itineraryDropdownOptions;
+                var itineraryDropdownOptions = document.getElementById(
+                    "itineraryDropdownOptions");
+                itineraryDropdownOptions.innerHTML = "";
+                trips.forEach(trip => {
+                    var optionDiv = document.createElement("div");
+                    optionDiv.className = "dropdown-item";
+                    optionDiv.innerText = trip.tripName;
+                    optionDiv.onclick = function (e) {
+                        selectedItineraryId.value = trip.id;
+                        itineraryDropdown.value = trip.tripName;
+                        itineraryDropdownOptions.style.display = "none";
+                        createItineraryFormVisible();
+                    }
+                    itineraryDropdownOptions.appendChild(optionDiv);
+                });
+                var createOptionDiv = document.createElement("div");
+                createOptionDiv.className = "dropdown-item";
+                createOptionDiv.innerText = "Create new itinerary";
+                createOptionDiv.onclick = function (e) {
+                    selectedItineraryId.value = "";
+                    itineraryDropdown.value = createOptionDiv.innerText;
+                    itineraryDropdownOptions.style.display = "none";
+                    createItineraryFormVisible();
+                }
+                itineraryDropdownOptions.appendChild(createOptionDiv);
             });
         });
     });
+
+    document.onclick = function (e) {
+        // Show/hide itinerary dropdown
+        var itineraryDropdown = document.getElementById("itineraryDropdown");
+        var itineraryDropdownArrow = document.getElementById("itineraryDropdownArrow");
+        var itineraryDropdownOptions = document.getElementById("itineraryDropdownOptions");
+        if (e.target == itineraryDropdown || e.target == itineraryDropdownArrow) {
+            if (itineraryDropdownOptions.style.display == "" || itineraryDropdownOptions.style.display == "none") {
+                itineraryDropdownOptions.style.display = "block";
+                itineraryDropdownArrow.src = "/images/up-arrow.png";
+            } else {
+                itineraryDropdownOptions.style.display = "none";
+                itineraryDropdownArrow.src = "/images/down-arrow.png";
+            }
+        } else {
+            itineraryDropdownOptions.style.display = "none";
+            itineraryDropdownArrow.src = "/images/down-arrow.png";
+        }
+    }
 
     // Close modal
     function closeModal() {
@@ -451,7 +498,7 @@
         var tripName = document.getElementById("trip-name");
         var tripFromDate = document.getElementById("trip-from-date");
         var tripToDate = document.getElementById("trip-to-date");
-        if (itineraryDropdown.options[itineraryDropdown.selectedIndex].innerText == "Create new itinerary") {
+        if (itineraryDropdown.value == "Create new itinerary") {
             createItineraryForm.style.display = "block";
             tripName.required = true;
             tripFromDate.required = true;
@@ -473,8 +520,7 @@
             city: item.City,
             country: item.Country
         }));
-        citiesAndCountries = citiesAndCountries.filter((value, index, self) => index == self.findIndex((
-            v) => (v
+        citiesAndCountries = citiesAndCountries.filter((value, index, self) => index == self.findIndex((v) => (v
             .city == value.city && v.country == value.country)));
     });
     $("#trip-destination").on("input", function () {
@@ -496,6 +542,7 @@
             var optionDiv = $("<div>").addClass("dropdown-item").text(`${item.city}, ${item.country}`);
             optionDiv.on("click", function () {
                 $("#trip-destination").val(`${item.city}, ${item.country}`);
+                addDestination();
                 $dropdown.hide();
             });
             $dropdown.append(optionDiv);
@@ -521,9 +568,8 @@
                     addedDestinations.splice(index, 1);
                     $(this).closest(".input-group").remove();
                 });
-            var hiddenInput = $("<input>").attr("type", "hidden").attr("name", "destinations").val(
-                selectedDestination);
-            var inputGroup = $("<div>").addClass("input-group mb-3").css({
+            var hiddenInput = $("<input>").attr("type", "hidden").attr("name", "destinations").val(selectedDestination);
+            var inputGroup = $("<div>").addClass("input-group").css({
                 "width": "auto",
                 "margin-right": "10px",
                 "margin-top": "10px"
@@ -533,52 +579,79 @@
         }
     }
 
+    // Prevent unwanted deletion of destination when enter key is pressed
+    document.onkeydown = function (e) {
+        if (e.key == "Enter" || e.keyCode == 13) {
+            e.preventDefault();
+        }
+    }
+
+    // Check that to date is not earlier than from date
+    function modalCheckDate() {
+        var fromDate = document.getElementById("trip-from-date");
+        var toDate = document.getElementById("trip-to-date");
+        var errorMessage = document.getElementById("modalErrorMessage");
+        var addButtonContainer = document.getElementById("addButtonContainer");
+        var addButton = document.getElementById("addButton");
+        if (fromDate.value != "" && toDate.value != "" && toDate.value < fromDate.value) {
+            fromDate.style.border = "1px solid #d9534f";
+            toDate.style.border = "1px solid #d9534f";
+            errorMessage.style.display = "block";
+            addButtonContainer.className = "button-container-disabled";
+            addButton.disabled = true;
+        } else {
+            fromDate.style.border = "1px solid #ccc";
+            toDate.style.border = "1px solid #ccc";
+            errorMessage.style.display = "none";
+            addButtonContainer.className = "";
+            addButton.disabled = false;
+        }
+    }
+
     // Add booking to itinerary
     $("#addToItineraryForm").on("submit", function (e) {
         e.preventDefault();
         var itineraryDropdown = document.getElementById("itineraryDropdown");
+        var selectedItineraryId = document.getElementById("selectedItineraryId");
         var bookingIdInput = document.getElementById("bookingId");
         // If adding to existing itinerary
-        if (itineraryDropdown.options[itineraryDropdown.selectedIndex].innerText !=
-            "Create new itinerary") {
+        if (itineraryDropdown.value != "Create new itinerary") {
             // Add itinerary ID to booking
-            var itineraryId = itineraryDropdown.options[itineraryDropdown.selectedIndex].value;
             $.ajax({
                 url: `/bookings/update/hotel/${bookingIdInput.value}`,
                 type: "PUT",
                 data: JSON.stringify({
-                    itineraryId: itineraryId
+                    itineraryId: selectedItineraryId.value
                 }),
                 contentType: "application/json",
                 success: function (response) {
                     // Add booking ID to itinerary
-                    fetch("/itinerary/trip/destinations").then(response => response.json())
-                        .then(
-                            trips => {
-                                trips.forEach(trip => {
-                                    if (trip.id == itineraryId) {
-                                        trip.bookings.hotel.push(bookingIdInput.value);
-                                        $.ajax({
-                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryId}`,
-                                            type: "PUT",
-                                            data: JSON.stringify(trip),
-                                            contentType: "application/json",
-                                            success: function (response) {
-                                                alert(
-                                                    "Booking added to itinerary!"
+                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                        trips => {
+                            trips.forEach(trip => {
+                                if (trip.id == selectedItineraryId.value) {
+                                    trip.bookings.hotel.push(bookingIdInput.value);
+                                    $.ajax({
+                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
+                                        type: "PUT",
+                                        data: JSON.stringify(trip),
+                                        contentType: "application/json",
+                                        success: function (response) {
+                                            alert(
+                                                "Booking added to itinerary!"
                                                 );
-                                                window.location.href =
-                                                    `/itinerary/p?tripId=${itineraryId}`;
-                                            },
-                                            error: function (error) {
-                                                alert(
-                                                    "An error occurred while adding booking ID to itinerary."
+                                            window.location.href =
+                                                `/itinerary/p?tripId=${selectedItineraryId.value}`;
+                                        },
+                                        error: function (error) {
+                                            alert(
+                                                "An error occurred while adding booking ID to itinerary."
                                                 );
-                                            }
-                                        });
-                                    }
-                                });
+                                        }
+                                    });
+                                }
                             });
+                        });
                 },
                 error: function (error) {
                     alert("An error occurred while adding itinerary ID to booking.");
