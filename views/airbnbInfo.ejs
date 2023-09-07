@@ -47,13 +47,13 @@
                     <% if ("amenities" in detail) { %>
                         <h3><%= detail.title %></h3>
                         <ul class="amenities-list">
-                            <% detail.amenities.forEach(amenityType => { %>
-                                <li><%= amenityType.amenities[0].title %></li>
-                            <% }) %>
+                            <% for (var i = 0; i < detail.amenities.length - 1; i++) { %>
+                                <li><%= detail.amenities[i].amenities[0].title %></li>
+                            <% } %>
                         </ul>
                     <% } %>
                 <% }) %>
-                <button type="button" class="btn amenities-button" onclick="showAmenitiesModal()">Show all amenities</button>
+                <button type="button" class="btn amenities-button" id="amenitiesButton">Show all amenities</button>
             </div>
             <div class="col-md-6">
                 <div class="booking-search-box">
@@ -84,6 +84,10 @@
                                         <div class="error-message" id="errorMessage">
                                             <img src="/images/error-icon.png" class="error-icon">
                                             Check-out date must be later than check-in date
+                                        </div>
+                                        <div class="error-message" id="unavailableErrorMessage">
+                                            <img src="/images/error-icon.png" class="error-icon">
+                                            Property is not available during this period
                                         </div>
                                     </td>
                                 </tr>
@@ -157,25 +161,25 @@
         </div>
         <div class="row mt-5">
             <% if (propertyReviews.length == 0) { %>
-                <h3 class="no-padding-left">No reviews (yet)</h3>
+                <h3 class="no-padding-left no-reviews">No reviews (yet)</h3>
             <% } else { %>
                 <h3 class="no-padding-left">&#9733; <%= propertyDetails.reviewsRating %> &bull; <%= propertyDetails.reviewsCount %> reviews</h3>
-                <table>
+                <table class="rating-table">
                     <tr>
-                        <td width="90px">Cleanliness</td>
-                        <td width="110px">
+                        <td class="rating-type-td1">Cleanliness</td>
+                        <td class="rating-bar-td">
                             <div class="rating-container">
                                 <div class="rating-bar" id="cleanlinessRatingBar"></div>
                             </div>
                         </td>
-                        <td width="100px" id="cleanlinessRating"><%= propertyDetails.cleanlinessRating %></td>
-                        <td width="90px">Accuracy</td>
-                        <td width="110px">
+                        <td class="rating-score-td" id="cleanlinessRating"><%= propertyDetails.cleanlinessRating %></td>
+                        <td class="rating-type-td2">Accuracy</td>
+                        <td class="rating-bar-td">
                             <div class="rating-container">
                                 <div class="rating-bar" id="accuracyRatingBar"></div>
                             </div>
                         </td>
-                        <td width="100px" id="accuracyRating"><%= propertyDetails.accuracyRating %></td>
+                        <td class="rating-score-td" id="accuracyRating"><%= propertyDetails.accuracyRating %></td>
                     </tr>
                     <tr>
                         <td>Communication</td>
@@ -209,10 +213,9 @@
                         </td>
                         <td id="valueRating"><%= propertyDetails.valueRating %></td>
                     </tr>
-                </table><br>
+                </table>
                 <% propertyReviews.forEach(review => { %>
-                    <br>
-                    <table>
+                    <table class="reviewer-table">
                         <tr>
                             <td rowspan="2" width="50px">
                                 <img src="<%= review.reviewer.userProfilePicture.baseUrl %>" class="reviewer-profile-photo">
@@ -223,22 +226,22 @@
                             <td class="reviewer-date"><h4 class="h4-small"><%= review.localizedDate %></h4></td>
                         </tr>
                     </table>
-                    <p class="no-padding-left"><%= review.comments %></p><br>
+                    <p class="no-padding-left review"><%= review.comments %></p>
                 <% }) %>
             <% } %>
         </div>
         <div class="modal" id="amenitiesModal">
-            <div class="modal-content">
+            <div class="modal-content" id="amenitiesModalContent">
                 <% propertyDetails.details.forEach(detail => { %>
                     <% if ("amenities" in detail) { %>
-                        <div class="modal-header">
-                            <h3 class="modal-title"><%= detail.title %></h3>
-                            <button type="button" class="btn-close" onclick="closeAmenitiesModal()"></button>
-                        </div>
-                        <div class="modal-body">
+                        <div class="amenities-modal-body">
+                            <div class="amenities-modal-header">
+                                <h3 class="modal-title"><%= detail.title %></h3>
+                                <button type="button" class="btn-close" onclick="closeAmenitiesModal()"></button>
+                            </div>
                             <% detail.amenities.forEach(amenityType => { %>
-                                <h4 class="h4-black"><%= amenityType.title %></h4>
-                                <ul>
+                                <h4 class="h4-black amenity-type"><%= amenityType.title %></h4>
+                                <ul class="amenity-list">
                                     <% amenityType.amenities.forEach(amenity => { %>
                                         <li><%= amenity.title %></li>
                                     <% }) %>
@@ -250,7 +253,7 @@
             </div>
         </div>
         <div class="modal" id="modal">
-            <div class="modal-content">
+            <div class="modal-content" id="bookingModalContent">
                 <form id="addToItineraryForm">
                     <div class="modal-header">
                         <h3 class="modal-title">Booking successful!</h3>
@@ -356,26 +359,54 @@
     checkinRatingBar.style.width = `${checkinRatingPercentage}%`;
     valueRatingBar.style.width = `${valueRatingPercentage}%`;
 
-    // Check that check-out date is later than check-in date
+    // Check that check-in and check-out dates are valid
     function checkDate() {
         var checkin = document.getElementById("checkin");
         var checkout = document.getElementById("checkout");
         var errorMessage = document.getElementById("errorMessage");
+        var unavailableErrorMessage = document.getElementById("unavailableErrorMessage");
         var bookButtonContainer = document.getElementById("bookButtonContainer");
         var bookButton = document.getElementById("bookButton");
         if (checkin.value != "" && checkout.value != "" && checkout.value <= checkin.value) {
             checkin.style.border = "1px solid #d9534f";
             checkout.style.border = "1px solid #d9534f";
             errorMessage.style.display = "block";
+            unavailableErrorMessage.style.display = "none";
             bookButtonContainer.className = "button-container-disabled";
             bookButton.disabled = true;
         }
         else {
-            checkin.style.border = "1px solid #ccc";
-            checkout.style.border = "1px solid #ccc";
-            errorMessage.style.display = "none";
-            bookButtonContainer.className = "";
-            bookButton.disabled = false;
+            var propertyAvailabilityObject = <%- JSON.stringify(propertyAvailability) %>;
+            var checkinDate = new Date(checkin.value);
+            var checkoutDate = new Date(checkout.value);
+            var checkinAvailable;
+            var checkoutAvailable;
+            propertyAvailabilityObject.forEach(month => {
+                if (month.year == checkinDate.getFullYear() && month.month == checkinDate.getMonth() + 1) {
+                    console.log(`Check-in: ${month.days[checkinDate.getDate() - 1].date} (${month.days[checkinDate.getDate() - 1].available_for_checkin})`);
+                    checkinAvailable = month.days[checkinDate.getDate() - 1].available_for_checkin;
+                }
+                if (month.year == checkoutDate.getFullYear() && month.month == checkoutDate.getMonth() + 1) {
+                    console.log(`Check-out: ${month.days[checkoutDate.getDate() - 1].date} (${month.days[checkoutDate.getDate() - 1].available_for_checkout})`);
+                    checkoutAvailable = month.days[checkoutDate.getDate() - 1].available_for_checkout;
+                }
+            });
+            if (!checkinAvailable || !checkoutAvailable) {
+                checkin.style.border = "1px solid #d9534f";
+                checkout.style.border = "1px solid #d9534f";
+                errorMessage.style.display = "none";
+                unavailableErrorMessage.style.display = "block";
+                bookButtonContainer.className = "button-container-disabled";
+                bookButton.disabled = true;
+            }
+            else {
+                checkin.style.border = "1px solid #ccc";
+                checkout.style.border = "1px solid #ccc";
+                errorMessage.style.display = "none";
+                unavailableErrorMessage.style.display = "none";
+                bookButtonContainer.className = "";
+                bookButton.disabled = false;
+            }
         }
     }
 
@@ -416,6 +447,21 @@
             itineraryDropdownOptions.style.display = "none";
             itineraryDropdownArrow.src = "/images/down-arrow.png";
         }
+        // Show/hide amenities modal
+        var amenitiesButton = document.getElementById("amenitiesButton");
+        var amenitiesModal = document.getElementById("amenitiesModal");
+        var amenitiesModalContent = document.getElementById("amenitiesModalContent");
+        if (e.target == amenitiesButton && (amenitiesModal.style.display == "" || amenitiesModal.style.display == "none")) {
+            showAmenitiesModal();
+        }
+        else if (e.target != amenitiesModalContent) {
+            closeAmenitiesModal();
+        }
+        // Hide booking modal when click outside
+        var bookingModalContent = document.getElementById("bookingModalContent");
+        if (!bookingModalContent.contains(e.target)) {
+            closeModal();
+        }
     }
 
     // Show airbnb image when clicked
@@ -433,6 +479,7 @@
     function showAmenitiesModal() {
         var amenitiesModal = document.getElementById("amenitiesModal");
         amenitiesModal.style.display = "block";
+        closeModal();
     }
 
     // Close amenities modal
@@ -552,6 +599,7 @@
                                                                    checkout: $("#checkout").val()}, function(response) {
             var modal = document.getElementById("modal");
             modal.style.display = "block";
+            closeAmenitiesModal();
             var bookingIdInput = document.getElementById("bookingId");
             bookingIdInput.value = response.bookingId;
             fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {

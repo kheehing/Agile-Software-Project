@@ -84,7 +84,12 @@ router.get('/:id', (req, res) => {
         .then(reviewsResponse => {
             const propertyReviews = reviewsResponse.data.data;
             console.log(propertyReviews);
-            res.render('airbnbInfo', {user: req.session.user, tripDetails: tripDetails, propertyDetails: propertyDetails, propertyReviews: propertyReviews});
+            getData('checkAvailability', {propertyId: req.params.id})
+            .then(availabilityResponse => {
+                const propertyAvailability = availabilityResponse.data.data;
+                console.log(propertyAvailability);
+                res.render('airbnbInfo', {user: req.session.user, tripDetails: tripDetails, propertyDetails: propertyDetails, propertyReviews: propertyReviews, propertyAvailability: propertyAvailability});
+            });
         });
     });
 });
