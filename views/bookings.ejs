@@ -308,7 +308,8 @@
                                     data: JSON.stringify(trip),
                                     contentType: "application/json",
                                     success: function (response) {
-
+                                        alert("Booking deleted!");
+                                        window.location.reload();
                                     },
                                     error: function (error) {
                                         console.error(
@@ -318,7 +319,6 @@
                                 });
                             }
                         });
-                        window.location.reload();
                     });
                 });
         }
