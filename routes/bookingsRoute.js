@@ -19,10 +19,10 @@ router.get('', async (req, res) => {
                 }
             });
         });
-        hotelBookings.forEach(booking => {
-            itineraries.forEach(itinerary => {
-                if (booking.itineraryId && booking.itineraryId == itinerary.itineraryId) {
-                    booking.itineraryName = itinerary.tripName;
+        hotelBookings.forEach(hotelBooking => {
+            itineraries.forEach(hotelItinerary => {
+                if (hotelBooking.itineraryId && hotelBooking.itineraryId == hotelItinerary.itineraryId) {
+                    hotelBooking.itineraryName = hotelItinerary.tripName;
                 }
             });
         });

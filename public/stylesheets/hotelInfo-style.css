@@ -123,7 +123,9 @@
   padding: 0px 5px;
 }
 
-.indicator-image:hover, .prev-arrow:hover, .next-arrow:hover {
+.indicator-image:hover,
+.prev-arrow:hover,
+.next-arrow:hover {
   cursor: pointer;
 }
 
@@ -227,7 +229,7 @@
   color: white;
   text-decoration: none;
   text-align: center;
-  border-radius: 5px; 
+  border-radius: 5px;
   cursor: pointer;
 }
 
@@ -243,12 +245,12 @@
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
-  color: #333; 
+  color: #333;
 }
 
 .facility-list ul {
   list-style-type: disc;
-  padding-left: 20px; 
+  padding-left: 20px;
 }
 
 .facility-list li {
@@ -392,6 +394,17 @@ p.no {
 
 .create-itinerary-form {
   display: none;
+}
+
+error-message {
+  display: none;
+  margin-top: 5px;
+  font-size: 14px;
+  color: #d9534f;
+}
+
+.error-icon {
+  width: 20px;
 }
 
 /* Base Styles */

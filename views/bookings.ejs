@@ -169,30 +169,30 @@
             </div>
         </div>
         <div class="booking-list">
-            <% hotelBookings.forEach(entry => { %>
+            <% hotelBookings.forEach(hotelEntry => { %>
             <div class="booking-item">
-                <img src="<%= entry.hotelImage %>" class="booking-image">
+                <img src="<%= hotelEntry.hotelImage %>" class="booking-image">
                 <div class="booking-details">
-                    <h3><%= entry.hotelName %></h3>
-                    <span>Check-in: <%= entry.checkIn %></span><br>
-                    <span>Check-out: <%= entry.checkOut %></span><br>
-                    <% if (entry.itineraryId && entry.itineraryId != "") { %>
-                    <span>Itinerary: <%= entry.itineraryName %> <a
-                            onclick="displayModal('<%= entry.bookingId %>', '<%= entry.itineraryId %>')"
+                    <h3><%= hotelEntry.hotelName %></h3>
+                    <span>Check-in: <%= hotelEntry.checkIn %></span><br>
+                    <span>Check-out: <%= hotelEntry.checkOut %></span><br>
+                    <% if (hotelEntry.itineraryId && hotelEntry.itineraryId != "") { %>
+                    <span>Itinerary: <%= hotelEntry.itineraryName %> <a
+                            onclick="displayModal('<%= hotelEntry.bookingId %>', '<%= hotelEntry.itineraryId %>')"
                             class="link">Change</a></span><br>
                     <% } else { %>
-                    <span>Itinerary: <a onclick="displayModal('<%= entry.bookingId %>', '')"
+                    <span>Itinerary: <a onclick="displayModal('<%= hotelEntry.bookingId %>', '')"
                             class="link">Add</a></span><br>
                     <% } %>
                     <div class="booking-button-container">
                         <form action="/hotel/information" method="GET">
                             <input type="hidden" name="hotel_id" value="<%= entry.hotelId %>">
-                            <input type="hidden" name="checkin" value="<%= entry.checkInDate %>">
-                            <input type="hidden" name="checkout" value="<%= entry.checkOutDate %>">
-                            <input type="hidden" name="pax" value="<%= entry.pax %>">
+                            <input type="hidden" name="hotelCheckin" value="<%= entry.checkInDate %>">
+                            <input type="hidden" name="hotelCheckout" value="<%= entry.checkOutDate %>">
+                            <input type="hidden" name="hotelPax" value="<%= entry.pax %>">
                             <button type="submit" class="btn btn-primary booking-button">View listing</button>
                         </form>
-                        <button onclick="deleteBooking('hotel', '<%= entry.bookingId %>')"
+                        <button onclick="deleteBooking('hotel', '<%= hotelEntry.bookingId %>')"
                             class="btn btn-danger booking-button">Delete</button>
                     </div>
                 </div>
