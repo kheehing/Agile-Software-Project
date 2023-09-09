@@ -186,10 +186,10 @@
                     <% } %>
                     <div class="booking-button-container">
                         <form action="/hotel/information" method="GET">
-                            <input type="hidden" name="hotel_id" value="<%= entry.hotelId %>">
-                            <input type="hidden" name="hotelCheckin" value="<%= entry.checkInDate %>">
-                            <input type="hidden" name="hotelCheckout" value="<%= entry.checkOutDate %>">
-                            <input type="hidden" name="hotelPax" value="<%= entry.pax %>">
+                            <input type="hidden" name="hotel_id" value="<%= hotelEntry.hotelId %>">
+                            <input type="hidden" name="hotelCheckin" value="<%= hotelEntry.checkInDate %>">
+                            <input type="hidden" name="hotelCheckout" value="<%= hotelEntry.checkOutDate %>">
+                            <input type="hidden" name="hotelPax" value="<%= hotelEntry.pax %>">
                             <button type="submit" class="btn btn-primary booking-button">View listing</button>
                         </form>
                         <button onclick="deleteBooking('hotel', '<%= hotelEntry.bookingId %>')"
