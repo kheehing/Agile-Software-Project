@@ -12,6 +12,15 @@ router.get('', async (req, res) => {
         var airbnbBookings = airbnbBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
         const hotelBookingsSnapshot = await db.collection('hotel').where('userId', '==', req.session.user.uid).get();
         var hotelBookings = hotelBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
+        const flightBookingsSnapshot = await db.collection('flights').where('userid', '==', req.session.user.uid).get();
+        var flightBookings = flightBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
+        flightBookings.forEach(flightBooking => {
+            itineraries.forEach(flightItinerary => {
+                if (flightBooking.itineraryId && flightBooking.itineraryId == flightItinerary.itineraryId) {
+                    flightBooking.itineraryName = flightItinerary.tripName;
+                }
+            });
+        });
         airbnbBookings.forEach(booking => {
             itineraries.forEach(itinerary => {
                 if (booking.itineraryId && booking.itineraryId == itinerary.itineraryId) {
@@ -26,8 +35,6 @@ router.get('', async (req, res) => {
                 }
             });
         });
-        const flightBookingsSnapshot = await db.collection('flights').where('userid', '==', req.session.user.uid).get();
-        const flightBookings = flightBookingsSnapshot.docs.map(doc => ({bookingId: doc.id, ...doc.data()}));
         res.render('bookings', {user: req.session.user, airbnbBookings: airbnbBookings, flightBookings: flightBookings, hotelBookings: hotelBookings});
     }
     catch (error) {

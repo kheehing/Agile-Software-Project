@@ -26,8 +26,22 @@
                                 class="me-2">
                             <h5 class="mb-0"><%= data.carrierName %></h5>
                         </div>
-                        <button class="btn btn-danger flight-booking-button"
-                            onclick="deleteBooking('flights', '<%= data.bookingId %>')">Delete</button>
+
+                        <div>
+                            <% if (data.itineraryId && data.itineraryId != "") { %>
+                                <span>Itinerary: <%= data.itineraryName %> <a
+                                        onclick="displayModal('<%= data.bookingId %>', '<%= data.itineraryId %>', 'flights')"
+                                        class="link">Change</a></span><br>
+                                <% } else { %>
+                                <span>Itinerary: <a onclick="displayModal('<%= data.bookingId %>', '', 'flights')"
+                                        class="link">Add</a></span><br>
+                                <% } %>
+                        </div>
+                        
+                        <div>
+                            <button class="btn btn-danger flight-booking-button" onclick="deleteBooking('flights', '<%= data.bookingId %>')">Delete</button>
+                        </div>
+                        
                     </div>
                 </div>
                 <div class="card-body d-flex flex-column justify-content-between">
@@ -139,10 +153,10 @@
                     <span>Check-out: <%= entry.checkOut %></span><br>
                     <% if (entry.itineraryId && entry.itineraryId != "") { %>
                     <span>Itinerary: <%= entry.itineraryName %> <a
-                            onclick="displayModal('<%= entry.bookingId %>', '<%= entry.itineraryId %>')"
+                            onclick="displayModal('<%= entry.bookingId %>', '<%= entry.itineraryId %>', 'airbnb')"
                             class="link">Change</a></span><br>
                     <% } else { %>
-                    <span>Itinerary: <a onclick="displayModal('<%= entry.bookingId %>', '')"
+                    <span>Itinerary: <a onclick="displayModal('<%= entry.bookingId %>', '', 'airbnb')"
                             class="link">Add</a></span><br>
                     <% } %>
                     <div class="booking-button-container">
@@ -178,10 +192,10 @@
                     <span>Check-out: <%= hotelEntry.checkOut %></span><br>
                     <% if (hotelEntry.itineraryId && hotelEntry.itineraryId != "") { %>
                     <span>Itinerary: <%= hotelEntry.itineraryName %> <a
-                            onclick="displayModal('<%= hotelEntry.bookingId %>', '<%= hotelEntry.itineraryId %>')"
+                            onclick="displayModal('<%= hotelEntry.bookingId %>', '<%= hotelEntry.itineraryId %>', 'hotel')"
                             class="link">Change</a></span><br>
                     <% } else { %>
-                    <span>Itinerary: <a onclick="displayModal('<%= hotelEntry.bookingId %>', '')"
+                    <span>Itinerary: <a onclick="displayModal('<%= hotelEntry.bookingId %>', '', 'hotel')"
                             class="link">Add</a></span><br>
                     <% } %>
                     <div class="booking-button-container">
@@ -252,6 +266,7 @@
                     <input type="hidden" id="bookingId" />
                     <input type="hidden" id="itineraryId" />
                     <input type="hidden" id="selectedItineraryId" />
+                    <input type="hidden" id="bookingType" />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -325,7 +340,7 @@
     }
 
     // Display modal
-    function displayModal(bookingId, itineraryId) {
+    function displayModal(bookingId, itineraryId , type) {
         var modal = document.getElementById("modal");
         modal.style.display = "block";
         var bookingIdInput = document.getElementById("bookingId");
@@ -374,6 +389,8 @@
                 itineraryDropdownOptions.appendChild(removeOptionDiv);
             }
         });
+        var hiddenInput = document.getElementById("bookingType");
+        hiddenInput.value = type;
     }
 
     // Close modal
@@ -521,258 +538,514 @@
     // Add booking to itinerary
     $("#addToItineraryForm").on("submit", function (e) {
         e.preventDefault();
-        var itineraryDropdown = document.getElementById("itineraryDropdown");
-        var selectedItineraryId = document.getElementById("selectedItineraryId");
-        var bookingIdInput = document.getElementById("bookingId");
-        var itineraryIdInput = document.getElementById("itineraryId");
-        // If adding to existing itinerary
-        if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
-            "Remove from itinerary") {
-            // Add itinerary ID to booking
-            $.ajax({
-                url: `/bookings/update/airbnb/${bookingIdInput.value}`,
-                type: "PUT",
-                data: JSON.stringify({
-                    itineraryId: selectedItineraryId.value
-                }),
-                contentType: "application/json",
-                success: function (response) {
-                    // Add booking ID to itinerary
-                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
-                        trips => {
-                            trips.forEach(trip => {
-                                if (trip.id == selectedItineraryId.value) {
-                                    trip.bookings.airbnb.push(bookingIdInput.value);
-                                    $.ajax({
-                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
-                                        type: "PUT",
-                                        data: JSON.stringify(trip),
-                                        contentType: "application/json",
-                                        success: function (response) {
-                                            alert(
-                                                "Booking added to itinerary!");
-                                            window.location.reload();
-                                        },
-                                        error: function (error) {
-                                            alert(
-                                                "An error occurred while adding booking ID to itinerary.");
-                                        }
-                                    });
-                                }
+        var bookingType = document.getElementById("bookingType").value;
+        console.log(bookingType);
+
+        if (bookingType === "airbnb") {
+            var itineraryDropdown = document.getElementById("itineraryDropdown");
+            var selectedItineraryId = document.getElementById("selectedItineraryId");
+            var bookingIdInput = document.getElementById("bookingId");
+            var itineraryIdInput = document.getElementById("itineraryId");
+            // If adding to existing itinerary
+            if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
+                "Remove from itinerary") {
+                // Add itinerary ID to booking
+                $.ajax({
+                    url: `/bookings/update/airbnb/${bookingIdInput.value}`,
+                    type: "PUT",
+                    data: JSON.stringify({
+                        itineraryId: selectedItineraryId.value
+                    }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Add booking ID to itinerary
+                        fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                            trips => {
+                                trips.forEach(trip => {
+                                    if (trip.id == selectedItineraryId.value) {
+                                        trip.bookings.airbnb.push(bookingIdInput.value);
+                                        $.ajax({
+                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
+                                            type: "PUT",
+                                            data: JSON.stringify(trip),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                alert(
+                                                    "Booking added to itinerary!");
+                                                window.location.reload();
+                                            },
+                                            error: function (error) {
+                                                alert(
+                                                    "An error occurred while adding booking ID to itinerary.");
+                                            }
+                                        });
+                                    }
+                                });
                             });
-                        });
-                },
-                error: function (error) {
-                    alert("An error occurred while adding itinerary ID to booking.");
-                }
-            });
-        }
-        // If adding to new itinerary
-        else if (itineraryDropdown.value == "Create new itinerary") {
-            if (addedDestinations.length == 0) {
-                alert("Please add at least one destination.");
-            } else {
-                // Create new itinerary and add booking ID to itinerary
-                $.post("/itinerary/trip/<%= user.uid %>/destinations", {
-                    destinations: addedDestinations,
-                    tripName: $("#trip-name").val(),
-                    fromDate: $("#trip-from-date").val(),
-                    toDate: $("#trip-to-date").val(),
-                    bookings: {
-                        flights: [],
-                        hotel: [],
-                        airbnb: [bookingIdInput.value]
+                    },
+                    error: function (error) {
+                        alert("An error occurred while adding itinerary ID to booking.");
                     }
-                }, function (response) {
-                    // Add itinerary ID to booking
-                    $.ajax({
-                        url: `/bookings/update/airbnb/${bookingIdInput.value}`,
-                        type: "PUT",
-                        data: JSON.stringify({
-                            itineraryId: response.itineraryId
-                        }),
-                        contentType: "application/json",
-                        success: function (response) {
-                            alert("Booking added to itinerary!");
-                            window.location.reload();
-                        },
-                        error: function (error) {
-                            alert("An error occurred while adding to itinerary.");
+                });
+            }
+            // If adding to new itinerary
+            else if (itineraryDropdown.value == "Create new itinerary") {
+                if (addedDestinations.length == 0) {
+                    alert("Please add at least one destination.");
+                } else {
+                    // Create new itinerary and add booking ID to itinerary
+                    $.post("/itinerary/trip/<%= user.uid %>/destinations", {
+                        destinations: addedDestinations,
+                        tripName: $("#trip-name").val(),
+                        fromDate: $("#trip-from-date").val(),
+                        toDate: $("#trip-to-date").val(),
+                        bookings: {
+                            flights: [],
+                            hotel: [],
+                            airbnb: [bookingIdInput.value]
                         }
+                    }, function (response) {
+                        // Add itinerary ID to booking
+                        $.ajax({
+                            url: `/bookings/update/airbnb/${bookingIdInput.value}`,
+                            type: "PUT",
+                            data: JSON.stringify({
+                                itineraryId: response.itineraryId
+                            }),
+                            contentType: "application/json",
+                            success: function (response) {
+                                alert("Booking added to itinerary!");
+                                window.location.reload();
+                            },
+                            error: function (error) {
+                                alert("An error occurred while adding to itinerary.");
+                            }
+                        });
                     });
+                }
+            }
+            // If removing from itinerary
+            else {
+                // Remove itinerary ID from booking
+                $.ajax({
+                    url: `/bookings/update/airbnb/${bookingIdInput.value}`,
+                    type: "PUT",
+                    data: JSON.stringify({
+                        itineraryId: ""
+                    }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Remove booking ID from itinerary
+                        fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                            trips => {
+                                trips.forEach(trip => {
+                                    if (trip.id == itineraryIdInput.value) {
+                                        trip.bookings.airbnb.filter(item => item !=
+                                            bookingIdInput.value);
+                                        $.ajax({
+                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
+                                            type: "PUT",
+                                            data: JSON.stringify(trip),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                alert(
+                                                    "Booking removed from itinerary!");
+                                                window.location.reload();
+                                            },
+                                            error: function (error) {
+                                                alert(
+                                                    "An error occurred while removing booking ID from itinerary.");
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                    },
+                    error: function (error) {
+                        alert("An error occurred while removing itinerary ID from booking.");
+                    }
+                });
+            }
+        } else if (bookingType === "hotel") {
+            var itineraryDropdown = document.getElementById("itineraryDropdown");
+            var selectedItineraryId = document.getElementById("selectedItineraryId");
+            var bookingIdInput = document.getElementById("bookingId");
+            var itineraryIdInput = document.getElementById("itineraryId");
+            // If adding to existing itinerary
+            if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
+                "Remove from itinerary") {
+                // Add itinerary ID to booking
+                $.ajax({
+                    url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                    type: "PUT",
+                    data: JSON.stringify({
+                        itineraryId: selectedItineraryId.value
+                    }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Add booking ID to itinerary
+                        fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                            trips => {
+                                trips.forEach(trip => {
+                                    if (trip.id == selectedItineraryId.value) {
+                                        trip.bookings.hotel.push(bookingIdInput.value);
+                                        $.ajax({
+                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
+                                            type: "PUT",
+                                            data: JSON.stringify(trip),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                alert(
+                                                    "Booking added to itinerary!");
+                                                window.location.reload();
+                                            },
+                                            error: function (error) {
+                                                alert(
+                                                    "An error occurred while adding booking ID to itinerary.");
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                    },
+                    error: function (error) {
+                        alert("An error occurred while adding itinerary ID to booking.");
+                    }
+                });
+            }
+            // If adding to new itinerary
+            else if (itineraryDropdown.value == "Create new itinerary") {
+                if (addedDestinations.length == 0) {
+                    alert("Please add at least one destination.");
+                } else {
+                    // Create new itinerary and add booking ID to itinerary
+                    $.post("/itinerary/trip/<%= user.uid %>/destinations", {
+                        destinations: addedDestinations,
+                        tripName: $("#trip-name").val(),
+                        fromDate: $("#trip-from-date").val(),
+                        toDate: $("#trip-to-date").val(),
+                        bookings: {
+                            flights: [],
+                            hotel: [bookingIdInput.value],
+                            airbnb: []
+                        }
+                    }, function (response) {
+                        // Add itinerary ID to booking
+                        $.ajax({
+                            url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                            type: "PUT",
+                            data: JSON.stringify({
+                                itineraryId: response.itineraryId
+                            }),
+                            contentType: "application/json",
+                            success: function (response) {
+                                alert("Booking added to itinerary!");
+                                window.location.reload();
+                            },
+                            error: function (error) {
+                                alert("An error occurred while adding to itinerary.");
+                            }
+                        });
+                    });
+                }
+            }
+            // If removing from itinerary
+            else {
+                // Remove itinerary ID from booking
+                $.ajax({
+                    url: `/bookings/update/hotel/${bookingIdInput.value}`,
+                    type: "PUT",
+                    data: JSON.stringify({
+                        itineraryId: ""
+                    }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Remove booking ID from itinerary
+                        fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                            trips => {
+                                trips.forEach(trip => {
+                                    if (trip.id == itineraryIdInput.value) {
+                                        trip.bookings.hotel.filter(item => item !=
+                                            bookingIdInput.value);
+                                        $.ajax({
+                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
+                                            type: "PUT",
+                                            data: JSON.stringify(trip),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                alert(
+                                                    "Booking removed from itinerary!");
+                                                window.location.reload();
+                                            },
+                                            error: function (error) {
+                                                alert(
+                                                    "An error occurred while removing booking ID from itinerary.");
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                    },
+                    error: function (error) {
+                        alert("An error occurred while removing itinerary ID from booking.");
+                    }
+                });
+            }
+        } else if (bookingType === 'flights') {
+            var itineraryDropdown = document.getElementById("itineraryDropdown");
+            var selectedItineraryId = document.getElementById("selectedItineraryId");
+            var bookingIdInput = document.getElementById("bookingId");
+            var itineraryIdInput = document.getElementById("itineraryId");
+            // If adding to existing itinerary
+            if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
+                "Remove from itinerary") {
+                // Add itinerary ID to booking
+                $.ajax({
+                    url: `/bookings/update/flights/${bookingIdInput.value}`,
+                    type: "PUT",
+                    data: JSON.stringify({
+                        itineraryId: selectedItineraryId.value
+                    }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Add booking ID to itinerary
+                        fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                            trips => {
+                                trips.forEach(trip => {
+                                    if (trip.id == selectedItineraryId.value) {
+                                        trip.bookings.hotel.push(bookingIdInput.value);
+                                        $.ajax({
+                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
+                                            type: "PUT",
+                                            data: JSON.stringify(trip),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                alert(
+                                                    "Booking added to itinerary!");
+                                                window.location.reload();
+                                            },
+                                            error: function (error) {
+                                                alert(
+                                                    "An error occurred while adding booking ID to itinerary.");
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                    },
+                    error: function (error) {
+                        alert("An error occurred while adding itinerary ID to booking.");
+                    }
+                });
+            }
+            // If adding to new itinerary
+            else if (itineraryDropdown.value == "Create new itinerary") {
+                if (addedDestinations.length == 0) {
+                    alert("Please add at least one destination.");
+                } else {
+                    // Create new itinerary and add booking ID to itinerary
+                    $.post("/itinerary/trip/<%= user.uid %>/destinations", {
+                        destinations: addedDestinations,
+                        tripName: $("#trip-name").val(),
+                        fromDate: $("#trip-from-date").val(),
+                        toDate: $("#trip-to-date").val(),
+                        bookings: {
+                            flights: [bookingIdInput.value],
+                            hotel: [],
+                            airbnb: []
+                        }
+                    }, function (response) {
+                        // Add itinerary ID to booking
+                        $.ajax({
+                            url: `/bookings/update/flights/${bookingIdInput.value}`,
+                            type: "PUT",
+                            data: JSON.stringify({
+                                itineraryId: response.itineraryId
+                            }),
+                            contentType: "application/json",
+                            success: function (response) {
+                                alert("Booking added to itinerary!");
+                                window.location.reload();
+                            },
+                            error: function (error) {
+                                alert("An error occurred while adding to itinerary.");
+                            }
+                        });
+                    });
+                }
+            }
+            // If removing from itinerary
+            else {
+                // Remove itinerary ID from booking
+                $.ajax({
+                    url: `/bookings/update/flights/${bookingIdInput.value}`,
+                    type: "PUT",
+                    data: JSON.stringify({
+                        itineraryId: ""
+                    }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Remove booking ID from itinerary
+                        fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+                            trips => {
+                                trips.forEach(trip => {
+                                    if (trip.id == itineraryIdInput.value) {
+                                        trip.bookings.hotel.filter(item => item !=
+                                            bookingIdInput.value);
+                                        $.ajax({
+                                            url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
+                                            type: "PUT",
+                                            data: JSON.stringify(trip),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                alert(
+                                                    "Booking removed from itinerary!");
+                                                window.location.reload();
+                                            },
+                                            error: function (error) {
+                                                alert(
+                                                    "An error occurred while removing booking ID from itinerary.");
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                    },
+                    error: function (error) {
+                        alert("An error occurred while removing itinerary ID from booking.");
+                    }
                 });
             }
         }
-        // If removing from itinerary
-        else {
-            // Remove itinerary ID from booking
-            $.ajax({
-                url: `/bookings/update/airbnb/${bookingIdInput.value}`,
-                type: "PUT",
-                data: JSON.stringify({
-                    itineraryId: ""
-                }),
-                contentType: "application/json",
-                success: function (response) {
-                    // Remove booking ID from itinerary
-                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
-                        trips => {
-                            trips.forEach(trip => {
-                                if (trip.id == itineraryIdInput.value) {
-                                    trip.bookings.airbnb.filter(item => item !=
-                                        bookingIdInput.value);
-                                    $.ajax({
-                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
-                                        type: "PUT",
-                                        data: JSON.stringify(trip),
-                                        contentType: "application/json",
-                                        success: function (response) {
-                                            alert(
-                                                "Booking removed from itinerary!");
-                                            window.location.reload();
-                                        },
-                                        error: function (error) {
-                                            alert(
-                                                "An error occurred while removing booking ID from itinerary.");
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                },
-                error: function (error) {
-                    alert("An error occurred while removing itinerary ID from booking.");
-                }
-            });
-        }
+        
     });
 
-    // Add booking to itinerary for hotel
-    $("#addToItineraryForm").on("submit", function (e) {
-        e.preventDefault();
-        var itineraryDropdown = document.getElementById("itineraryDropdown");
-        var selectedItineraryId = document.getElementById("selectedItineraryId");
-        var bookingIdInput = document.getElementById("bookingId");
-        var itineraryIdInput = document.getElementById("itineraryId");
-        // If adding to existing itinerary
-        if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
-            "Remove from itinerary") {
-            // Add itinerary ID to booking
-            $.ajax({
-                url: `/bookings/update/hotel/${bookingIdInput.value}`,
-                type: "PUT",
-                data: JSON.stringify({
-                    itineraryId: selectedItineraryId.value
-                }),
-                contentType: "application/json",
-                success: function (response) {
-                    // Add booking ID to itinerary
-                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
-                        trips => {
-                            trips.forEach(trip => {
-                                if (trip.id == selectedItineraryId.value) {
-                                    trip.bookings.hotel.push(bookingIdInput.value);
-                                    $.ajax({
-                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
-                                        type: "PUT",
-                                        data: JSON.stringify(trip),
-                                        contentType: "application/json",
-                                        success: function (response) {
-                                            alert(
-                                                "Booking added to itinerary!");
-                                            window.location.reload();
-                                        },
-                                        error: function (error) {
-                                            alert(
-                                                "An error occurred while adding booking ID to itinerary.");
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                },
-                error: function (error) {
-                    alert("An error occurred while adding itinerary ID to booking.");
-                }
-            });
-        }
-        // If adding to new itinerary
-        else if (itineraryDropdown.value == "Create new itinerary") {
-            if (addedDestinations.length == 0) {
-                alert("Please add at least one destination.");
-            } else {
-                // Create new itinerary and add booking ID to itinerary
-                $.post("/itinerary/trip/<%= user.uid %>/destinations", {
-                    destinations: addedDestinations,
-                    tripName: $("#trip-name").val(),
-                    fromDate: $("#trip-from-date").val(),
-                    toDate: $("#trip-to-date").val(),
-                    bookings: {
-                        flights: [],
-                        hotel: [bookingIdInput.value],
-                        airbnb: []
-                    }
-                }, function (response) {
-                    // Add itinerary ID to booking
-                    $.ajax({
-                        url: `/bookings/update/hotel/${bookingIdInput.value}`,
-                        type: "PUT",
-                        data: JSON.stringify({
-                            itineraryId: response.itineraryId
-                        }),
-                        contentType: "application/json",
-                        success: function (response) {
-                            alert("Booking added to itinerary!");
-                            window.location.reload();
-                        },
-                        error: function (error) {
-                            alert("An error occurred while adding to itinerary.");
-                        }
-                    });
-                });
-            }
-        }
-        // If removing from itinerary
-        else {
-            // Remove itinerary ID from booking
-            $.ajax({
-                url: `/bookings/update/hotel/${bookingIdInput.value}`,
-                type: "PUT",
-                data: JSON.stringify({
-                    itineraryId: ""
-                }),
-                contentType: "application/json",
-                success: function (response) {
-                    // Remove booking ID from itinerary
-                    fetch("/itinerary/trip/destinations").then(response => response.json()).then(
-                        trips => {
-                            trips.forEach(trip => {
-                                if (trip.id == itineraryIdInput.value) {
-                                    trip.bookings.hotel.filter(item => item !=
-                                        bookingIdInput.value);
-                                    $.ajax({
-                                        url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
-                                        type: "PUT",
-                                        data: JSON.stringify(trip),
-                                        contentType: "application/json",
-                                        success: function (response) {
-                                            alert(
-                                                "Booking removed from itinerary!");
-                                            window.location.reload();
-                                        },
-                                        error: function (error) {
-                                            alert(
-                                                "An error occurred while removing booking ID from itinerary.");
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                },
-                error: function (error) {
-                    alert("An error occurred while removing itinerary ID from booking.");
-                }
-            });
-        }
-    });
+    // // Add booking to itinerary for hotel
+    // $("#addToItineraryForm").on("submit", function (e) {
+    //     e.preventDefault();
+    //     var itineraryDropdown = document.getElementById("itineraryDropdown");
+    //     var selectedItineraryId = document.getElementById("selectedItineraryId");
+    //     var bookingIdInput = document.getElementById("bookingId");
+    //     var itineraryIdInput = document.getElementById("itineraryId");
+    //     // If adding to existing itinerary
+    //     if (itineraryDropdown.value != "Create new itinerary" && itineraryDropdown.value !=
+    //         "Remove from itinerary") {
+    //         // Add itinerary ID to booking
+    //         $.ajax({
+    //             url: `/bookings/update/hotel/${bookingIdInput.value}`,
+    //             type: "PUT",
+    //             data: JSON.stringify({
+    //                 itineraryId: selectedItineraryId.value
+    //             }),
+    //             contentType: "application/json",
+    //             success: function (response) {
+    //                 // Add booking ID to itinerary
+    //                 fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+    //                     trips => {
+    //                         trips.forEach(trip => {
+    //                             if (trip.id == selectedItineraryId.value) {
+    //                                 trip.bookings.hotel.push(bookingIdInput.value);
+    //                                 $.ajax({
+    //                                     url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
+    //                                     type: "PUT",
+    //                                     data: JSON.stringify(trip),
+    //                                     contentType: "application/json",
+    //                                     success: function (response) {
+    //                                         alert(
+    //                                             "Booking added to itinerary!");
+    //                                         window.location.reload();
+    //                                     },
+    //                                     error: function (error) {
+    //                                         alert(
+    //                                             "An error occurred while adding booking ID to itinerary.");
+    //                                     }
+    //                                 });
+    //                             }
+    //                         });
+    //                     });
+    //             },
+    //             error: function (error) {
+    //                 alert("An error occurred while adding itinerary ID to booking.");
+    //             }
+    //         });
+    //     }
+    //     // If adding to new itinerary
+    //     else if (itineraryDropdown.value == "Create new itinerary") {
+    //         if (addedDestinations.length == 0) {
+    //             alert("Please add at least one destination.");
+    //         } else {
+    //             // Create new itinerary and add booking ID to itinerary
+    //             $.post("/itinerary/trip/<%= user.uid %>/destinations", {
+    //                 destinations: addedDestinations,
+    //                 tripName: $("#trip-name").val(),
+    //                 fromDate: $("#trip-from-date").val(),
+    //                 toDate: $("#trip-to-date").val(),
+    //                 bookings: {
+    //                     flights: [],
+    //                     hotel: [bookingIdInput.value],
+    //                     airbnb: []
+    //                 }
+    //             }, function (response) {
+    //                 // Add itinerary ID to booking
+    //                 $.ajax({
+    //                     url: `/bookings/update/hotel/${bookingIdInput.value}`,
+    //                     type: "PUT",
+    //                     data: JSON.stringify({
+    //                         itineraryId: response.itineraryId
+    //                     }),
+    //                     contentType: "application/json",
+    //                     success: function (response) {
+    //                         alert("Booking added to itinerary!");
+    //                         window.location.reload();
+    //                     },
+    //                     error: function (error) {
+    //                         alert("An error occurred while adding to itinerary.");
+    //                     }
+    //                 });
+    //             });
+    //         }
+    //     }
+    //     // If removing from itinerary
+    //     else {
+    //         // Remove itinerary ID from booking
+    //         $.ajax({
+    //             url: `/bookings/update/hotel/${bookingIdInput.value}`,
+    //             type: "PUT",
+    //             data: JSON.stringify({
+    //                 itineraryId: ""
+    //             }),
+    //             contentType: "application/json",
+    //             success: function (response) {
+    //                 // Remove booking ID from itinerary
+    //                 fetch("/itinerary/trip/destinations").then(response => response.json()).then(
+    //                     trips => {
+    //                         trips.forEach(trip => {
+    //                             if (trip.id == itineraryIdInput.value) {
+    //                                 trip.bookings.hotel.filter(item => item !=
+    //                                     bookingIdInput.value);
+    //                                 $.ajax({
+    //                                     url: `/itinerary/trip/<%= user.uid %>/destinations/${itineraryIdInput.value}`,
+    //                                     type: "PUT",
+    //                                     data: JSON.stringify(trip),
+    //                                     contentType: "application/json",
+    //                                     success: function (response) {
+    //                                         alert(
+    //                                             "Booking removed from itinerary!");
+    //                                         window.location.reload();
+    //                                     },
+    //                                     error: function (error) {
+    //                                         alert(
+    //                                             "An error occurred while removing booking ID from itinerary.");
+    //                                     }
+    //                                 });
+    //                             }
+    //                         });
+    //                     });
+    //             },
+    //             error: function (error) {
+    //                 alert("An error occurred while removing itinerary ID from booking.");
+    //             }
+    //         });
+    //     }
+    // });
 </script>

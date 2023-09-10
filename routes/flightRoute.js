@@ -133,7 +133,8 @@ router.post('/oneWay', (req, res) => {
       })
       .catch(error => {
         console.error(error);
-        res.status(500).send('An error occurred making the request');
+        // res.redirect('/flight')
+        res.status(500).send('No Flights Found. Please return to the flights page');
       });
 
   });
@@ -248,9 +249,9 @@ router.post('/roundTrip', (req, res) => {
       })
       .catch(error => {
         console.error(error);
-        res.status(500).send('An error occurred making the request');
+        // res.redirect('/flight');
+        res.status(500).send('No Flights Found. Please return to the flights page');
       });
-
   });
 });
 
