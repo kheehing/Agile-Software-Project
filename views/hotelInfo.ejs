@@ -630,7 +630,12 @@
                         trips => {
                             trips.forEach(trip => {
                                 if (trip.id == selectedItineraryId.value) {
-                                    trip.bookings.hotel.push(bookingIdInput.value);
+                                    if (trip.bookings.hotel) {
+                                        trip.bookings.hotel.push(bookingIdInput.value);
+                                    }
+                                    else {
+                                        trip.bookings.hotel = [bookingIdInput.value];
+                                    }
                                     $.ajax({
                                         url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
                                         type: "PUT",

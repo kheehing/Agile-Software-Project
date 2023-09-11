@@ -769,7 +769,12 @@
                     fetch("/itinerary/trip/destinations").then(response => response.json()).then(trips => {
                         trips.forEach(trip => {
                             if (trip.id == selectedItineraryId.value) {
-                                trip.bookings.airbnb.push(bookingIdInput.value);
+                                if (trip.bookings.airbnb) {
+                                    trip.bookings.airbnb.push(bookingIdInput.value);
+                                }
+                                else {
+                                    trip.bookings.airbnb = [bookingIdInput.value];
+                                }
                                 $.ajax({
                                     url: `/itinerary/trip/<%= user.uid %>/destinations/${selectedItineraryId.value}`,
                                     type: "PUT",
