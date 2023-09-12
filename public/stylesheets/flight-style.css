@@ -46,3 +46,78 @@
     padding: 10px 20px;
     font-size: 16px;
 }
+
+/* Modal styles */
+
+.modal {
+    display: none;
+    width: 50%;
+    margin-left: 25%;
+  }
+  
+  .modal-title {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .h4-black {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #000;
+  }
+  
+  .itinerary-dropdown-div {
+    position: relative;
+    width: 50%;
+  }
+  
+  .itinerary-dropdown {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 6px 12px;
+  }
+  
+  .itinerary-dropdown:hover {
+    cursor: pointer;
+  }
+  
+  .itinerary-dropdown-arrow {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    width: 25px;
+  }
+  
+  .itinerary-dropdown-arrow:hover {
+    cursor: pointer;
+  }
+  
+  .dropdown-menu {
+    display: none;
+    top: 100%;
+    padding: 0px;
+  }
+  
+  .dropdown-item {
+    padding: 10px;
+  }
+  
+  .dropdown-item:hover {
+    cursor: pointer;
+  }
+  
+  .create-itinerary-form {
+    display: none;
+  }
+  
+  error-message {
+    display: none;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #d9534f;
+  }
+  
+  .error-icon {
+    width: 20px;
+  }

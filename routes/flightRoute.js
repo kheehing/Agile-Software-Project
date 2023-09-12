@@ -275,8 +275,8 @@ router.post("/addToDatabase", (req, res) => {
     const onewayRef = db.collection("flights");
     onewayRef.add(onewayData)
       .then(docRef => {
-        console.log("Document written with ID: ", docRef.id);
-        res.json({ success: true, message: "Data added to Firestore" });
+        // console.log("Document written with ID: ", docRef.id);
+        res.json({ success: true, message: "Data added to Firestore", bookingId: docRef.id });
       })
       .catch(error => {
         console.error("Error adding document: ", error);
@@ -308,10 +308,10 @@ router.post("/addToDatabase", (req, res) => {
     roundTripRef.add(roundTripData)
       .then(docRef => {
         // console.log("Document written with ID: ", docRef.id);
-        res.json({ success: true, message: "Data added to Firestore" });
+        res.json({ success: true, message: "Data added to Firestore", bookingId: docRef.id });
       })
       .catch(error => {
-        // console.error("Error adding document: ", error);
+        console.error("Error adding document: ", error);
         res.json({ success: false, error: "Error adding document" });
       });
     // console.log(roundTripData);
