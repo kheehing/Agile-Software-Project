@@ -86,6 +86,7 @@
                         <label for="pwd">Confirm Password:</label>
                         <input type="password" class="form-control" id="cfm-pwd" placeholder="Retype password" name="confirm-password" required>
                     </div>
+                    <br>
                     <div class="submit-btn">
                         <button type="submit" class="btn btn-primary">Register</button>
                     </div>
@@ -99,13 +100,6 @@
     </div>
     <%- include ('base/footer'); %>
     <script>
-        window.onload = function(){
-            firebase.auth().onAuthStateChanged(function(user){
-                if (user){
-                   window.location.href = '/home'
-                }
-            });
-        }
         $(document).ready(function() {
             $("#register-form").submit(function(event) {
                 event.preventDefault();
@@ -127,8 +121,7 @@
                 firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
                     var user = userCredential.user;
                     return window.location.href = "/home";
-                })
-                .catch((error) => {
+                }).catch((error) => {
                     var errorCode = error.code;
                     var errorMessage = error.message;
                     console.error('Error signing in', errorCode, errorMessage);
