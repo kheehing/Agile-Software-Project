@@ -15,6 +15,7 @@ router.get('/flightDetails', (req, res) => {
   const flightData = req.session.flightData;
   const OriginAirportName = req.session.OriginAirportName;
   const DestinationAirportName = req.session.DestinationAirportName;
+  const error = req.session.error;
   
   const values = [
     req.session.flightType,
@@ -31,7 +32,7 @@ router.get('/flightDetails', (req, res) => {
 
   const valuesJSON = JSON.stringify(values);
 
-  res.render('flightDetails', {flightData, valuesJSON, OriginAirportName, DestinationAirportName, user: req.session.user});
+  res.render('flightDetails', {flightData, valuesJSON, OriginAirportName, DestinationAirportName, user: req.session.user, error});
 });
 
 router.post('/oneWay', (req, res) => {
@@ -128,13 +129,14 @@ router.post('/oneWay', (req, res) => {
       .then(response => {
         // res.status(200).json(response.data);
         req.session.flightData = response.data;
-        req.session.formSubmitted = 'true';
+        req.session.error = 'false';
         res.redirect('/flight/flightDetails');
       })
       .catch(error => {
         console.error(error);
-        // res.redirect('/flight')
-        res.status(500).send('No Flights Found. Please return to the flights page');
+        req.session.error = 'true';
+        res.redirect('/flight/flightDetails');
+        // res.status(500).send('No Flights Found. Please return to the flights page');
       });
 
   });
@@ -244,7 +246,6 @@ router.post('/roundTrip', (req, res) => {
       .then(response => {
         // res.status(200).json(response.data);
         req.session.flightData = response.data;
-        req.session.formSubmitted = 'true';
         res.redirect('/flight/flightDetails');
       })
       .catch(error => {

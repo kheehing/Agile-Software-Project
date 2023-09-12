@@ -11,72 +11,84 @@
 
     <div class="container mt-4" id="flightResults">
     
-        <% if (flightData.data.context.totalResults > 0) { %>
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="d-flex flex-column">
-                    <p class="fs-4 mb-0">Flights from <span class="fw-bold"><%= flightData.data.itineraries[0].legs[0].origin.name %></span> to <span class="fw-bold"><%= flightData.data.itineraries[0].legs[0].destination.name %></span></p>
-                </div>
-                <button class="btn btn-outline-dark" onclick="redirectToWebpage('<%= valuesJSON %>')">Book on Website</button>
-            </div>
-        <% } %>
-        
-    
-        <ul class="list-unstyled">
+        <% if (error == 'false') { %>
+
             <% if (flightData.data.context.totalResults > 0) { %>
-                <% flightData.data.itineraries.forEach((itinerary, index) => { %>
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img src="<%= itinerary.legs[0].carriers.marketing[0].logoUrl %>" alt="<%= itinerary.legs[0].carriers.marketing[0].name %> Logo" width="30" class="me-2">
-                                    <h5 class="mb-0"><%= itinerary.legs[0].carriers.marketing[0].name %></h5>
-                                </div>
-                                <button class="btn btn-outline-dark" data-index="<%= index %>" data-itinerary='<%= JSON.stringify(itinerary) %>' onclick="addToDatabase(this)">Add to Bookings</button>
-                            </div>
-                        </div>
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <% itinerary.legs.forEach((leg, index) => { %>
-                                <div class="leg-item">
-                                    <div class="leg-info">
-                                        <div class="row">
-                                            <div class="col text-center">
-                                                <span class="fs-5"><%= formatDate(leg.departure) %></span>
-                                                <span class="line flex-grow-1"></span>
-                                                <span class="fs-5"><%= formatDate(leg.arrival) %></span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col text-center"></div>
-                                            <div class="col text-center">
-                                                <div class="d-flex justify-content-center align-items-center h-100">
-                                                    <span><%= convertToHoursAndMinutes(leg.durationInMinutes) %>, <%= leg.stopCount %> Stops</span>
-                                                </div>
-                                            </div>
-                                            <% if (index === 0) { %>
-                                                <div class="col text-end">
-                                                    <h5>USD <%= itinerary.price.formatted %></h5>
-                                                </div>
-                                            <% } else { %>
-                                                <div class="col text-end"></div>
-                                                <% } %>
-                                        </div>
-                                    </div>
-                                </div>
-                            <% }); %>
-                        </div>
-                    </div>
-                <% }); %>
-            <% } else { %>
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="d-flex flex-column">
-                        <p class="fs-4 mb-0">No flights from <span class="fw-bold"><%= OriginAirportName %></span> to <span class="fw-bold"><%= DestinationAirportName %></span> found</p>
+                        <p class="fs-4 mb-0">Flights from <span class="fw-bold"><%= flightData.data.itineraries[0].legs[0].origin.name %></span> to <span class="fw-bold"><%= flightData.data.itineraries[0].legs[0].destination.name %></span></p>
                     </div>
-                </div>
-                <div class="alert alert-warning">
-                    No flight data available.
+                    <button class="btn btn-outline-dark" onclick="redirectToWebpage('<%= valuesJSON %>')">Book on Website</button>
                 </div>
             <% } %>
-        </ul>
+            
+            <ul class="list-unstyled">
+                <% if (flightData.data.context.totalResults > 0) { %>
+                    <% flightData.data.itineraries.forEach((itinerary, index) => { %>
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <img src="<%= itinerary.legs[0].carriers.marketing[0].logoUrl %>" alt="<%= itinerary.legs[0].carriers.marketing[0].name %> Logo" width="30" class="me-2">
+                                        <h5 class="mb-0"><%= itinerary.legs[0].carriers.marketing[0].name %></h5>
+                                    </div>
+                                    <button class="btn btn-outline-dark" data-index="<%= index %>" data-itinerary='<%= JSON.stringify(itinerary) %>' onclick="addToDatabase(this)">Add to Bookings</button>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <% itinerary.legs.forEach((leg, index) => { %>
+                                    <div class="leg-item">
+                                        <div class="leg-info">
+                                            <div class="row">
+                                                <div class="col text-center">
+                                                    <span class="fs-5"><%= formatDate(leg.departure) %></span>
+                                                    <span class="line flex-grow-1"></span>
+                                                    <span class="fs-5"><%= formatDate(leg.arrival) %></span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col text-center"></div>
+                                                <div class="col text-center">
+                                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                                        <span><%= convertToHoursAndMinutes(leg.durationInMinutes) %>, <%= leg.stopCount %> Stops</span>
+                                                    </div>
+                                                </div>
+                                                <% if (index === 0) { %>
+                                                    <div class="col text-end">
+                                                        <h5>USD <%= itinerary.price.formatted %></h5>
+                                                    </div>
+                                                <% } else { %>
+                                                    <div class="col text-end"></div>
+                                                    <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex flex-column">
+                            <p class="fs-4 mb-0">Flights from <span class="fw-bold"><%= OriginAirportName %></span> to <span class="fw-bold"><%= DestinationAirportName %></span></p>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning">
+                        No flight data available.
+                    </div>
+                <% } %>
+            </ul>
+            
+        <% } else if (error == 'true') { %>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex flex-column">
+                    <p class="fs-4 mb-0">Flights from <span class="fw-bold"><%= OriginAirportName %></span> to <span class="fw-bold"><%= DestinationAirportName %></span></p>
+                </div>
+            </div>
+            <div class="alert alert-warning">
+                No flight data available.
+            </div>
+        <% } %>
 
     </div>
     
@@ -162,10 +174,6 @@
         });
         window.alert("Flight added to bookings")
     }
-
-
-</script>
-
 
 </script>
 
