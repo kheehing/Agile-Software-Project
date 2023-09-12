@@ -50,6 +50,26 @@
         "Combine": "Taiwan Taoyuan International Airport (Taipei), Taiwan"
     },
     {
+        "Name": "Beijing Capital International Airport",
+        "City": "Beijing",
+        "Country": "China",
+        "IATA": "PEK",
+        "ICAO": "ZBAA",
+        "Latitude": "40.08010101",
+        "Longitude": "116.5849991",
+        "Combine": "Beijing Capital International Airport (Beijing), China"
+    },
+    {
+        "Name": "Shanghai Hongqiao International Airport",
+        "City": "Shanghai",
+        "Country": "China",
+        "IATA": "SHA",
+        "ICAO": "ZSSS",
+        "Latitude": "31.19790077",
+        "Longitude": "121.3359985",
+        "Combine": "Shanghai Hongqiao International Airport (Shanghai), China"
+    },
+    {
         "Name": "Don Mueang International Airport",
         "City": "Bangkok",
         "Country": "Thailand",
@@ -100,14 +120,14 @@
         "Combine": "Geneva Cointrin International Airport (Geneva), Switzerland"
     },
     {
-        "Name": "Berlin-Sch\u00f6nefeld Airport",
-        "City": "Berlin",
-        "Country": "Germany",
-        "IATA": "SXF",
-        "ICAO": "EDDB",
-        "Latitude": "52.380001",
-        "Longitude": "13.5225",
-        "Combine": "Berlin-Sch\u00f6nefeld Airport (Berlin), Germany"
+        "Name": "Rochester Airport",
+        "City": "Rochester",
+        "Country": "United Kingdom",
+        "IATA": "RCS",
+        "ICAO": "EGTO",
+        "Latitude": "51.35189819",
+        "Longitude": "0.503332973",
+        "Combine": "Rochester Airport (Rochester), United Kingdom"
     },
     {
         "Name": "Hong Kong International Airport",
@@ -25780,16 +25800,6 @@
         "Combine": "Wagga Wagga City Airport (Wagga Wagga), Australia"
     },
     {
-        "Name": "Beijing Capital International Airport",
-        "City": "Beijing",
-        "Country": "China",
-        "IATA": "PEK",
-        "ICAO": "ZBAA",
-        "Latitude": "40.08010101",
-        "Longitude": "116.5849991",
-        "Combine": "Beijing Capital International Airport (Beijing), China"
-    },
-    {
         "Name": "Dongshan Airport",
         "City": "Hailar",
         "Country": "China",
@@ -26018,16 +26028,6 @@
         "Latitude": "36.26610184",
         "Longitude": "120.3740005",
         "Combine": "Liuting Airport (Qingdao), China"
-    },
-    {
-        "Name": "Shanghai Hongqiao International Airport",
-        "City": "Shanghai",
-        "Country": "China",
-        "IATA": "SHA",
-        "ICAO": "ZSSS",
-        "Latitude": "31.19790077",
-        "Longitude": "121.3359985",
-        "Combine": "Shanghai Hongqiao International Airport (Shanghai), China"
     },
     {
         "Name": "Yantai Laishan Airport",
@@ -52340,6 +52340,16 @@
         "Combine": "Grabtsevo Airport (Kaluga), Russia"
     },
     {
+        "Name": "Berlin-Sch\u00f6nefeld Airport",
+        "City": "Berlin",
+        "Country": "Germany",
+        "IATA": "SXF",
+        "ICAO": "EDDB",
+        "Latitude": "52.380001",
+        "Longitude": "13.5225",
+        "Combine": "Berlin-Sch\u00f6nefeld Airport (Berlin), Germany"
+    },
+    {
         "Name": "Tri-County Regional Airport",
         "City": "Lone Rock",
         "Country": "United States",
@@ -53498,16 +53508,6 @@
         "Latitude": "0.7324",
         "Longitude": "73.4336",
         "Combine": "Kooddoo Airport (Kooddoo), Maldives"
-    },
-    {
-        "Name": "Rochester Airport",
-        "City": "Rochester",
-        "Country": "United Kingdom",
-        "IATA": "RCS",
-        "ICAO": "EGTO",
-        "Latitude": "51.35189819",
-        "Longitude": "0.503332973",
-        "Combine": "Rochester Airport (Rochester), United Kingdom"
     },
     {
         "Name": "Termas de R\u00edo Hondo international Airport",
