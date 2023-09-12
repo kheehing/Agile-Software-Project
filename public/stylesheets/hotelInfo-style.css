@@ -60,19 +60,19 @@
 }
 
 /* Book button style */
-.book-button {
-  width: 80%;
-  /* Adjust the width as needed */
+.info-booking-button {
+  width: 15%;
   background-color: #007bff;
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 15px;
-  /* Add border-radius for curved edges */
   cursor: pointer;
   display: block;
-  margin: 0 auto;
-  /* Center the button horizontally */
+  right: 0;
+  top: 0;
+  position: absolute;
+  margin: 10px;
 }
 
 .book-button-div {
@@ -285,7 +285,8 @@
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
-  background-color: #f9f9f9;
+  background-color: #d1d0d0;
+  position: relative;
 }
 
 /* Style headings */
