@@ -1,17 +1,7 @@
 const admin = require('firebase-admin');
-if (process.env.HEROKU){
-  const credential = process.env['CREDS'];
+const credential = process.env.CREDS || require('./ServiceAccountKey.json');
 
-  admin.initializeApp({
-    credential: admin.credential.cert(credential),
-  });
-  module.exports = admin;
-} else {
-  const credentials = require('./ServiceAccountKey.json');
-
-  admin.initializeApp({
-    credential: admin.credential.cert(credentials),
-  });
-  
-  module.exports = admin;
-}
+admin.initializeApp({
+  credential: admin.credential.cert(credential),
+});
+module.exports = admin;
