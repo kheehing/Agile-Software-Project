@@ -4,6 +4,12 @@
     <%- include ('base/head'); %>
     <title>Airbnb Page</title>
     <link rel="stylesheet" href="/stylesheets/airbnb-style.css">
+    <link rel="stylesheet" href="/stylesheets/homepage-style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <%- include ('base/navbar'); %>
@@ -14,7 +20,7 @@
             </div>
             <div class="col-md-6 airbnb-right-content">
                 <div class="booking-search-box">
-                    <h2>Where do you want to stay?</h2>
+                    <h2 class="booking-title">Where do you want to stay?</h2>
                     <form action="/airbnb/searchResults" method="GET">
                         <div class="form-group">
                             <label for="destination" class="booking-label">Destination</label>
