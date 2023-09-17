@@ -18,7 +18,12 @@
 <body>
     <%- include ('base/navbar'); %>
     <!-- Big Image Stretching from Left to Right -->
-    <img src="/images/image-placeholder.png" class="full-width-image" alt="Big Image">
+    <section class="hotel" id="hotel">
+        <div class="hotel-text">
+            <h1>Book a  hotel stay <br>with us today!</h1>
+            
+        </div>
+    </section>
 
     <!-- Secondary Nav Bar -->
     <div class="secondary-navbar">
@@ -31,10 +36,10 @@
     <!-- Content Sections -->
     <div class="content-section" id="overview">
         <!-- Overview Content -->
-        <h2>Overview</h2>
+        <h2 style=" font-family: 'Paytone One', sans-serif; font-size: 30px;">Overview</h2>
         <h1><%= hotelData.name %></h1>
         <% if (hotelData.description_translations) { %>
-        <h3>Description</h3>
+        <h3 style=" font-family: 'Paytone One', sans-serif;">Description</h3>
         <p><%= hotelData.description_translations[0].description %> </p>
         <% } %>
         <p>Address: <%= hotelData.address %>, <%= hotelData.city %>, <%= hotelData.country %>, <%= hotelData.zip %></p>
