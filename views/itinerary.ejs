@@ -20,7 +20,19 @@
         .dropdown-item:hover {
             background-color: #f0f0f0;
         }
+
+        .itinerary-title{
+            font-family: 'Poppins', sans-serif;
+        }
+
+
     </style>
+    <link rel="stylesheet" href="/stylesheets/homepage-style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <%- include ('base/navbar'); %>
@@ -28,7 +40,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col text-center">
-                <h3>Current Trips</h3>
+                <h3 class="itinerary-title">Current Trips</h3>
             </div>
             <div class="col-auto">
                 <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addTripModal">Add Trip</button>

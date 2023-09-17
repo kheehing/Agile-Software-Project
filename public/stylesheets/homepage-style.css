@@ -202,7 +202,7 @@ section {
 }
 
 .container-box:hover{
-    box-shadow: 5px 30px 56.1276px rgb(88 101 242 / 55%);
+    box-shadow: 5px 30px 56.1276px rgb(88 101 242 / 65%);
     border: 1px solid transparent;
     transform: translateY(-3px);
 }
@@ -216,7 +216,7 @@ section {
 .btn-services-btn {
     background: transparent;
     position: relative;
-    padding: 5px 15px;
+    padding: 5px 45px;
     display: flex;
     align-items: center;
     font-size: 17px;

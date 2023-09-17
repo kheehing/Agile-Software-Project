@@ -105,14 +105,14 @@
 }
 
 .booking-title {
-    font-size: 24px;
-    font-weight: bold;
+    font-family: 'Paytone One', sans-serif;
+    font-weight: 400;
     margin-bottom: 15px;
 }
 
 .booking-label {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 15px;
+  letter-spacing: 2px;
     margin: 5px 0px;
     display: block;
 }
@@ -189,4 +189,14 @@
 
   #suggestions li:last-child {
     border-bottom: none;
+  }
+
+  .hotel-popular-stays{
+    font-size: var(--h2-font);
+    font-family: 'Paytone One', sans-serif;
+    line-height: 1;
+    align-items: center;
+    text-align: center;
+    margin-top: 5%;
+
   }
