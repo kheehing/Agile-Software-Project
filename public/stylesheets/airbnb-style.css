@@ -36,9 +36,15 @@ h4 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.booking-title {
+    font-family: 'Paytone One', sans-serif;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
 .booking-label {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 2px;
     margin: 5px 0px;
     display: block;
 }

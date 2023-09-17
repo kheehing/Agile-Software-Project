@@ -5,6 +5,12 @@
     <%- include ('base/head'); %>
     <title>Flight's Details Page</title>
     <link rel="stylesheet" href="/stylesheets/flight-style.css">
+    <link rel="stylesheet" href="/stylesheets/homepage-style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -12,8 +18,9 @@
 
     <div class="container mt-4" id="flightResults">
     
+        <!-- Checks if the session variable error is false -->
         <% if (error == 'false') { %>
-
+            <!-- Checks whether there are any results from the data gathered from the api -->
             <% if (flightData.data.context.totalResults > 0) { %>
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="d-flex flex-column">
@@ -23,6 +30,7 @@
                 </div>
             <% } %>
             
+            <!-- Prints the results from the data into its own card -->
             <ul class="list-unstyled">
                 <% if (flightData.data.context.totalResults > 0) { %>
                     <% flightData.data.itineraries.forEach((itinerary, index) => { %>
@@ -93,6 +101,8 @@
 
     </div>
 
+    <!-- Modal for adding to itinerary -->
+    <!-- appears when the button add is clicked -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <form id="addToItineraryForm">

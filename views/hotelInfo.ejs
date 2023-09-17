@@ -7,12 +7,23 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Hotel Information Page</title>
+    <link rel="stylesheet" href="/stylesheets/homepage-style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <%- include ('base/navbar'); %>
     <!-- Big Image Stretching from Left to Right -->
-    <img src="/images/image-placeholder.png" class="full-width-image" alt="Big Image">
+    <section class="hotel" id="hotel">
+        <div class="hotel-text">
+            <h1>Book a  hotel stay <br>with us today!</h1>
+            
+        </div>
+    </section>
 
     <!-- Secondary Nav Bar -->
     <div class="secondary-navbar">
@@ -25,10 +36,10 @@
     <!-- Content Sections -->
     <div class="content-section" id="overview">
         <!-- Overview Content -->
-        <h2>Overview</h2>
+        <h2 style=" font-family: 'Paytone One', sans-serif; font-size: 30px;">Overview</h2>
         <h1><%= hotelData.name %></h1>
         <% if (hotelData.description_translations) { %>
-        <h3>Description</h3>
+        <h3 style=" font-family: 'Paytone One', sans-serif;">Description</h3>
         <p><%= hotelData.description_translations[0].description %> </p>
         <% } %>
         <p>Address: <%= hotelData.address %>, <%= hotelData.city %>, <%= hotelData.country %>, <%= hotelData.zip %></p>

@@ -6,17 +6,20 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-
+// Render /flight
 router.get('', (req, res) => {
   res.render('flight', {user: req.session.user});
 });
 
+// Renders /flight/flightDetails
 router.get('/flightDetails', (req, res) => {
   const flightData = req.session.flightData;
   const OriginAirportName = req.session.OriginAirportName;
   const DestinationAirportName = req.session.DestinationAirportName;
   const error = req.session.error;
   
+  // Storing the values chosen in an array which is used to redirect
+  // to skyscanner's booking site
   const values = [
     req.session.flightType,
     req.session.originIATA,
@@ -35,6 +38,7 @@ router.get('/flightDetails', (req, res) => {
   res.render('flightDetails', {flightData, valuesJSON, OriginAirportName, DestinationAirportName, user: req.session.user, error});
 });
 
+// Getting the form values for one way trips
 router.post('/oneWay', (req, res) => {
   const { origin, destination, date, adults, children, infants, cabinClass } = req.body;
 
@@ -55,6 +59,7 @@ router.post('/oneWay', (req, res) => {
   req.session.dateInYYMMDD = dateInYYMMDD;
 
 
+  // Opens the airports.json file within public/data
   fs.readFile('./public/data/airports.json', 'utf8', (err, data) => {
     if (err) {
       console.error(err);
@@ -67,6 +72,7 @@ router.post('/oneWay', (req, res) => {
     const originAirport = airports.find(airport => airport.Combine === origin);
     const destinationAirport = airports.find(airport => airport.Combine === destination);
 
+    // Getting the values and passing it into the session variables
     const originIATA = originAirport.IATA;
     const destinationIATA = destinationAirport.IATA;
     req.session.originIATA = originIATA;
@@ -76,6 +82,7 @@ router.post('/oneWay', (req, res) => {
     req.session.OriginAirportName = OriginAirportName;
     req.session.DestinationAirportName = DestinationAirportName;
 
+    // Using the airport search to get skyscanner's custom entityId for both origin and destination
     const optionsForOriginEntityId = {
       method: 'GET',
       url: process.env.AirportURL,
@@ -99,6 +106,7 @@ router.post('/oneWay', (req, res) => {
       axios.request(optionsForDestinationEntityId)
     ])
       .then(axios.spread((originResponse, destinationResponse) => {
+        // selects the entityId to be passed to the searchFlights API
         const originEntityId = originResponse.data.data[0].navigation.entityId;
         const destinationEntityId = destinationResponse.data.data[0].navigation.entityId;
 
@@ -127,24 +135,27 @@ router.post('/oneWay', (req, res) => {
         return axios.request(optionsForSearchFlights);
       }))
       .then(response => {
+        // Redirects to the flightDetails page with the result from the API
         // res.status(200).json(response.data);
         req.session.flightData = response.data;
         req.session.error = 'false';
         res.redirect('/flight/flightDetails');
       })
       .catch(error => {
+        // Catch any error and print an error message in flightDetails page
         console.error(error);
         req.session.error = 'true';
         res.redirect('/flight/flightDetails');
-        // res.status(500).send('No Flights Found. Please return to the flights page');
       });
 
   });
 });
 
+// gets the value from the round trip form
 router.post('/roundTrip', (req, res) => {
   const { origin, destination, from: dateFrom, to: dateTo, adults, children, infants, cabinClass } = req.body;
 
+  // Converts the Date from the form to a YYMMDD format
   const parts = dateFrom.split('-')
   const yearLastTwoDigits = parts[0].slice(2);
   const month = parts[1];
@@ -157,6 +168,7 @@ router.post('/roundTrip', (req, res) => {
   const parts1DD = parts1[2];
   const dateToInYYMMDD = `${parts1YY}${parts1MM}${parts1DD}`;
 
+  // Passing the variables to a session variables
   req.session.origin = origin;
   req.session.destination = destination;
   req.session.from = dateFrom;
@@ -169,6 +181,7 @@ router.post('/roundTrip', (req, res) => {
   req.session.dateFromInYYMMDD = dateFromInYYMMDD;
   req.session.dateToInYYMMDD = dateToInYYMMDD;
 
+  // opening the airports.json file to find the IATA for the airports chosen
   fs.readFile('./public/data/airports.json', 'utf8', (err, data) => {
     if (err) {
       console.error(err);
@@ -181,7 +194,7 @@ router.post('/roundTrip', (req, res) => {
     const originAirport = airports.find(airport => airport.Combine === origin);
     const destinationAirport = airports.find(airport => airport.Combine === destination);
     
-
+    // Passing the values to a session variable
     const originIATA = originAirport.IATA;
     const destinationIATA = destinationAirport.IATA;
     req.session.originIATA = originIATA;
@@ -191,7 +204,7 @@ router.post('/roundTrip', (req, res) => {
     req.session.OriginAirportName = OriginAirportName;
     req.session.DestinationAirportName = DestinationAirportName;
 
-
+    // Sets the params for SearchAirport in the api
     const optionsForOriginEntityId = {
       method: 'GET',
       url: process.env.AirportURL,
@@ -215,6 +228,7 @@ router.post('/roundTrip', (req, res) => {
       axios.request(optionsForDestinationEntityId)
     ])
       .then(axios.spread((originResponse, destinationResponse) => {
+        // Gets the entityId for the airports to be used in searchFlights
         const originEntityId = originResponse.data.data[0].navigation.entityId;
         const destinationEntityId = destinationResponse.data.data[0].navigation.entityId;
 
@@ -244,20 +258,26 @@ router.post('/roundTrip', (req, res) => {
         return axios.request(optionsForSearchFlights);
       }))
       .then(response => {
+        // redirect to flightdetails page with the data collected
         // res.status(200).json(response.data);
+        req.session.error = 'false';
         req.session.flightData = response.data;
         res.redirect('/flight/flightDetails');
       })
       .catch(error => {
+        // catch any error and print the error in flight details page
         console.error(error);
         // res.redirect('/flight');
-        res.status(500).send('No Flights Found. Please return to the flights page');
+        req.session.error = 'true';
+        res.redirect('/flight/flightDetails');
       });
   });
 });
 
+// gets the data from the button to add to itinerary
 router.post("/addToDatabase", (req, res) => {
   const data = req.body;
+  // Depending on the number of legs it can be determined whether it is a oneway trip or round trip
   if (data.legs.length == 1) {
     const onewayData = {
       userid: req.session.user.uid,

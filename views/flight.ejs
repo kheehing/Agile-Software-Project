@@ -4,13 +4,33 @@
 <head>
     <%- include ('base/head'); %>
     <title>Flights Page</title>
+    <link rel="stylesheet" href="/stylesheets/homepage-style.css">
     <link rel="stylesheet" href="/stylesheets/flight-style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <%- include ('base/navbar'); %>
         
         <!-- First Row -->
+        <section class="flight" id="flight">
+            <div class="flight-text">
+                <h1>Book a <br> trip with us today!</h1>
+                
+            </div>
+        </section>
+        <!-- First Row End -->
+
+        <div class="rowtext">
+            <h1>Start your exciting trip here: </h1>
+        </div>
+
+        <!-- Second Row -->
         <div class="container mt-3">
             <div class="row mt-5">
                 <!-- Placeholder image on the left of form -->
@@ -188,125 +208,78 @@
                 </div>
             </div>
         </div>
-        <!-- First Row End (Placeholder left image and form) -->
-
-
-        <!-- Second Row Image-->
-        <div class="container mt-4">
-            <img src="images/flight.jpg" class="img-fluid rounded-1" alt="Flight Image">
-        </div>
-        <!-- Second Row End -->
+        <!-- Second Row End (Placeholder left image and form) -->
 
 
         <!-- Third Row -->
-        <div class="container mt-3">
-            <h4>Popular places to travel to</h4>
+        <div class="rowtext">
+            <h1>Popular places to travel to</h1>
         </div>
 
-        <!-- 9 Images within its card -->
-        <div class="container mt-3 mb-5">
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/bali.jpg" class="card-img-left" alt="Image 1" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Bali</h5>
-                            </div>
-                        </div>
+        <section>
+            <div class="destination" id="destination">
+                <div class="destination-content">
+                    <div class="col-content">
+                        <img src="../images/bali.jpg">
+                        <h5>Indonesia</h5>
+                        <p>Bali</p>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/bangkok.jpg" class="card-img-left" alt="Image 2" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Bangkok</h5>
-                            </div>
-                        </div>
+        
+                    <div class="col-content">
+                        <img src="../images/bangkok.jpg">
+                        <h5>Thailand</h5>
+                        <p>Bangkok</p>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/hong kong.jpg" class="card-img-left" alt="Image 3" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Hong Kong</h5>
-                            </div>
-                        </div>
+        
+                    <div class="col-content">
+                        <img src="../images/hong kong.jpg">
+                        <h5>Hong Kong</h5>
+                        <p>Hong Kong</p>
                     </div>
-                </div>
-            </div>
-
-            <div class="row row-cols-1 row-cols-md-3 g-4 mt-1">
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/korea.jpg" class="card-img-left" alt="Image 1" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Korea</h5>
-                            </div>
-                        </div>
+        
+                    <div class="col-content">
+                        <img src="../images/korea.jpg">
+                        <h5>Korea</h5>
+                        <p>Seoul</p>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/kuala lumpur.jpg" class="card-img-left" alt="Image 2" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Kuala Lumpur</h5>
-                            </div>
-                        </div>
+        
+                    <div class="col-content">
+                        <img src="../images/kuala lumpur.jpg">
+                        <h5>Malaysia</h5>
+                        <p>Kuala Lumpur</p>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/singapore.jpg" class="card-img-left" alt="Image 3" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Singapore</h5>
-                            </div>
-                        </div>
+        
+                    <div class="col-content">
+                        <img src="../images/singapore.jpg">
+                        <h5>Singapore</h5>
+                        <p>Singapore</p>
                     </div>
+        
+                    <div class="col-content">
+                        <img src="../images/sydney.jpg">
+                        <h5>Australia</h5>
+                        <p>Sydney</p>
+                    </div>
+        
+                    <div class="col-content">
+                        <img src="../images/taipei.jpg">
+                        <h5>Taiwan</h5>
+                        <p>Taipei</p>
+                    </div>
+        
+                    <div class="col-content">
+                        <img src="../images/tokyo.jpg">
+                        <h5>Japan</h5>
+                        <p>Tokyo</p>
+                    </div>
+        
                 </div>
             </div>
+        </section>
 
-            <div class="row row-cols-1 row-cols-md-3 g-4 mt-1 mb-6">
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/sydney.jpg" class="card-img-left" alt="Image 1" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Sydney</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/taipei.jpg" class="card-img-left" alt="Image 2" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Taipei</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="d-flex">
-                            <img src="images/tokyo.jpg" class="card-img-left" alt="Image 3" style="max-width: 100px; max-height:100px">
-                            <div class="card-body">
-                                <h5 class="card-title">Tokyo</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Third Row End -->
+       
+        
 
-    <%- include ('base/footer'); %>
 
     <script>   
         // Creates the options for the origin and destination using the json
@@ -413,5 +386,7 @@
     
     </script>
 </body>
+<%- include ('base/footer'); %>
+
 
 </html>
