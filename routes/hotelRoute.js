@@ -348,6 +348,8 @@ router.get('/information', async (req, res) => {
 
     const roomData = roomResponse;
 
+    const maxPhotoUrl = hotelImages[0].url_max;
+
     //console.log("room data:", roomData);
 
     //console.log("hotel data:", hotelData);
@@ -360,7 +362,8 @@ router.get('/information', async (req, res) => {
       hotelReviews: hotelTopReviews,
       hotelId: hotelId,
       roomData: roomData,
-      user: req.session.user
+      user: req.session.user,
+      maxPhotoUrl: maxPhotoUrl,
     });
   } catch (error) {
     const roomOptions = {
